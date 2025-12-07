@@ -1,16 +1,26 @@
 <script lang="ts">
-  import { io, Socket } from "socket.io-client";
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
 
+  // components
   import Dialog from "$lib/components/Dialog.svelte";
   import Piece from "$lib/components/Piece.svelte";
   import TextInput from "$lib/components/TextInput.svelte";
+
+  // constants
   import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants";
+
+  // socket
+  import { getSocket, setRoom } from "$lib/socket";
+
+  // types
   import type {
     SocketGetRoomsResponse,
     SocketJoinRoomError,
     SocketJoinRoomResponse
   } from "$lib/types/socket";
+
+  // assets
   import bgTile from "$lib/assets/empty_piece.jpg";
 
   let username = $state("");
@@ -21,7 +31,7 @@
   let showRoomsDialog = $state(false);
   let rooms = $state<{ name: string; userCount: number; max: number }[]>([]);
 
-  let socket: Socket;
+  const socket = getSocket();
 
   function validate() {
     emitting = true;
@@ -34,7 +44,8 @@
         usernameError = err?.username;
         roomError = err?.room;
         if (response.success) {
-          // redirect
+          setRoom(room);
+          goto(`/${encodeURIComponent(room)}/${encodeURIComponent(username)}`);
         }
       }
     );
@@ -61,7 +72,6 @@
   });
 
   onMount(() => {
-    socket = io("http://localhost:8080", { transports: ["websocket"] });
     username = localStorage.getItem("username") ?? "";
   });
 </script>
