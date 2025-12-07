@@ -1,2 +1,184 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+  import { io, Socket } from "socket.io-client";
+  import { onMount } from "svelte";
+
+  import Dialog from "$lib/components/Dialog.svelte";
+  import Piece from "$lib/components/Piece.svelte";
+  import TextInput from "$lib/components/TextInput.svelte";
+  import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants";
+  import type {
+    SocketGetRoomsResponse,
+    SocketJoinRoomError,
+    SocketJoinRoomResponse
+  } from "$lib/types/socket";
+  import bgTile from "$lib/assets/empty_piece.jpg";
+
+  let username = $state("");
+  let usernameError = $state<string | undefined>(undefined);
+  let room = $state("");
+  let roomError = $state<string | undefined>(undefined);
+  let emitting = $state(false);
+  let showRoomsDialog = $state(false);
+  let rooms = $state<{ name: string; userCount: number; max: number }[]>([]);
+
+  let socket: Socket;
+
+  function validate() {
+    emitting = true;
+    localStorage.setItem("username", username);
+    socket.emit(
+      "join room",
+      { username, room },
+      (err: SocketJoinRoomError, response: SocketJoinRoomResponse) => {
+        emitting = false;
+        usernameError = err?.username;
+        roomError = err?.room;
+        if (response.success) {
+          // redirect
+        }
+      }
+    );
+  }
+
+  function getRooms() {
+    socket.emit("get rooms", (err: any, response: SocketGetRoomsResponse) => {
+      rooms = response.rooms ?? [];
+    });
+  }
+
+  function joinRoom(selectedRoom: string) {
+    room = selectedRoom;
+    showRoomsDialog = false;
+    validate();
+  }
+
+  $effect(() => {
+    if (showRoomsDialog) {
+      getRooms();
+      const interval = setInterval(getRooms, 1000);
+      return () => clearInterval(interval);
+    }
+  });
+
+  onMount(() => {
+    socket = io("http://localhost:8080", { transports: ["websocket"] });
+    username = localStorage.getItem("username") ?? "";
+  });
+</script>
+
+<div class="flex h-screen" style="background-image: url({bgTile});">
+  <div class="m-auto flex flex-col">
+    <h1
+      class="text-7xl text-red-primary text-shadow-red-secondary text-shadow-[8px_6px_0px] text-center mb-32 relative"
+    >
+      RED TETRIS
+      <div class="absolute top-1/2 -translate-y-1/2 -left-24">
+        <Piece color="red" size={64} />
+      </div>
+      <div class="absolute top-1/2 -translate-y-1/2 -right-24">
+        <Piece color="red" size={64} />
+      </div>
+    </h1>
+    <div
+      class="bg-dark-primary ring-2 ring-inset ring-border p-8 flex flex-col items-center relative mb-24"
+    >
+      <div class="space-y-4">
+        <TextInput
+          bind:value={username}
+          maxlength={USERNAME_MAX_LENGTH}
+          placeholder="Username"
+          error={usernameError}
+        />
+        <TextInput
+          bind:value={room}
+          maxlength={ROOM_NAME_MAX_LENGTH}
+          placeholder="Room Name"
+          error={roomError}
+        />
+      </div>
+      <div class="pt-8 flex flex-col space-y-4 w-xs">
+        <button
+          disabled={emitting}
+          onclick={validate}
+          class="relative bg-red-primary w-full px-2 py-4 text-4xl shadow-[0_6px_0_var(--color-red-secondary)]
+          not-disabled:active:translate-y-1.5 not-disabled:active:shadow-none duration-75
+          disabled:bg-dark-accent disabled:shadow-[0_6px_0_var(--color-dark-secondary)]"
+          >JOIN GAME
+        </button>
+        <button
+          disabled={emitting}
+          onclick={() => {
+            showRoomsDialog = true;
+          }}
+          class="hover:bg-dark-secondary w-fit mx-auto px-4 py-2 text-white/75 not-disabled:active:scale-95 duration-75 disabled:text-white/50"
+          >Show existing room(s)</button
+        >
+      </div>
+      <div class="absolute grid grid-cols-2 -left-32 top-0">
+        <Piece color="yellow" size={64} />
+        <Piece color="yellow" size={64} />
+        <Piece color="yellow" size={64} />
+        <Piece color="yellow" size={64} />
+      </div>
+
+      <div class="absolute flex -top-16 -left-16">
+        <Piece color="cyan" size={64} />
+        <Piece color="cyan" size={64} />
+        <Piece color="cyan" size={64} />
+        <Piece color="cyan" size={64} />
+      </div>
+
+      <div class="absolute -top-16 -right-16 flex">
+        <div>
+          <Piece color="orange" size={64} />
+        </div>
+        <div>
+          <Piece color="orange" size={64} />
+          <Piece color="orange" size={64} />
+          <Piece color="orange" size={64} />
+        </div>
+      </div>
+
+      <div class="absolute -bottom-16 -right-32 flex">
+        <Piece color="purple" size={64} />
+        <Piece color="purple" size={64} />
+        <Piece color="purple" size={64} />
+      </div>
+      <div class="absolute bottom-0 -right-16 flex">
+        <Piece color="purple" size={64} />
+      </div>
+
+      <div class="absolute -bottom-16 -left-16 flex flex-col">
+        <Piece color="green" size={64} />
+        <Piece color="green" size={64} />
+      </div>
+      <div class="absolute -bottom-32 left-0 flex flex-col">
+        <Piece color="green" size={64} />
+        <Piece color="green" size={64} />
+      </div>
+    </div>
+  </div>
+
+  <Dialog bind:open={showRoomsDialog}>
+    <h2 class="text-2xl text-center mb-6">Available Rooms</h2>
+    {#if rooms.length === 0}
+      <p class="text-white/50 text-center">No rooms available</p>
+    {:else}
+      <ul class="space-y-2 max-h-128 overflow-y-auto w-80">
+        {#each rooms as { name, userCount, max }}
+          <li>
+            <button
+              onclick={() => joinRoom(name)}
+              class="w-full text-left px-4 py-3 bg-dark-secondary hover:bg-dark-accent border border-border transition-colors duration-75 flex justify-between items-center"
+            >
+              <span>{name}</span>
+              <span class="{userCount === max ? 'text-red-400' : 'text-white/50'} text-sm"
+                >{userCount}/{max}</span
+              >
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </Dialog>
+</div>

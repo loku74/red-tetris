@@ -1,1 +1,22 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Russo One";
+  src: url("$lib/fonts/RussoOne-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "Russo One", sans-serif;
+  color: hsl(0, 0%, 90%);
+}
+
+@theme {
+  --color-red-primary: #d00000;
+  --color-red-secondary: #770000;
+  --color-dark-primary: hsl(0, 0%, 10%);
+  --color-dark-secondary: hsl(0, 0%, 20%);
+  --color-dark-accent: hsl(0, 0%, 30%);
+  --color-border: hsl(0, 0%, 40%);
+}
