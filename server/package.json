@@ -5,12 +5,17 @@
   "private": true,
   "scripts": {
     "dev": "bun --hot app.ts",
-    "format": "bunx prettier . --write"
+    "format": "bunx prettier . --write",
+    "lint": "bunx eslint ."
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@types/bun": "latest",
     "@types/express": "^5.0.6",
-    "prettier": "3.7.4"
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "3.7.4",
+    "typescript-eslint": "^8.48.1"
   },
   "peerDependencies": {
     "typescript": "^5"
