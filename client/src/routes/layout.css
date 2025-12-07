@@ -9,6 +9,7 @@
 
 body {
   font-family: "Russo One", sans-serif;
+  color: hsl(0, 0%, 90%);
 }
 
 @theme {

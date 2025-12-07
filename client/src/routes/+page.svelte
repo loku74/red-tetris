@@ -1,13 +1,72 @@
 <script lang="ts">
+  import { io, Socket } from "socket.io-client";
+  import { onMount } from "svelte";
+
+  import Dialog from "$lib/components/Dialog.svelte";
   import Piece from "$lib/components/Piece.svelte";
   import TextInput from "$lib/components/TextInput.svelte";
   import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants";
+  import type {
+    SocketGetRoomsResponse,
+    SocketJoinRoomError,
+    SocketJoinRoomResponse
+  } from "$lib/types/socket";
+  import bgTile from "$lib/assets/empty_piece.jpg";
 
   let username = $state("");
-  let roomName = $state("");
+  let usernameError = $state<string | undefined>(undefined);
+  let room = $state("");
+  let roomError = $state<string | undefined>(undefined);
+  let emitting = $state(false);
+  let showRoomsDialog = $state(false);
+  let rooms = $state<{ name: string; userCount: number; max: number }[]>([]);
+
+  let socket: Socket;
+
+  function validate() {
+    emitting = true;
+    localStorage.setItem("username", username);
+    socket.emit(
+      "join room",
+      { username, room },
+      (err: SocketJoinRoomError, response: SocketJoinRoomResponse) => {
+        emitting = false;
+        usernameError = err?.username;
+        roomError = err?.room;
+        if (response.success) {
+          // redirect
+        }
+      }
+    );
+  }
+
+  function getRooms() {
+    socket.emit("get rooms", (err: any, response: SocketGetRoomsResponse) => {
+      rooms = response.rooms ?? [];
+    });
+  }
+
+  function joinRoom(selectedRoom: string) {
+    room = selectedRoom;
+    showRoomsDialog = false;
+    validate();
+  }
+
+  $effect(() => {
+    if (showRoomsDialog) {
+      getRooms();
+      const interval = setInterval(getRooms, 1000);
+      return () => clearInterval(interval);
+    }
+  });
+
+  onMount(() => {
+    socket = io("http://localhost:8080", { transports: ["websocket"] });
+    username = localStorage.getItem("username") ?? "";
+  });
 </script>
 
-<div class="flex h-dvh">
+<div class="flex h-screen" style="background-image: url({bgTile});">
   <div class="m-auto flex flex-col">
     <h1
       class="text-7xl text-red-primary text-shadow-red-secondary text-shadow-[8px_6px_0px] text-center mb-32 relative"
@@ -24,17 +83,33 @@
       class="bg-dark-primary ring-2 ring-inset ring-border p-8 flex flex-col items-center relative mb-24"
     >
       <div class="space-y-4">
-        <TextInput bind:value={username} maxlength={USERNAME_MAX_LENGTH} placeholder="Username" />
-        <TextInput bind:value={roomName} maxlength={ROOM_NAME_MAX_LENGTH} placeholder="Room Name" />
+        <TextInput
+          bind:value={username}
+          maxlength={USERNAME_MAX_LENGTH}
+          placeholder="Username"
+          error={usernameError}
+        />
+        <TextInput
+          bind:value={room}
+          maxlength={ROOM_NAME_MAX_LENGTH}
+          placeholder="Room Name"
+          error={roomError}
+        />
       </div>
-      <div class="pt-8 flex flex-col space-y-6 w-xs">
+      <div class="pt-8 flex flex-col space-y-4 w-xs">
         <button
-          class="bg-red-primary w-full px-2 py-4 text-4xl shadow-[0_6px_0_var(--color-red-secondary)]
+          disabled={emitting}
+          onclick={validate}
+          class="relative bg-red-primary w-full px-2 py-4 text-4xl shadow-[0_6px_0_var(--color-red-secondary)]
           not-disabled:active:translate-y-1.5 not-disabled:active:shadow-none duration-75
           disabled:bg-dark-accent disabled:shadow-[0_6px_0_var(--color-dark-secondary)]"
-          >JOIN GAME</button
-        >
+          >JOIN GAME
+        </button>
         <button
+          disabled={emitting}
+          onclick={() => {
+            showRoomsDialog = true;
+          }}
           class="hover:bg-dark-secondary w-fit mx-auto px-4 py-2 text-white/75 not-disabled:active:scale-95 duration-75 disabled:text-white/50"
           >Show existing room(s)</button
         >
@@ -83,4 +158,27 @@
       </div>
     </div>
   </div>
+
+  <Dialog bind:open={showRoomsDialog}>
+    <h2 class="text-2xl text-center mb-6">Available Rooms</h2>
+    {#if rooms.length === 0}
+      <p class="text-white/50 text-center">No rooms available</p>
+    {:else}
+      <ul class="space-y-2 max-h-128 overflow-y-auto w-80">
+        {#each rooms as { name, userCount, max }}
+          <li>
+            <button
+              onclick={() => joinRoom(name)}
+              class="w-full text-left px-4 py-3 bg-dark-secondary hover:bg-dark-accent border border-border transition-colors duration-75 flex justify-between items-center"
+            >
+              <span>{name}</span>
+              <span class="{userCount === max ? 'text-red-400' : 'text-white/50'} text-sm"
+                >{userCount}/{max}</span
+              >
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </Dialog>
 </div>

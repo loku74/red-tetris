@@ -1,23 +1,23 @@
 {
-    "name": "server",
-    "module": "app.ts",
-    "type": "module",
-    "private": true,
-    "scripts": {
-        "dev": "bun run --hot app.ts",
-        "production": "bun run app.ts",
-        "format": "bunx prettier . --write"
-    },
-    "devDependencies": {
-        "@types/bun": "latest",
-        "@types/express": "^5.0.6",
-        "prettier": "3.7.4"
-    },
-    "peerDependencies": {
-        "typescript": "^5"
-    },
-    "dependencies": {
-        "express": "^5.2.1",
-        "socket.io": "^4.8.1"
-    }
+  "name": "server",
+  "module": "app.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot app.ts",
+    "format": "bunx prettier . --write"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.6",
+    "prettier": "3.7.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.1",
+    "zod": "^4.1.13"
+  }
 }
