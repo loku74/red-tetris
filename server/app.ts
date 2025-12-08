@@ -3,70 +3,44 @@ import { createServer } from "node:http";
 import path from "node:path";
 import { Server, Socket } from "socket.io";
 import { fileURLToPath } from "node:url";
-import type { JoinRoomData } from "./src/types";
-import { ROOM_MAX_USERS } from "./src/constants";
-import { validateJoinRoom } from "./src/controllers/rooms";
-import type { User } from "./src/objects/User";
-
-type Callback = (err: unknown, response?: unknown) => void;
+import { registerClientHandlers } from "./src/events";
+import type { ServerData } from "./src/types";
+import type { Express } from "express";
+import { SERVER_PORT } from "./src/constants";
+import { Server as IoServer } from "socket.io";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const frontendPath = path.join(__dirname, "../client/build");
 
-const app = express();
-const server = createServer(app);
-const io = new Server(server);
+function configureHttp(app: Express) {
+  app.use(express.static(frontendPath));
 
-const port = 8080;
-
-const users: Record<string, User> = {};
-
-app.use(express.static(frontendPath));
-
-app.get("/", (req: express.Request, res: express.Response) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
-
-io.on("connection", (socket: Socket) => {
-  console.log("New client connected");
-
-  socket.on("join room", (data: JoinRoomData, callback: Callback) => {
-    const errors = validateJoinRoom(io, socket, data);
-    if (errors) {
-      callback(errors, { success: false });
-      return;
-    }
-
-    users[socket.id] = { name: data.username };
-    socket.join(data.room);
-
-    console.log(`User ${users[socket.id]!.name} joined room ${data.room} ${socket.rooms.size}`);
-    callback(null, { success: true });
+  app.get("/", (req: express.Request, res: express.Response) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
+}
 
-  socket.on("get rooms", (callback: Callback) => {
-    const rooms: { name: string; userCount: number; max: number }[] = [];
-    const adapter = io.sockets.adapter;
+function configureSocket(io: IoServer) {
+  io.on("connection", (socket: Socket) => {
+    console.log("New client connected");
 
-    adapter.rooms.forEach((sockets, roomName) => {
-      if (!adapter.sids.has(roomName)) {
-        rooms.push({
-          name: roomName,
-          userCount: sockets.size,
-          max: ROOM_MAX_USERS
-        });
-      }
-    });
-
-    callback(null, { rooms });
+    registerClientHandlers(socket);
   });
+}
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
+export function init(): ServerData {
+  const app = express();
+  const server = createServer(app);
+  const io = new Server(server);
 
-server.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  configureHttp(app);
+  configureSocket(io);
+  return { app, server, io };
+}
+
+const struct = init();
+
+struct.server.listen(SERVER_PORT, () => {
+  console.log(`Server running at http://localhost:${SERVER_PORT}`);
 });
