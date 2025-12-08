@@ -31,6 +31,7 @@ beforeEach(() => {
 afterEach(() => {
   io.close();
   clientSocket.disconnect();
+  rooms.clear();
 });
 
 it("Invalid scheme", () => {
@@ -62,9 +63,6 @@ it("Room is full", () => {
 
     clientSocket.emit("join room", data, ((err, response) => {
       expect(response).toEqual({ success: false });
-
-      // this is shared between others tests of this file
-      rooms.clear();
 
       resolve();
     }) as Callback);
