@@ -1,11 +1,11 @@
-import type { Socket } from "socket.io";
-import type { Callback, GetRoomsData, JoinRoomData } from "./types";
-import { getRoomId, joinOrCreateRoom, leaveRoom, validateJoinRoom } from "./controllers/rooms";
+import { Server, type Socket } from "socket.io";
 import { ROOM_MAX_USERS } from "./constants";
-import { User, users } from "./objects/User";
+import { getRoomId, joinOrCreateRoom, leaveRoom, validateJoinRoom } from "./controllers/rooms";
 import { rooms } from "./objects/Room";
+import { User, users } from "./objects/User";
+import type { Callback, GetRoomsData, JoinRoomData } from "./types";
 
-export function registerClientHandlers(socket: Socket) {
+export function registerClientHandlers(io: Server, socket: Socket) {
   socket.on("join room", (data: JoinRoomData, callback: Callback) => {
     const errors = validateJoinRoom(socket, data);
     if (errors) {
@@ -13,14 +13,14 @@ export function registerClientHandlers(socket: Socket) {
       return;
     }
 
-    const user = new User(data.username);
+    const user = new User(socket.id, data.username);
     users[socket.id] = user;
 
-    joinOrCreateRoom(data.room, user);
+    const room = joinOrCreateRoom(socket, data.room, user);
     socket.join(data.room);
 
     console.log(`User ${users[socket.id]?.name} joined room ${data.room} ${socket.rooms.size}`);
-    callback(null, { success: true });
+    callback(null, { success: true, room: room.asInfo() });
   });
 
   socket.on("get rooms", (callback: Callback) => {
@@ -37,12 +37,12 @@ export function registerClientHandlers(socket: Socket) {
     callback(null, { rooms: result });
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnecting", () => {
     const user = users[socket.id];
     const room_id = getRoomId(socket);
 
     if (user != undefined && room_id != undefined) {
-      leaveRoom(room_id, user);
+      leaveRoom(io, room_id, user);
     }
     console.log("user disconnected");
   });

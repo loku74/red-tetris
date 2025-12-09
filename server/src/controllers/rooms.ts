@@ -1,9 +1,9 @@
+import { Server, Socket } from "socket.io";
 import * as z from "zod";
-import { USERNAME_MAX_LENGTH, ROOM_MAX_LENGTH, ROOM_MAX_USERS, ROOM_MAX } from "../constants";
-import { Socket } from "socket.io";
-import type { JoinRoomData } from "../types";
-import type { User } from "../objects/User";
+import { ROOM_MAX, ROOM_MAX_LENGTH, ROOM_MAX_USERS, USERNAME_MAX_LENGTH } from "../constants";
 import { Room, rooms } from "../objects/Room";
+import type { User } from "../objects/User";
+import type { JoinRoomData } from "../types";
 
 const joinRoomSchema = z.object({
   username: z
@@ -57,20 +57,33 @@ export function getRoomId(socket: Socket): string | undefined {
   return undefined;
 }
 
-export function joinOrCreateRoom(room_id: string, user: User) {
+export function joinOrCreateRoom(socket: Socket, room_id: string, user: User): Room {
   let room = rooms.get(room_id);
 
   if (room == undefined) {
-    room = new Room(room_id);
+    room = new Room(room_id, user.name);
     room.add(user);
+    room.host = user.name;
 
     rooms.set(room_id, room);
   } else {
     room.add(user);
   }
+
+  // the current socket will receive information with the callback
+  // we can exclude him on this call
+  // see: https://socket.io/docs/v4/rooms/
+  socket.to(room.name).emit("room", room.asInfo());
+  return room;
 }
 
-export function leaveRoom(room_id: string, user: User) {
+function setNextHost(room: Room) {
+  const next = room.users.entries().next();
+
+  room.host = next.value![0];
+}
+
+export function leaveRoom(server: Server, room_id: string, user: User) {
   const room = rooms.get(room_id);
 
   if (room) {
@@ -80,7 +93,13 @@ export function leaveRoom(room_id: string, user: User) {
     // deletion of empty room
     if (room.users.size == 0) {
       rooms.delete(room_id);
+      console.log(`room ${room_id} deleted`);
     } else {
+      setNextHost(room);
+
+      // update all people of the "situation" of the room
+      server.to(room.name).emit("room", room.asInfo());
+
       // game logic then (declare lose etc..)
     }
   }

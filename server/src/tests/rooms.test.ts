@@ -1,42 +1,40 @@
-import { expect, it, beforeEach, afterEach } from "vitest";
-import { createServer } from "node:http";
 import { type AddressInfo } from "node:net";
-import { io as ioc, type Socket as ClientSocket } from "socket.io-client";
 import { Server } from "socket.io";
-import { registerClientHandlers } from "../events";
-import type { Callback } from "../types";
-import { Room, rooms } from "../objects/Room";
+import { afterEach, beforeEach, expect, it } from "vitest";
+import { init } from "../../app";
 import { ROOM_MAX_USERS } from "../constants";
+import { Room, rooms } from "../objects/Room";
 import { User } from "../objects/User";
+import type { Callback, RoomInfo, TestSocket } from "../types";
+import { createClient, emitAsync, onceAsync } from "./utils";
 
-let io: Server, clientSocket: ClientSocket;
+let io: Server, test1: TestSocket, address: string;
 
 // create test socket.io server
 // see: https://socket.io/docs/v4/testing/
 beforeEach(() => {
   return new Promise<void>((resolve) => {
-    const httpServer = createServer();
-    io = new Server(httpServer);
-    httpServer.listen(() => {
-      const port = (httpServer.address() as AddressInfo).port;
-      clientSocket = ioc(`http://localhost:${port}`);
-      io.on("connection", (socket) => {
-        registerClientHandlers(socket);
-      });
-      clientSocket.on("connect", resolve);
+    const struct = init();
+    io = struct.io;
+
+    struct.server.listen(async () => {
+      address = `http://localhost:${(struct.server.address() as AddressInfo).port}`;
+
+      test1 = await createClient(address, io);
+      resolve();
     });
   });
 });
 
 afterEach(() => {
   io.close();
-  clientSocket.disconnect();
+  test1.client.disconnect();
   rooms.clear();
 });
 
 it("Invalid scheme", () => {
   return new Promise<void>((resolve) => {
-    clientSocket.emit("join room", {}, ((err, response) => {
+    test1.client.emit("join room", {}, ((err, response) => {
       expect(response).toEqual({ success: false });
       resolve();
     }) as Callback);
@@ -44,11 +42,11 @@ it("Invalid scheme", () => {
 });
 
 it("Room is full", () => {
-  const room = new Room("example");
+  const room = new Room("example", "example");
   const users = new Map<string, User>(
     Array.from({ length: ROOM_MAX_USERS }, (_, i) => [
       `example${i + 1}`,
-      new User(`example${i + 1}`)
+      new User("dumb_id", `example${i + 1}`)
     ])
   );
 
@@ -61,7 +59,7 @@ it("Room is full", () => {
       room: "example"
     };
 
-    clientSocket.emit("join room", data, ((err, response) => {
+    test1.client.emit("join room", data, ((err, response) => {
       expect(response).toEqual({ success: false });
 
       resolve();
@@ -76,18 +74,26 @@ it("Valid join", () => {
       room: "example"
     };
 
-    clientSocket.emit("join room", data, ((err, response) => {
-      expect(response).toEqual({ success: true });
+    test1.client.emit("join room", data, ((err, response) => {
+      expect(response).toEqual({
+        success: true,
+        room: {
+          players: ["example"],
+          userCount: 1,
+          max: ROOM_MAX_USERS,
+          host: "example"
+        }
+      });
       resolve();
     }) as Callback);
   });
 });
 
 it("Get rooms", () => {
-  rooms.set("example", new Room("example"));
+  rooms.set("example", new Room("example", "superhost"));
 
   return new Promise<void>((resolve) => {
-    clientSocket.emit("get rooms", ((err, response) => {
+    test1.client.emit("get rooms", ((err, response) => {
       expect(response).toEqual({
         rooms: [
           {
@@ -100,4 +106,36 @@ it("Get rooms", () => {
       resolve();
     }) as Callback);
   });
+});
+
+it("Host changed", async () => {
+  const test2 = await createClient(address, io);
+  const roomListener = onceAsync(test1.client, "room");
+  const roomListener2 = onceAsync(test2.client, "room");
+  const disconnectListener = onceAsync(test2.server, "disconnect");
+
+  await emitAsync(test1.client, "join room", {
+    username: "user1",
+    room: "example"
+  });
+  await emitAsync(test2.client, "join room", {
+    username: "user2",
+    room: "example"
+  });
+
+  // client1 is warned that a new player is here using "room" event
+  const data1 = (await roomListener) as RoomInfo;
+  expect(rooms.get("example")?.asInfo()).toEqual(data1);
+
+  test1.client.close();
+
+  // a new host have been setted
+  const data2 = (await roomListener2) as RoomInfo;
+  expect(rooms.get("example")?.asInfo()).toEqual(data2);
+  expect(data2.host).toEqual("user2");
+
+  test2.client.close();
+  await disconnectListener;
+
+  expect(rooms.size).toEqual(0);
 });
