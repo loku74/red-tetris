@@ -57,7 +57,7 @@ export function registerClientHandlers(io: Server, socket: Socket) {
     if (target) {
       leaveRoom(target, data.room);
       target.socket.emit("kick", { room: data.room });
-      console.log(`user ${data.username} have been kicked from ${data.room} room`);
+      console.log(`user ${data.username} has been kicked from ${data.room} room`);
 
       callback(null, { success: true });
     } else {

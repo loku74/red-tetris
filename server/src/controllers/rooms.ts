@@ -55,9 +55,7 @@ export function joinOrCreateRoom(user: User, room_id: string): Room {
   let room = rooms.get(room_id);
 
   if (room == undefined) {
-    room = new Room(room_id, user.name);
-    room.add(user);
-    room.host = user.name;
+    room = new Room(room_id, user);
 
     rooms.set(room_id, room);
   } else {
@@ -75,7 +73,7 @@ function setNextHost(room: Room) {
   const next = room.users.entries().next();
 
   if (next.value) {
-    room.host = next.value[1].name;
+    room.host = next.value[1];
   }
 }
 
@@ -120,7 +118,7 @@ export function validateKick(
   if (room === undefined) {
     return { kick: `The room ${data.room} does not exist!` };
   }
-  if (room.host != current.name) {
+  if (room.host.name != current.name) {
     return { kick: "You are not the host of this room!" };
   }
   if (data.username === current.name) {

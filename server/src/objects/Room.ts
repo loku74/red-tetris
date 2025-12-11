@@ -7,8 +7,10 @@ export class Room {
 
   constructor(
     public name: string,
-    public host: string
-  ) {}
+    public host: User
+  ) {
+    this.add(host);
+  }
 
   public exist(user: User) {
     return this.users.has(user.id);
@@ -32,7 +34,7 @@ export class Room {
       players: [...this.users.values()].map((u) => u.name),
       userCount: this.users.size,
       max: ROOM_MAX_USERS,
-      host: this.host
+      host: this.host.name
     };
   }
 }

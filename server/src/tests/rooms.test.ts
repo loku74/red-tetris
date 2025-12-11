@@ -75,6 +75,7 @@ it("Valid join", () => {
     };
 
     test1.client.emit("join room", data, ((err, response) => {
+      console.log(response);
       expect(response).toEqual({
         success: true,
         room: {
@@ -90,7 +91,7 @@ it("Valid join", () => {
 });
 
 it("Get rooms", () => {
-  rooms.set("example", new Room("example", "superhost"));
+  rooms.set("example", new Room("example", new User("id", "example", null)));
 
   return new Promise<void>((resolve) => {
     test1.client.emit("get rooms", ((err, response) => {
@@ -98,7 +99,7 @@ it("Get rooms", () => {
         rooms: [
           {
             name: "example",
-            userCount: 0,
+            userCount: 1,
             max: ROOM_MAX_USERS
           }
         ]
@@ -129,7 +130,7 @@ it("Host changed", async () => {
 
   test1.client.close();
 
-  // a new host have been setted
+  // a new host has been setted
   const data2 = (await roomListener2) as RoomInfo;
   expect(rooms.get("example")?.asInfo()).toEqual(data2);
   expect(data2.host).toEqual("user2");
@@ -205,7 +206,7 @@ it("Invalid kick", async () => {
   });
 
   // not host
-  room.host = "someone";
+  room.host = new User("dumb", "someone", null);
   await emitAsync(test1.client, "kick", {
     username: "user2",
     room: "example"
@@ -213,7 +214,7 @@ it("Invalid kick", async () => {
     expect(err.kick).toContain("host of this");
     expect(res).toEqual({ success: false });
   });
-  room.host = "user1";
+  room.host = users[test1.server.id];
 
   // him self
   await emitAsync(test1.client, "kick", {
