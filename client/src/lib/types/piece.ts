@@ -1,5 +1,3 @@
-type PieceSize = number;
-
 type PieceColor =
   | "red"
   | "blue"
@@ -8,11 +6,11 @@ type PieceColor =
   | "purple"
   | "orange"
   | "cyan"
-  | "gray"
+  | "grey"
   | "empty";
 
 interface Piece {
-  size: PieceSize;
+  size: number;
   color: PieceColor;
 }
 
@@ -24,4 +22,4 @@ type PieceColorDetail = Record<
     light: string;
   }
 >;
-export type { PieceSize, PieceColor, Piece, PieceColorDetail };
+export type { PieceColor, Piece, PieceColorDetail };

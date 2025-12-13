@@ -20,3 +20,36 @@ body {
   --color-dark-accent: hsl(0, 0%, 30%);
   --color-border: hsl(0, 0%, 40%);
 }
+
+.btn-primary {
+  --bg-color: var(--color-red-primary);
+  --shadow-color: var(--color-red-secondary);
+}
+
+.btn-secondary {
+  --bg-color: var(--color-dark-accent);
+  --shadow-color: hsl(0, 0%, 15%);
+}
+
+.btn {
+  --btn-depth: 4px;
+
+  text-align: center;
+  text-transform: uppercase;
+
+  background-color: var(--bg-color);
+  box-shadow: 0 var(--btn-depth) 0 var(--shadow-color);
+  transition-duration: 75ms;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(var(--btn-depth));
+  box-shadow: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  background-color: var(--color-dark-accent);
+  box-shadow: 0 var(--btn-depth) 0 var(--color-dark-secondary);
+  cursor: not-allowed;
+}

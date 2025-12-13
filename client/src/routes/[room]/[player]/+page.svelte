@@ -56,9 +56,7 @@
         <p class="text-red-400 text-xl mb-2">{error}</p>
         <p class="text-white/50">Redirecting to home...</p>
       </div>
-    {:else if joined}
-      <p class="text-white text-xl">In room "{room}" as "{username}"</p>
-    {:else}
+    {:else if !joined}
       <p class="text-white text-xl">Joining room "{room}" as "{username}"...</p>
     {/if}
   </div>

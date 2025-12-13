@@ -6,6 +6,7 @@
   import Dialog from "$lib/components/Dialog.svelte";
   import Piece from "$lib/components/Piece.svelte";
   import TextInput from "$lib/components/TextInput.svelte";
+  import { Gamepad2 } from "@lucide/svelte";
 
   // constants
   import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants";
@@ -110,10 +111,9 @@
         <button
           disabled={emitting}
           onclick={validate}
-          class="relative bg-red-primary w-full px-2 py-4 text-4xl shadow-[0_6px_0_var(--color-red-secondary)]
-          not-disabled:active:translate-y-1.5 not-disabled:active:shadow-none duration-75
-          disabled:bg-dark-accent disabled:shadow-[0_6px_0_var(--color-dark-secondary)]"
-          >JOIN GAME
+          class="btn btn-primary text-3xl py-4"
+          style="--btn-depth: 6px;"
+          >join game
         </button>
         <button
           disabled={emitting}
@@ -169,12 +169,11 @@
     </div>
   </div>
 
-  <Dialog bind:open={showRoomsDialog}>
-    <h2 class="text-2xl text-center mb-6">Available Rooms</h2>
+  <Dialog icon={Gamepad2} confirm="exit" title="Available Rooms" bind:open={showRoomsDialog}>
     {#if rooms.length === 0}
       <p class="text-white/50 text-center">No rooms available</p>
     {:else}
-      <ul class="space-y-2 max-h-128 overflow-y-auto w-80">
+      <ul class="space-y-2 px-4 max-h-128 overflow-y-auto w-80">
         {#each rooms as { name, userCount, max }}
           <li>
             <button

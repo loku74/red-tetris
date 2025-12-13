@@ -36,7 +36,7 @@ const pieceColors: PieceColorDetail = {
     dark: "#09A4A2",
     light: "#59FEFF"
   },
-  gray: {
+  grey: {
     main: "#B3B3B3",
     dark: "#8C8C8C",
     light: "#D9D9D9"
