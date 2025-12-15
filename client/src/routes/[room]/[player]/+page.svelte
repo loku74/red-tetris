@@ -12,8 +12,11 @@
 
   // types
   import type { SocketJoinRoomError, SocketJoinRoomData } from "$lib/types/socket";
-  import { USERNAME_MAX_LENGTH } from "$lib/constants";
   import type { RoomInfo } from "server-types";
+
+  // utils
+  import { USERNAME_MAX_LENGTH } from "$lib/constants";
+  import { pieceColors } from "$lib/utils/piece";
 
   const room = page.params.room;
   const username = page.params.player;
@@ -22,6 +25,7 @@
   let userError = $state<string>();
   let unusualError = $state<string>();
   let roomData = $state<RoomInfo>();
+  let color = $state<string>();
   let joined = $state(false);
   let countdown = $state(3);
 
@@ -54,6 +58,8 @@
         socket.on("room update", (data: RoomInfo) => {
           roomData = data;
         });
+        const player = roomData.players.find((p) => p.username === username)!;
+        color = pieceColors[player.color].light;
         joined = true;
       }
     });
@@ -94,9 +100,11 @@
       <ul class="py-4">
         {#each roomData.players as player, index (player.color)}
           <li
-            class="text-white p-2 text-lg flex items-center gap-2 group/list {index % 2 === 0
-              ? 'bg-dark-list-accent'
-              : ''}"
+            class="text-white p-2 text-lg flex items-center gap-2 group/list {username ===
+            player.username
+              ? 'ring ring-inset'
+              : ''} {index % 2 === 0 ? 'bg-dark-list-accent' : ''}"
+            style={username === player.username ? `--tw-ring-color: ${player.color};` : ""}
           >
             <Piece color={player.color} size={24} />
             <span class="overflow-hidden text-ellipsis">
