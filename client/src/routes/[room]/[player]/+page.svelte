@@ -102,11 +102,9 @@
           <li
             class="text-white p-2 text-lg flex items-center gap-2 group/list {username ===
             player.username
-              ? 'ring ring-inset'
+              ? `border-l-2`
               : ''} {index % 2 === 0 ? 'bg-dark-list-accent' : ''}"
-            style={username === player.username
-              ? `--tw-ring-color: ${player.color}; color: ${pieceColors[player.color].light};`
-              : ""}
+            style={username === player.username ? `border-color: ${color}; color: ${color};` : ""}
           >
             <Piece color={player.color} size={24} />
             <span class="overflow-hidden text-ellipsis">
