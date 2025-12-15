@@ -14,7 +14,7 @@
   // types
   import type { SocketJoinRoomError, SocketJoinRoomData } from "$lib/types/socket";
   import type { PieceColor } from "$lib/types/piece";
-  import type { RoomInfo, PlayerData } from "server-types";
+  import type { RoomInfo, PlayerData, SocketKickData } from "server-types";
 
   // utils
   import { USERNAME_MAX_LENGTH } from "$lib/constants";
@@ -79,9 +79,19 @@
     showKickDialog = true;
   }
 
+  function kickUser(data: SocketKickData) {
+    socket.emit("kick", data, (success: boolean, data?: { kick: string }) => {});
+    showKickDialog = false;
+  }
+
   onMount(() => {
     if (socket.connected) joinRoom();
     else socket.on("connect", joinRoom);
+
+    // to change
+    socket.on("kick", () => {
+      goto("/");
+    });
 
     return () => {
       socket.off("connect", joinRoom);
@@ -172,6 +182,7 @@
   <Dialog
     icon={UserX}
     confirm="kick"
+    confirmCallback={() => kickUser({ username: userToKick!, room: room! })}
     title="Confirm kick"
     cancel="cancel"
     bind:open={showKickDialog}

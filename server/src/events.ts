@@ -1,7 +1,7 @@
 import { Server, type Socket } from "socket.io";
 import { ROOM_MAX_USERS } from "./constants";
 import {
-  getRoomId,
+  getRoom,
   joinOrCreateRoom,
   leaveRoom,
   validateJoinRoom,
@@ -62,12 +62,15 @@ export function registerClientHandlers(io: Server, socket: Socket) {
       return;
     }
     // existance checked before
-    const target = rooms.get(data.room)?.get(data.username);
+    const room = rooms.get(data.room);
+    const target = room?.get(data.username);
 
-    if (target) {
-      leaveRoom(target, data.room);
+    if (target && room) {
+      leaveRoom(target, room);
       target.socket.emit("kick", { room: data.room });
       console.log(`user ${data.username} has been kicked from ${data.room} room`);
+
+      io.to(data.room).emit("room update", room.asInfo());
 
       callback(true);
     }
@@ -75,10 +78,11 @@ export function registerClientHandlers(io: Server, socket: Socket) {
 
   socket.on("disconnecting", () => {
     const user = users[socket.id];
-    const room_id = getRoomId(socket);
+    const room = getRoom(socket);
 
-    if (user != undefined && room_id != undefined) {
-      leaveRoom(user, room_id);
+    if (user && room) {
+      const roomInfo = leaveRoom(user, room);
+      io.to(room.name).emit("room update", roomInfo);
     }
     console.log("user disconnected");
   });

@@ -50,13 +50,13 @@ export function validateJoinRoom(
   return null;
 }
 
-export function getRoomId(socket: Socket): string | undefined {
+export function getRoom(socket: Socket): Room | null {
   for (const roomId of socket.rooms) {
     if (roomId !== socket.id) {
-      return roomId;
+      return rooms.get(roomId) ?? null;
     }
   }
-  return undefined;
+  return null;
 }
 
 export function joinOrCreateRoom(user: User, room_id: string): Room {
@@ -85,30 +85,23 @@ function setNextHost(room: Room) {
   }
 }
 
-export function leaveRoom(target: User, room_id: string) {
-  const room = rooms.get(room_id);
+export function leaveRoom(target: User, room: Room) {
+  room.remove(target);
+  target.socket.leave(room.name);
 
-  if (room) {
-    room.remove(target);
-    target.socket.leave(room_id);
+  console.log(`User ${target.name} left room ${room.name}`);
 
-    console.log(`User ${target.name} left room ${room_id}`);
-
-    // deletion of empty room
-    if (room.users.size == 0) {
-      rooms.delete(room_id);
-      console.log(`room ${room_id} deleted`);
-    } else {
-      if (target === room.host) {
-        setNextHost(room);
-      }
-
-      // update all people of the "situation" of the room
-      target.socket.to(room.name).emit("room", room.asInfo());
-
-      // game logic then (declare lose etc..)
+  // deletion of empty room
+  if (room.users.size == 0) {
+    rooms.delete(room.name);
+    console.log(`room ${room.name} deleted`);
+  } else {
+    if (target === room.host) {
+      setNextHost(room);
     }
   }
+
+  return room.asInfo();
 }
 
 export function validateKick(
