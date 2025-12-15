@@ -5,7 +5,7 @@
 
   // components
   import Piece from "$lib/components/Piece.svelte";
-  import { Crown, LogOut, Swords } from "@lucide/svelte";
+  import { Crown, LogOut, Swords, X } from "@lucide/svelte";
 
   // socket
   import { getSocket } from "$lib/socket";
@@ -94,9 +94,9 @@
       <ul class="py-4">
         {#each roomData.players as player, index (player.color)}
           <li
-            class="text-white p-2 text-lg flex items-center gap-2 {index % 2 === 0
-              ? 'bg-dark-accent'
-              : 'bg-dark-secondary'}"
+            class="text-white p-2 text-lg flex items-center gap-2 group/list {index % 2 === 0
+              ? 'bg-dark-list-accent'
+              : ''}"
           >
             <Piece color={player.color} size={24} />
             <span class="overflow-hidden text-ellipsis">
@@ -104,6 +104,14 @@
             </span>
             {#if roomData.host === player.username}
               <Crown color="#FFC832" />
+            {/if}
+            {#if roomData.host === username && player.username !== username}
+              <button
+                class="ml-auto btn btn-secondary group/button group-hover/list:opacity-100 opacity-0 duration-75 p-1"
+                style="--btn-depth: 2px;"
+              >
+                <X size={20} class="group-hover/button:text-red-500 duration-100" />
+              </button>
             {/if}
           </li>
         {/each}
