@@ -104,7 +104,9 @@
             player.username
               ? 'ring ring-inset'
               : ''} {index % 2 === 0 ? 'bg-dark-list-accent' : ''}"
-            style={username === player.username ? `--tw-ring-color: ${player.color};` : ""}
+            style={username === player.username
+              ? `--tw-ring-color: ${player.color}; color: ${pieceColors[player.color].light};`
+              : ""}
           >
             <Piece color={player.color} size={24} />
             <span class="overflow-hidden text-ellipsis">
