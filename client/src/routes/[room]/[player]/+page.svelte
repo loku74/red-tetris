@@ -5,14 +5,16 @@
 
   // components
   import Piece from "$lib/components/Piece.svelte";
-  import { Crown, LogOut, Swords, X } from "@lucide/svelte";
+  import { Crown, LogOut, Swords, UserX, X } from "@lucide/svelte";
+  import Dialog from "$lib/components/Dialog.svelte";
 
   // socket
   import { getSocket } from "$lib/socket";
 
   // types
   import type { SocketJoinRoomError, SocketJoinRoomData } from "$lib/types/socket";
-  import type { RoomInfo } from "server-types";
+  import type { PieceColor } from "$lib/types/piece";
+  import type { RoomInfo, PlayerData } from "server-types";
 
   // utils
   import { USERNAME_MAX_LENGTH } from "$lib/constants";
@@ -27,7 +29,12 @@
   let roomData = $state<RoomInfo>();
   let color = $state<string>();
   let joined = $state(false);
-  let countdown = $state(3);
+  let countdown = $state(5);
+
+  let showKickDialog = $state(false);
+  let userToKick = $state<string>();
+  let userToKickColor = $state<PieceColor>("empty");
+  let userToKickPieceColor = $state<string>("#e6e6e6");
 
   const socket = getSocket();
 
@@ -63,6 +70,13 @@
         joined = true;
       }
     });
+  }
+
+  function handleKickUser(user: PlayerData) {
+    userToKick = user.username;
+    userToKickColor = user.color;
+    userToKickPieceColor = pieceColors[user.color].light;
+    showKickDialog = true;
   }
 
   onMount(() => {
@@ -115,6 +129,7 @@
             {/if}
             {#if roomData.host === username && player.username !== username}
               <button
+                onclick={() => handleKickUser(player)}
                 class="ml-auto btn btn-secondary group/button group-hover/list:opacity-100 opacity-0 duration-75 p-1"
                 style="--btn-depth: 2px;"
               >
@@ -128,7 +143,7 @@
         {#if roomData.host === username}
           <button class="btn btn-secondary text-lg py-1.5 w-full">leave room</button>
         {:else}
-          <p class="text-center text-white/50">Waiting for the host to start...</p>
+          <p class="text-center text-white/70">Waiting for the host to start...</p>
         {/if}
         {#if roomData.host === username}
           <button
@@ -152,3 +167,24 @@
     <div class="bg-dark-secondary ring ring-inset ring-border flex h-[640px] w-[320px]"></div>
   {/if}
 </div>
+
+{#if showKickDialog}
+  <Dialog
+    icon={UserX}
+    confirm="kick"
+    title="Confirm kick"
+    cancel="cancel"
+    bind:open={showKickDialog}
+  >
+    <div class="flex">
+      Do you want to kick
+      <div class="flex items-center gap-2 px-2">
+        <Piece color={userToKickColor} size={16} />
+        <span style="color: {userToKickPieceColor}">
+          {userToKick}
+        </span>
+      </div>
+      from the room ?
+    </div>
+  </Dialog>
+{/if}

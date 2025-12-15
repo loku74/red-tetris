@@ -54,12 +54,12 @@
       <div class="flex items-center justify-center pb-2">
         <IconCmp size={32} />
       </div>
-      <h1 class="text-center text-2xl mb-4">{title}</h1>
+      <h1 class="text-center text-2xl mb-6">{title}</h1>
 
       {@render children()}
 
       <!-- Bottom section -->
-      <div class="flex items-center justify-center gap-6 mt-6">
+      <div class="flex items-center justify-center gap-6 mt-8">
         <button
           class="btn btn-primary text-xl min-w-24 py-2 px-4"
           onclick={() => {
