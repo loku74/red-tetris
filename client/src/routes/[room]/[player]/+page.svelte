@@ -110,7 +110,7 @@
                 class="ml-auto btn btn-secondary group/button group-hover/list:opacity-100 opacity-0 duration-75 p-1"
                 style="--btn-depth: 2px;"
               >
-                <X size={20} class="group-hover/button:text-red-500 duration-100" />
+                <X size={20} class="group-hover/button:text-red-500 duration-100 text-white/90" />
               </button>
             {/if}
           </li>
