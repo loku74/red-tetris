@@ -1,6 +1,6 @@
 import { type AddressInfo } from "node:net";
 import { Server } from "socket.io";
-import { afterEach, beforeEach, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { init } from "../../app";
 import { ROOM_MAX, ROOM_MAX_USERS } from "../constants";
 import { Room, rooms } from "../objects/Room";
@@ -9,6 +9,7 @@ import type { Callback, RoomInfo } from "../types/types";
 import type { TestSocket } from "../types/server";
 import { createClient, emitAsync, onceAsync } from "./utils";
 import type { SocketJoinRoomError } from "client-types";
+import type { SocketMessageData } from "../../../client/src/lib/types/socket";
 
 let io: Server, test1: TestSocket, address: string;
 
@@ -245,7 +246,7 @@ it("Invalid kick", async () => {
     expect((data as { kick: string }).kick).toContain("host of this");
     expect(success).toBe(false);
   });
-  room.host = users[test1.server.id];
+  room.host = users.get(test1.server.id);
 
   // him self
   await emitAsync(test1.client, "kick", {
@@ -257,12 +258,77 @@ it("Invalid kick", async () => {
   });
 
   // an user not in the room
-  users["test"] = new User("test", "user3", null);
+  users.set("test", new User("test", "user3", null));
   await emitAsync(test1.client, "kick", {
     username: "user3",
     room: "example"
   }).then(({ success, data }) => {
     expect((data as { kick: string }).kick).toContain("is not in");
     expect(success).toBe(false);
+  });
+});
+
+it("chat", async () => {
+  const test2 = await createClient(address, io);
+  const message1 = "c'est un super message!";
+  const message2 = "c'est une super réponse!";
+  const chatListener1 = onceAsync(test1.client, "message");
+  const chatListener2 = onceAsync(test2.client, "message");
+
+  await emitAsync(test1.client, "join room", {
+    username: "user1",
+    room: "example"
+  });
+  await emitAsync(test2.client, "join room", {
+    username: "user2",
+    room: "example"
+  });
+
+  // users talks
+  await emitAsync(test1.client, "chat", {
+    message: message1,
+    room: "example"
+  }).then(({ success }) => {
+    expect(success).toBe(true);
+  });
+  await emitAsync(test2.client, "chat", {
+    message: message2,
+    room: "example"
+  }).then(({ success }) => {
+    expect(success).toBe(true);
+  });
+
+  // check results
+  const data2 = (await chatListener2) as SocketMessageData;
+  expect(data2.from).toEqual("user1");
+  expect(data2.message).toEqual(message1);
+
+  const data1 = (await chatListener1) as SocketMessageData;
+  expect(data1.from).toEqual("user2");
+  expect(data1.message).toEqual(message2);
+});
+
+describe("Invalid chat", () => {
+  it("not in a room", async () => {
+    await emitAsync(test1.client, "chat", {
+      message: "test",
+      room: "example"
+    }).then(({ success, data }) => {
+      expect((data as { chat: string }).chat).toContain("do not belong to a room");
+      expect(success).toBe(false);
+    });
+  });
+  it("wrong room", async () => {
+    await emitAsync(test1.client, "join room", {
+      username: "user1",
+      room: "example2"
+    });
+    await emitAsync(test1.client, "chat", {
+      message: "test",
+      room: "example"
+    }).then(({ success, data }) => {
+      expect((data as { chat: string }).chat).toContain("not in the room");
+      expect(success).toBe(false);
+    });
   });
 });

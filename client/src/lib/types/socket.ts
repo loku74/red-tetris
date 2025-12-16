@@ -8,4 +8,9 @@ export interface SocketJoinRoomData {
   room: string;
 }
 
+export interface SocketMessageData {
+  from: string;
+  message: string;
+}
+
 export type SocketGetRoomsResponse = { name: string; userCount: number; max: number }[];

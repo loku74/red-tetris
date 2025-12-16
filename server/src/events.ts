@@ -4,12 +4,13 @@ import {
   getRoom,
   joinOrCreateRoom,
   leaveRoom,
+  validateChat,
   validateJoinRoom,
   validateKick
 } from "./controllers/rooms";
 import { rooms } from "./objects/Room";
 import { User, users } from "./objects/User";
-import type { Callback, GetRoomsData, SocketKickData } from "./types/types";
+import type { Callback, GetRoomsData, SocketChatData, SocketKickData } from "./types/types";
 import type { SocketJoinRoomData } from "client-types";
 
 export function registerClientHandlers(io: Server, socket: Socket) {
@@ -75,6 +76,20 @@ export function registerClientHandlers(io: Server, socket: Socket) {
 
       callback(true);
     }
+  });
+
+  socket.on("chat", (data: SocketChatData, callback: Callback) => {
+    const current = users.get(socket.id);
+    const errors = validateChat(data, current);
+
+    if (errors) {
+      callback(false, errors);
+      return;
+    }
+
+    current?.socket.to(data.room).emit("message", { from: current.name, message: data.message });
+    console.log(`user ${current?.name} wrote: "${data.message}" to ${data.room} `);
+    callback(true);
   });
 
   socket.on("disconnecting", () => {

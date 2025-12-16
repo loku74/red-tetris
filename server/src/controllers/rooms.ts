@@ -1,9 +1,15 @@
 import { Socket } from "socket.io";
 import * as z from "zod";
-import { ROOM_MAX, ROOM_MAX_LENGTH, ROOM_MAX_USERS, USERNAME_MAX_LENGTH } from "../constants";
+import {
+  CHAT_MAX_LENGTH,
+  ROOM_MAX,
+  ROOM_MAX_LENGTH,
+  ROOM_MAX_USERS,
+  USERNAME_MAX_LENGTH
+} from "../constants";
 import { Room, rooms } from "../objects/Room";
 import { users, type User } from "../objects/User";
-import type { SocketKickData } from "../types/types";
+import type { SocketChatData, SocketKickData } from "../types/types";
 import type { SocketJoinRoomData } from "client-types";
 import { formatSchemeError } from "./utils";
 
@@ -17,8 +23,18 @@ const usernameValidation = z
   .min(1, "Username cannot be empty")
   .max(USERNAME_MAX_LENGTH, `Username cannot be longer than ${USERNAME_MAX_LENGTH} characters`);
 
+const messageValidation = z
+  .string()
+  .min(1, "Message cannot be empty")
+  .max(CHAT_MAX_LENGTH, `Message cannot be longer than ${CHAT_MAX_LENGTH} characters`);
+
 const joinRoomSchema = z.object({
   username: usernameValidation,
+  room: roomValidation
+});
+
+const chatSchema = z.object({
+  message: messageValidation,
   room: roomValidation
 });
 
@@ -131,6 +147,26 @@ export function validateKick(
   }
   if (room.get(data.username) === undefined) {
     return { kick: `The user ${data.username} is not in the room!` };
+  }
+  return null;
+}
+
+export function validateChat(
+  data: SocketChatData,
+  current: User | undefined
+): Record<string, string> | null {
+  const result = chatSchema.safeParse(data);
+
+  if (!result.success) {
+    return formatSchemeError(result.error);
+  }
+  const room = rooms.get(data.room);
+
+  if (current === undefined) {
+    return { chat: "You do not belong to a room!" };
+  }
+  if (!current.room || room !== current.room) {
+    return { chat: `You are not in the room ${room?.name}` };
   }
   return null;
 }
