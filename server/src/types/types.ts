@@ -24,4 +24,9 @@ export interface SocketKickData {
   room: string;
 }
 
+export interface SocketChatData {
+  message: string;
+  room: string;
+}
+
 export type Callback = (success: boolean, data?: unknown) => void;

@@ -4,12 +4,13 @@ import {
   getRoom,
   joinOrCreateRoom,
   leaveRoom,
+  validateChat,
   validateJoinRoom,
   validateKick
 } from "./controllers/rooms";
 import { rooms } from "./objects/Room";
 import { User, users } from "./objects/User";
-import type { Callback, GetRoomsData, SocketKickData } from "./types/types";
+import type { Callback, GetRoomsData, SocketChatData, SocketKickData } from "./types/types";
 import type { SocketJoinRoomData } from "client-types";
 
 export function registerClientHandlers(io: Server, socket: Socket) {
@@ -30,12 +31,13 @@ export function registerClientHandlers(io: Server, socket: Socket) {
     }
 
     const user = new User(socket.id, data.username, socket);
-    users[socket.id] = user;
+    users.set(socket.id, user);
 
     const room = joinOrCreateRoom(user, data.room);
+    user.room = room;
     socket.join(data.room);
 
-    console.log(`User ${users[socket.id]?.name} joined room ${data.room} ${socket.rooms.size}`);
+    console.log(`User ${users.get(socket.id)?.name} joined room ${data.room} ${socket.rooms.size}`);
     callback(true, room.asInfo());
   });
 
@@ -54,7 +56,7 @@ export function registerClientHandlers(io: Server, socket: Socket) {
   });
 
   socket.on("kick", (data: SocketKickData, callback: Callback) => {
-    const current = users[socket.id];
+    const current = users.get(socket.id);
     const errors = validateKick(data, current);
 
     if (errors) {
@@ -76,8 +78,22 @@ export function registerClientHandlers(io: Server, socket: Socket) {
     }
   });
 
+  socket.on("chat", (data: SocketChatData, callback: Callback) => {
+    const current = users.get(socket.id);
+    const errors = validateChat(data, current);
+
+    if (errors) {
+      callback(false, errors);
+      return;
+    }
+
+    current?.socket.to(data.room).emit("message", { from: current.name, message: data.message });
+    console.log(`user ${current?.name} wrote: "${data.message}" to ${data.room} `);
+    callback(true);
+  });
+
   socket.on("disconnecting", () => {
-    const user = users[socket.id];
+    const user = users.get(socket.id);
     const room = getRoom(socket);
 
     if (user && room) {
