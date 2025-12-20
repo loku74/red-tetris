@@ -6,18 +6,22 @@
   import Dialog from "$lib/components/Dialog.svelte";
   import Piece from "$lib/components/Piece.svelte";
   import TextInput from "$lib/components/TextInput.svelte";
+  import { Gamepad2, Info } from "@lucide/svelte";
+
+  // stores
+  import { kickState } from "$lib/stores/kick.svelte";
 
   // constants
   import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants";
 
   // socket
-  import { getSocket, setRoom } from "$lib/socket";
+  import { getSocket } from "$lib/socket";
 
   // types
   import type {
     SocketGetRoomsResponse,
-    SocketJoinRoomError,
-    SocketJoinRoomResponse
+    SocketJoinRoomData,
+    SocketJoinRoomError
   } from "$lib/types/socket";
 
   // assets
@@ -36,24 +40,21 @@
   function validate() {
     emitting = true;
     localStorage.setItem("username", username);
-    socket.emit(
-      "join room",
-      { username, room },
-      (err: SocketJoinRoomError, response: SocketJoinRoomResponse) => {
-        emitting = false;
-        usernameError = err?.username;
-        roomError = err?.room;
-        if (response.success) {
-          setRoom(room);
-          goto(`/${encodeURIComponent(room)}/${encodeURIComponent(username)}`);
-        }
+    const data: SocketJoinRoomData = { username: username || "", room: room || "" };
+    socket.emit("can join room", data, (success: boolean, data?: SocketJoinRoomError) => {
+      emitting = false;
+      if (!success) {
+        usernameError = data?.username;
+        roomError = data?.room;
+      } else {
+        goto(`/${room}/${username}`);
       }
-    );
+    });
   }
 
   function getRooms() {
-    socket.emit("get rooms", (err: any, response: SocketGetRoomsResponse) => {
-      rooms = response.rooms ?? [];
+    socket.emit("get rooms", (success: boolean, data: SocketGetRoomsResponse) => {
+      if (success) rooms = data;
     });
   }
 
@@ -110,10 +111,9 @@
         <button
           disabled={emitting}
           onclick={validate}
-          class="relative bg-red-primary w-full px-2 py-4 text-4xl shadow-[0_6px_0_var(--color-red-secondary)]
-          not-disabled:active:translate-y-1.5 not-disabled:active:shadow-none duration-75
-          disabled:bg-dark-accent disabled:shadow-[0_6px_0_var(--color-dark-secondary)]"
-          >JOIN GAME
+          class="btn btn-primary text-3xl py-4"
+          style="--btn-depth: 6px;"
+          >join game
         </button>
         <button
           disabled={emitting}
@@ -169,12 +169,11 @@
     </div>
   </div>
 
-  <Dialog bind:open={showRoomsDialog}>
-    <h2 class="text-2xl text-center mb-6">Available Rooms</h2>
+  <Dialog icon={Gamepad2} confirm="exit" title="Available Rooms" bind:open={showRoomsDialog}>
     {#if rooms.length === 0}
       <p class="text-white/50 text-center">No rooms available</p>
     {:else}
-      <ul class="space-y-2 max-h-128 overflow-y-auto w-80">
+      <ul class="space-y-2 px-4 max-h-128 overflow-y-auto w-80">
         {#each rooms as { name, userCount, max }}
           <li>
             <button
@@ -192,3 +191,9 @@
     {/if}
   </Dialog>
 </div>
+
+<Dialog icon={Info} confirm="ok" title="You have been kicked" bind:open={kickState.show}>
+  <p class="text-white/75">
+    You have been kicked from <span class="text-red-accent">{kickState.room}</span>
+  </p>
+</Dialog>

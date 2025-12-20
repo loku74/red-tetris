@@ -1,6 +1,7 @@
 import { Server, type Socket as ServerSocket } from "socket.io";
 import { io as ioc, type Socket as ClientSocket } from "socket.io-client";
-import type { Callback, TestSocket } from "../types";
+import type { Callback } from "../types/types";
+import type { TestSocket } from "../types/server";
 
 export function createClient(address: string, io: Server): Promise<TestSocket> {
   return new Promise((resolve) => {
@@ -20,10 +21,10 @@ export function emitAsync(
   socket: ClientSocket | ServerSocket,
   event: string,
   data?: unknown
-): Promise<{ err: unknown; res: unknown }> {
+): Promise<{ success: boolean; data?: unknown }> {
   return new Promise((resolve) => {
-    socket.emit(event, data, ((err, res) => {
-      resolve({ err, res });
+    socket.emit(event, data, ((success: boolean, data?: unknown) => {
+      resolve({ success, data });
     }) as Callback);
   });
 }

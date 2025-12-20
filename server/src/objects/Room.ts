@@ -1,9 +1,19 @@
 import { ROOM_MAX_USERS } from "../constants";
-import type { RoomInfo } from "../types";
+import type { RoomInfo, UserColor } from "../types/types";
 import type { User } from "./User";
 
 export class Room {
-  public users: Map<string, User> = new Map();
+  public users: Map<string, { color: UserColor; user: User }> = new Map();
+  public colors: Array<UserColor> = [
+    "cyan",
+    "red",
+    "green",
+    "blue",
+    "yellow",
+    "orange",
+    "purple",
+    "grey"
+  ];
 
   constructor(
     public name: string,
@@ -16,22 +26,39 @@ export class Room {
     return this.users.has(user.id);
   }
 
+  private getColor() {
+    const color = this.colors.shift();
+
+    // should never be empty because max player is checked
+    if (!color) throw new Error("No more colors available");
+
+    return color;
+  }
+
   public add(user: User) {
-    this.users.set(user.id, user);
+    if (this.exist(user)) throw new Error("User already exists");
+    else if (this.users.size >= ROOM_MAX_USERS) throw new Error("Room is full");
+    const color = this.getColor();
+    this.users.set(user.id, { color, user });
   }
 
   public remove(user: User) {
-    this.users.delete(user.id);
+    const retrieved = this.users.get(user.id);
+    if (!retrieved) throw new Error("User not found");
+    this.users.delete(retrieved.user.id);
+    this.colors.push(retrieved.color);
   }
 
   // there are no duplicates usernames in a room
   public get(username: string): User | undefined {
-    return [...this.users.values()].find((u) => u.name === username);
+    const found = [...this.users.values()].find((u) => u.user.name === username);
+    return found?.user;
   }
 
   public asInfo(): RoomInfo {
     return {
-      players: [...this.users.values()].map((u) => u.name),
+      name: this.name,
+      players: [...this.users.values()].map((u) => ({ color: u.color, username: u.user.name })),
       userCount: this.users.size,
       max: ROOM_MAX_USERS,
       host: this.host.name

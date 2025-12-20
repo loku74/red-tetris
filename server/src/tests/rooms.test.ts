@@ -5,8 +5,10 @@ import { init } from "../../app";
 import { ROOM_MAX, ROOM_MAX_USERS } from "../constants";
 import { Room, rooms } from "../objects/Room";
 import { User, users } from "../objects/User";
-import type { Callback, RoomInfo, TestSocket } from "../types";
+import type { Callback, RoomInfo } from "../types/types";
+import type { TestSocket } from "../types/server";
 import { createClient, emitAsync, onceAsync } from "./utils";
+import type { SocketJoinRoomError } from "client-types";
 
 let io: Server, test1: TestSocket, address: string;
 
@@ -54,22 +56,22 @@ it("Invalid join", async () => {
   await emitAsync(test1.client, "join room", {
     username: "user1",
     room: "example"
-  }).then(({ err, res }) => {
-    expect(err.room).toContain("is full");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as SocketJoinRoomError).room).toContain("is full");
+    expect(success).toBe(false);
   });
   rooms.clear();
 
   // maximum of rooms
   for (let i = 0; i < ROOM_MAX; i++) {
-    rooms.set(i, new Room(`test${i}`, fakeUser));
+    rooms.set(i.toString(), new Room(`test${i}`, fakeUser));
   }
   await emitAsync(test1.client, "join room", {
     username: "user1",
     room: "example"
-  }).then(({ err, res }) => {
-    expect(err.room).toContain("number of rooms reached");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as SocketJoinRoomError).room).toContain("number of rooms reached");
+    expect(success).toBe(false);
   });
   rooms.clear();
 
@@ -78,9 +80,9 @@ it("Invalid join", async () => {
   await emitAsync(test1.client, "join room", {
     username: "name",
     room: "example"
-  }).then(({ err, res }) => {
-    expect(err.room).toContain("is already taken");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as SocketJoinRoomError).room).toContain("is already taken");
+    expect(success).toBe(false);
   });
 
   // already in a room
@@ -91,9 +93,9 @@ it("Invalid join", async () => {
   await emitAsync(test1.client, "join room", {
     username: "user1",
     room: "example2"
-  }).then(({ err, res }) => {
-    expect(err.room).toContain("already in room example");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as SocketJoinRoomError).room).toContain("already in room example");
+    expect(success).toBe(false);
   });
   rooms.clear();
 });
@@ -105,17 +107,16 @@ it("Valid join", () => {
       room: "example"
     };
 
-    test1.client.emit("join room", data, ((err, response) => {
-      console.log(response);
-      expect(response).toEqual({
-        success: true,
-        room: {
+    test1.client.emit("join room", data, ((success, data) => {
+      expect(data).toEqual([
+        {
           players: ["example"],
           userCount: 1,
           max: ROOM_MAX_USERS,
           host: "example"
         }
-      });
+      ]);
+      expect(success).toBe(true);
       resolve();
     }) as Callback);
   });
@@ -125,16 +126,15 @@ it("Get rooms", () => {
   rooms.set("example", new Room("example", new User("id", "example", null)));
 
   return new Promise<void>((resolve) => {
-    test1.client.emit("get rooms", ((err, response) => {
-      expect(response).toEqual({
-        rooms: [
-          {
-            name: "example",
-            userCount: 1,
-            max: ROOM_MAX_USERS
-          }
-        ]
-      });
+    test1.client.emit("get rooms", ((success, data) => {
+      expect(data).toEqual([
+        {
+          name: "example",
+          userCount: 1,
+          max: ROOM_MAX_USERS
+        }
+      ]);
+      expect(success).toBe(true);
       resolve();
     }) as Callback);
   });
@@ -195,9 +195,9 @@ it("Kick", async () => {
   await emitAsync(test1.client, "kick", {
     username: "user2",
     room: "example"
-  }).then(({ res }) => {
+  }).then(({ success }) => {
     // check the callback value
-    expect(res).toEqual({ success: true });
+    expect(success).toBe(true);
   });
   await roomListener.then((data) => {
     // update of room trigered
@@ -215,9 +215,9 @@ it("Invalid kick", async () => {
   await emitAsync(test1.client, "kick", {
     username: "user2",
     room: "example"
-  }).then(({ err, res }) => {
-    expect(err.kick).toContain("belong to");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as { kick: string }).kick).toContain("belong to");
+    expect(success).toBe(false);
   });
 
   await emitAsync(test1.client, "join room", {
@@ -231,9 +231,9 @@ it("Invalid kick", async () => {
   await emitAsync(test1.client, "kick", {
     username: "user2",
     room: "example1"
-  }).then(({ err, res }) => {
-    expect(err.kick).toContain("does not exist!");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as { kick: string }).kick).toContain("does not exist!");
+    expect(success).toBe(false);
   });
 
   // not host
@@ -241,9 +241,9 @@ it("Invalid kick", async () => {
   await emitAsync(test1.client, "kick", {
     username: "user2",
     room: "example"
-  }).then(({ err, res }) => {
-    expect(err.kick).toContain("host of this");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as { kick: string }).kick).toContain("host of this");
+    expect(success).toBe(false);
   });
   room.host = users[test1.server.id];
 
@@ -251,9 +251,9 @@ it("Invalid kick", async () => {
   await emitAsync(test1.client, "kick", {
     username: "user1",
     room: "example"
-  }).then(({ err, res }) => {
-    expect(err.kick).toContain("yourself");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as { kick: string }).kick).toContain("yourself");
+    expect(success).toBe(false);
   });
 
   // an user not in the room
@@ -261,8 +261,8 @@ it("Invalid kick", async () => {
   await emitAsync(test1.client, "kick", {
     username: "user3",
     room: "example"
-  }).then(({ err, res }) => {
-    expect(err.kick).toContain("is not in");
-    expect(res).toEqual({ success: false });
+  }).then(({ success, data }) => {
+    expect((data as { kick: string }).kick).toContain("is not in");
+    expect(success).toBe(false);
   });
 });

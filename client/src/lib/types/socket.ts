@@ -3,11 +3,9 @@ export interface SocketJoinRoomError {
   room?: string;
 }
 
-export interface SocketJoinRoomResponse {
-  success: boolean;
-  message?: string;
+export interface SocketJoinRoomData {
+  username: string;
+  room: string;
 }
 
-export interface SocketGetRoomsResponse {
-  rooms: { name: string; userCount: number; max: number }[];
-}
+export type SocketGetRoomsResponse = { name: string; userCount: number; max: number }[];

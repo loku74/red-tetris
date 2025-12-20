@@ -19,6 +19,9 @@ const config = {
     }),
     output: {
       bundleStrategy: "single"
+    },
+    alias: {
+      "server-types": "../server/src/types/types.ts"
     }
   }
 };

@@ -1,7 +1,7 @@
 import { Server, type Socket } from "socket.io";
 import { ROOM_MAX_USERS } from "./constants";
 import {
-  getRoomId,
+  getRoom,
   joinOrCreateRoom,
   leaveRoom,
   validateJoinRoom,
@@ -9,13 +9,23 @@ import {
 } from "./controllers/rooms";
 import { rooms } from "./objects/Room";
 import { User, users } from "./objects/User";
-import type { Callback, GetRoomsData, JoinRoomData, KickData } from "./types";
+import type { Callback, GetRoomsData, SocketKickData } from "./types/types";
+import type { SocketJoinRoomData } from "client-types";
 
 export function registerClientHandlers(io: Server, socket: Socket) {
-  socket.on("join room", (data: JoinRoomData, callback: Callback) => {
+  socket.on("can join room", (data: SocketJoinRoomData, callback: Callback) => {
     const errors = validateJoinRoom(socket, data);
     if (errors) {
-      callback(errors, { success: false });
+      callback(false, errors);
+      return;
+    }
+    callback(true);
+  });
+
+  socket.on("join room", (data: SocketJoinRoomData, callback: Callback) => {
+    const errors = validateJoinRoom(socket, data);
+    if (errors) {
+      callback(false, errors);
       return;
     }
 
@@ -26,7 +36,7 @@ export function registerClientHandlers(io: Server, socket: Socket) {
     socket.join(data.room);
 
     console.log(`User ${users[socket.id]?.name} joined room ${data.room} ${socket.rooms.size}`);
-    callback(null, { success: true, room: room.asInfo() });
+    callback(true, room.asInfo());
   });
 
   socket.on("get rooms", (callback: Callback) => {
@@ -40,35 +50,39 @@ export function registerClientHandlers(io: Server, socket: Socket) {
       });
     });
 
-    callback(null, { rooms: result });
+    callback(true, result);
   });
 
-  socket.on("kick", (data: KickData, callback: Callback) => {
+  socket.on("kick", (data: SocketKickData, callback: Callback) => {
     const current = users[socket.id];
     const errors = validateKick(data, current);
 
     if (errors) {
-      callback(errors, { success: false });
+      callback(false, errors);
       return;
     }
     // existance checked before
-    const target = rooms.get(data.room)?.get(data.username);
+    const room = rooms.get(data.room);
+    const target = room?.get(data.username);
 
-    if (target) {
-      leaveRoom(target, data.room);
+    if (target && room) {
+      leaveRoom(target, room);
       target.socket.emit("kick", { room: data.room });
       console.log(`user ${data.username} has been kicked from ${data.room} room`);
 
-      callback(null, { success: true });
+      io.to(data.room).emit("room update", room.asInfo());
+
+      callback(true);
     }
   });
 
   socket.on("disconnecting", () => {
     const user = users[socket.id];
-    const room_id = getRoomId(socket);
+    const room = getRoom(socket);
 
-    if (user != undefined && room_id != undefined) {
-      leaveRoom(user, room_id);
+    if (user && room) {
+      const roomInfo = leaveRoom(user, room);
+      io.to(room.name).emit("room update", roomInfo);
     }
     console.log("user disconnected");
   });

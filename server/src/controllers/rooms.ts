@@ -3,29 +3,35 @@ import * as z from "zod";
 import { ROOM_MAX, ROOM_MAX_LENGTH, ROOM_MAX_USERS, USERNAME_MAX_LENGTH } from "../constants";
 import { Room, rooms } from "../objects/Room";
 import { type User } from "../objects/User";
-import type { JoinRoomData, KickData } from "../types";
+import type { SocketKickData } from "../types/types";
+import type { SocketJoinRoomData } from "client-types";
 import { formatSchemeError } from "./utils";
 
-const roomSchema = z.object({
-  username: z
-    .string()
-    .min(1, "Username cannot be empty")
-    .max(USERNAME_MAX_LENGTH, `Username cannot be longer than ${USERNAME_MAX_LENGTH} characters`),
-  room: z
-    .string()
-    .min(1, "Room name cannot be empty")
-    .max(ROOM_MAX_LENGTH, `Room name cannot be longer than ${ROOM_MAX_LENGTH} characters`)
+const roomValidation = z
+  .string()
+  .min(1, "Room name cannot be empty")
+  .max(ROOM_MAX_LENGTH, `Room name cannot be longer than ${ROOM_MAX_LENGTH} characters`);
+
+const usernameValidation = z
+  .string()
+  .min(1, "Username cannot be empty")
+  .max(USERNAME_MAX_LENGTH, `Username cannot be longer than ${USERNAME_MAX_LENGTH} characters`);
+
+const joinRoomSchema = z.object({
+  username: usernameValidation,
+  room: roomValidation
 });
 
 export function validateJoinRoom(
   socket: Socket,
-  data: JoinRoomData
+  data: SocketJoinRoomData
 ): Record<string, string> | null {
-  const result = roomSchema.safeParse(data);
+  const result = joinRoomSchema.safeParse(data);
   if (!result.success) {
     return formatSchemeError(result.error);
   }
-  const room = rooms.get(data.room);
+
+  const room = rooms.get(result.data.room);
 
   if (socket.rooms.size > 1) {
     return { room: `You are already in room ${Array.from(socket.rooms)[1]}` };
@@ -44,13 +50,13 @@ export function validateJoinRoom(
   return null;
 }
 
-export function getRoomId(socket: Socket): string | undefined {
+export function getRoom(socket: Socket): Room | null {
   for (const roomId of socket.rooms) {
     if (roomId !== socket.id) {
-      return roomId;
+      return rooms.get(roomId) ?? null;
     }
   }
-  return undefined;
+  return null;
 }
 
 export function joinOrCreateRoom(user: User, room_id: string): Room {
@@ -67,7 +73,7 @@ export function joinOrCreateRoom(user: User, room_id: string): Room {
   // the current socket will receive information with the callback
   // we can exclude him on this call
   // see: https://socket.io/docs/v4/rooms/
-  user.socket.to(room.name).emit("room", room.asInfo());
+  user.socket.to(room.name).emit("room update", room.asInfo());
   return room;
 }
 
@@ -75,41 +81,34 @@ function setNextHost(room: Room) {
   const next = room.users.entries().next();
 
   if (next.value) {
-    room.host = next.value[1];
+    room.host = next.value[1].user;
   }
 }
 
-export function leaveRoom(target: User, room_id: string) {
-  const room = rooms.get(room_id);
+export function leaveRoom(target: User, room: Room) {
+  room.remove(target);
+  target.socket.leave(room.name);
 
-  if (room) {
-    room.remove(target);
-    target.socket.leave(room_id);
+  console.log(`User ${target.name} left room ${room.name}`);
 
-    console.log(`User ${target.name} left room ${room_id}`);
-
-    // deletion of empty room
-    if (room.users.size == 0) {
-      rooms.delete(room_id);
-      console.log(`room ${room_id} deleted`);
-    } else {
-      if (target === room.host) {
-        setNextHost(room);
-      }
-
-      // update all people of the "situation" of the room
-      target.socket.to(room.name).emit("room", room.asInfo());
-
-      // game logic then (declare lose etc..)
+  // deletion of empty room
+  if (room.users.size == 0) {
+    rooms.delete(room.name);
+    console.log(`room ${room.name} deleted`);
+  } else {
+    if (target === room.host) {
+      setNextHost(room);
     }
   }
+
+  return room.asInfo();
 }
 
 export function validateKick(
-  data: KickData,
+  data: SocketKickData,
   current: User | undefined
 ): Record<string, string> | null {
-  const result = roomSchema.safeParse(data);
+  const result = joinRoomSchema.safeParse(data); // à changer!
 
   if (!result.success) {
     return formatSchemeError(result.error);
