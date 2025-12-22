@@ -107,6 +107,7 @@ export function joinOrCreateRoom(user: User, room_id: string): Room {
     room.add(user);
   }
 
+  user.room = room;
   return room;
 }
 

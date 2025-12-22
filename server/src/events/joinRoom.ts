@@ -1,11 +1,11 @@
 import type { SocketJoinRoomData } from "client-types";
-import { Server, type Socket } from "socket.io";
 import { validateJoinRoom } from "../validate/room";
 import type { Callback } from "../types/types";
 import { User, users } from "../objects/User";
 import { joinOrCreateRoom } from "../objects/Room";
+import type { Socket } from "socket.io";
 
-export function registerHandlers(io: Server, socket: Socket) {
+export function registerHandlers(socket: Socket) {
   socket.on("join room", (data: SocketJoinRoomData, callback: Callback) => {
     const errors = validateJoinRoom(socket, data);
     if (errors) {
@@ -17,7 +17,6 @@ export function registerHandlers(io: Server, socket: Socket) {
     users.set(socket.id, user);
 
     const room = joinOrCreateRoom(user, data.room);
-    user.room = room;
     socket.join(data.room);
 
     // the current socket will receive information with the callback

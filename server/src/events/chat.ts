@@ -1,10 +1,10 @@
-import { Server, type Socket } from "socket.io";
+import { type Socket } from "socket.io";
 import { users } from "../objects/User";
 import { validateChat } from "../validate/chat";
 import type { SocketChatData } from "client-types";
 import type { Callback } from "../types/types";
 
-export function registerHandlers(io: Server, socket: Socket) {
+export function registerHandlers(socket: Socket) {
   socket.on("chat", (data: SocketChatData, callback: Callback) => {
     const current = users.get(socket.id);
     const errors = validateChat(data, current);

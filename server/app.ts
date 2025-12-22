@@ -29,11 +29,11 @@ function configureSocket(io: IoServer) {
   io.on("connection", (socket: Socket) => {
     console.log("New client connected");
 
-    canJoinRoomHandler(io, socket);
-    chatHandler(io, socket);
+    canJoinRoomHandler(socket);
+    chatHandler(socket);
     disconnectingHandler(io, socket);
-    getRoomsHandler(io, socket);
-    joinRoomHandler(io, socket);
+    getRoomsHandler(socket);
+    joinRoomHandler(socket);
     kickHandler(io, socket);
   });
 }

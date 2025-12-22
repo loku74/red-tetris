@@ -7,6 +7,7 @@ export function registerHandlers(io: Server, socket: Socket) {
     const user = users.get(socket.id);
     const room = getRoom(socket);
 
+    // user can only we waiting to join a room
     if (user && room) {
       const roomInfo = room.remove(user);
 

@@ -1,9 +1,9 @@
-import { Server, type Socket } from "socket.io";
 import type { Callback, GetRoomsData } from "../types/types";
 import { rooms } from "../objects/Room";
 import { ROOM_MAX_USERS } from "../constants";
+import type { Socket } from "socket.io";
 
-export function registerHandlers(io: Server, socket: Socket) {
+export function registerHandlers(socket: Socket) {
   socket.on("get rooms", (callback: Callback) => {
     const result: GetRoomsData[] = [];
 
