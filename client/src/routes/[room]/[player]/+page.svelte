@@ -12,9 +12,9 @@
   import { getSocket } from "$lib/socket";
 
   // types
-  import type { SocketJoinRoomError, SocketJoinRoomData } from "$lib/types/socket";
+  import type { SocketJoinRoomData, SocketKickData } from "$lib/types/socket";
+  import type { SocketJoinRoomResponse, SocketRoomInfoData, SocketPlayerData } from "server-types";
   import type { PieceColor } from "$lib/types/piece";
-  import type { RoomInfo, PlayerData, SocketKickData } from "server-types";
 
   // utils
   import { USERNAME_MAX_LENGTH } from "$lib/constants";
@@ -24,10 +24,11 @@
   const room = page.params.room;
   const username = page.params.player;
 
+  let roomData = $state<SocketRoomInfoData>();
   let roomError = $state<string>();
   let userError = $state<string>();
   let unusualError = $state<string>();
-  let roomData = $state<RoomInfo>();
+
   let color = $state<string>();
   let joined = $state(false);
   let countdown = $state(5);
@@ -46,34 +47,38 @@
 
     localStorage.setItem("username", username?.substring(0, USERNAME_MAX_LENGTH)!);
     const data: SocketJoinRoomData = { username: username || "", room: room || "" };
-    socket.emit("join room", data, (success: boolean, data: RoomInfo | SocketJoinRoomError) => {
-      if (!success) {
-        const errorData = data as SocketJoinRoomError;
-        roomError = errorData.room;
-        userError = errorData.username;
-        if (!userError && !roomError) {
-          unusualError = "Failed to join room";
-        }
-        const interval = setInterval(() => {
-          countdown--;
-          if (countdown <= 0) {
-            clearInterval(interval);
-            goto("/");
+    socket.emit(
+      "join room",
+      data,
+      (success: boolean, data: SocketRoomInfoData | SocketJoinRoomResponse) => {
+        if (!success) {
+          const errorData = data as SocketJoinRoomResponse;
+          roomError = errorData.room;
+          userError = errorData.username;
+          if (!userError && !roomError) {
+            unusualError = "Failed to join room";
           }
-        }, 1000);
-      } else {
-        roomData = data as RoomInfo;
-        socket.on("room update", (data: RoomInfo) => {
-          roomData = data;
-        });
-        const player = roomData.players.find((p) => p.username === username)!;
-        color = pieceColors[player.color].light;
-        joined = true;
+          const interval = setInterval(() => {
+            countdown--;
+            if (countdown <= 0) {
+              clearInterval(interval);
+              goto("/");
+            }
+          }, 1000);
+        } else {
+          roomData = data as SocketRoomInfoData;
+          socket.on("room update", (data: SocketRoomInfoData) => {
+            roomData = data;
+          });
+          const player = roomData.players.find((p) => p.username === username)!;
+          color = pieceColors[player.color].light;
+          joined = true;
+        }
       }
-    });
+    );
   }
 
-  function handleKickUser(user: PlayerData) {
+  function handleKickUser(user: SocketPlayerData) {
     userToKick = user.username;
     userToKickColor = user.color;
     userToKickPieceColor = pieceColors[user.color].light;

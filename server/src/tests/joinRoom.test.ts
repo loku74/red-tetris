@@ -3,8 +3,7 @@ import { createClient, emitAsync, onceAsync, setupTestServer, shutdownTestServer
 import { User } from "../objects/User";
 import { Room, rooms } from "../objects/Room";
 import { ROOM_MAX, ROOM_MAX_USERS } from "../constants";
-import type { SocketJoinRoomError } from "client-types";
-import type { RoomInfo } from "../types/types";
+import type { RoomInfo, SocketJoinRoomResponse } from "../types/types";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -37,7 +36,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomError).room).toContain("is full");
+      expect((data as SocketJoinRoomResponse).room).toContain("is full");
       expect(success).toBe(false);
     });
   });
@@ -50,7 +49,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomError).room).toContain("number of rooms reached");
+      expect((data as SocketJoinRoomResponse).room).toContain("number of rooms reached");
       expect(success).toBe(false);
     });
   });
@@ -62,7 +61,7 @@ describe("invalid join", () => {
       username: "name",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomError).room).toContain("is already taken");
+      expect((data as SocketJoinRoomResponse).room).toContain("is already taken");
       expect(success).toBe(false);
     });
   });
@@ -76,7 +75,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example2"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomError).room).toContain("already in room example");
+      expect((data as SocketJoinRoomResponse).room).toContain("already in room example");
       expect(success).toBe(false);
     });
   });

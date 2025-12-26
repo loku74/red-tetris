@@ -1,16 +1,14 @@
-export interface SocketJoinRoomError {
-  username?: string;
-  room?: string;
-}
-
 export interface SocketJoinRoomData {
   username: string;
   room: string;
 }
 
-export interface SocketMessageData {
-  from: string;
-  message: string;
+export interface SocketKickData {
+  username: string;
+  room: string;
 }
 
-export type SocketGetRoomsResponse = { name: string; userCount: number; max: number }[];
+export interface SocketChatData {
+  message: string;
+  room: string;
+}

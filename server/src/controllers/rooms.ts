@@ -9,8 +9,7 @@ import {
 } from "../constants";
 import { Room, rooms } from "../objects/Room";
 import { users, type User } from "../objects/User";
-import type { SocketChatData, SocketKickData } from "../types/types";
-import type { SocketJoinRoomData } from "client-types";
+import type { SocketJoinRoomData, SocketChatData, SocketKickData } from "client-types";
 import { formatSchemeError } from "./utils";
 
 const roomValidation = z

@@ -10,8 +10,8 @@ import {
 } from "./controllers/rooms";
 import { rooms } from "./objects/Room";
 import { User, users } from "./objects/User";
-import type { Callback, GetRoomsData, SocketChatData, SocketKickData } from "./types/types";
-import type { SocketJoinRoomData } from "client-types";
+import type { Callback, SocketGetRoomsResponse } from "./types/types";
+import type { SocketJoinRoomData, SocketKickData, SocketChatData } from "client-types";
 
 export function registerClientHandlers(io: Server, socket: Socket) {
   socket.on("can join room", (data: SocketJoinRoomData, callback: Callback) => {
@@ -42,7 +42,7 @@ export function registerClientHandlers(io: Server, socket: Socket) {
   });
 
   socket.on("get rooms", (callback: Callback) => {
-    const result: GetRoomsData[] = [];
+    const result: SocketGetRoomsResponse[] = [];
 
     rooms.forEach((room) => {
       result.push({

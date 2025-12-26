@@ -1,32 +1,47 @@
-export interface GetRoomsData {
-  name: string;
-  userCount: number;
-  max: number;
-}
+// data (emit)
+export type SocketUserColor =
+  | "cyan"
+  | "red"
+  | "green"
+  | "blue"
+  | "yellow"
+  | "orange"
+  | "purple"
+  | "grey";
 
-export type UserColor = "cyan" | "red" | "green" | "blue" | "yellow" | "orange" | "purple" | "grey";
-
-export interface PlayerData {
-  color: UserColor;
+export interface SocketPlayerData {
+  color: SocketUserColor;
   username: string;
 }
 
-export interface RoomInfo {
+export interface SocketRoomInfoData {
   name: string;
-  players: Array<PlayerData>;
+  players: Array<SocketPlayerData>;
   userCount: number;
   max: number;
   host: string;
 }
 
-export interface SocketKickData {
-  username: string;
-  room: string;
-}
-
-export interface SocketChatData {
+export interface SocketMessageData {
+  from: string;
   message: string;
-  room: string;
 }
 
+// responses (callback)
 export type Callback = (success: boolean, data?: unknown) => void;
+
+export interface SocketJoinRoomResponse {
+  username?: string;
+  room?: string;
+}
+
+export interface SocketGetRoomsResponse {
+  name: string;
+  userCount: number;
+  max: number;
+}
+
+export interface SocketMessageResponse {
+  from: string;
+  message: string;
+}

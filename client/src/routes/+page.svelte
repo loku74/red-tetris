@@ -18,11 +18,8 @@
   import { getSocket } from "$lib/socket";
 
   // types
-  import type {
-    SocketGetRoomsResponse,
-    SocketJoinRoomData,
-    SocketJoinRoomError
-  } from "$lib/types/socket";
+  import type { SocketJoinRoomData } from "$lib/types/socket";
+  import type { SocketJoinRoomResponse, SocketGetRoomsResponse } from "server-types";
 
   // assets
   import bgTile from "$lib/assets/empty_piece.jpg";
@@ -33,7 +30,7 @@
   let roomError = $state<string | undefined>(undefined);
   let emitting = $state(false);
   let showRoomsDialog = $state(false);
-  let rooms = $state<{ name: string; userCount: number; max: number }[]>([]);
+  let rooms = $state<SocketGetRoomsResponse[]>([]);
 
   const socket = getSocket();
 
@@ -41,11 +38,11 @@
     emitting = true;
     localStorage.setItem("username", username);
     const data: SocketJoinRoomData = { username: username || "", room: room || "" };
-    socket.emit("can join room", data, (success: boolean, data?: SocketJoinRoomError) => {
+    socket.emit("can join room", data, (success: boolean, data: SocketJoinRoomResponse) => {
       emitting = false;
       if (!success) {
-        usernameError = data?.username;
-        roomError = data?.room;
+        usernameError = data.username;
+        roomError = data.room;
       } else {
         goto(`/${room}/${username}`);
       }
@@ -53,7 +50,7 @@
   }
 
   function getRooms() {
-    socket.emit("get rooms", (success: boolean, data: SocketGetRoomsResponse) => {
+    socket.emit("get rooms", (success: boolean, data: SocketGetRoomsResponse[]) => {
       if (success) rooms = data;
     });
   }

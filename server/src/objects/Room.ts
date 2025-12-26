@@ -1,10 +1,10 @@
 import { ROOM_MAX_USERS } from "../constants";
-import type { RoomInfo, UserColor } from "../types/types";
+import type { SocketRoomInfoData, SocketUserColor } from "../types/types";
 import type { User } from "./User";
 
 export class Room {
-  public users: Map<string, { color: UserColor; user: User }> = new Map();
-  public colors: Array<UserColor> = [
+  public users: Map<string, { color: SocketUserColor; user: User }> = new Map();
+  public colors: Array<SocketUserColor> = [
     "cyan",
     "red",
     "green",
@@ -55,7 +55,7 @@ export class Room {
     return found?.user;
   }
 
-  public asInfo(): RoomInfo {
+  public asInfo(): SocketRoomInfoData {
     return {
       name: this.name,
       players: [...this.users.values()].map((u) => ({ color: u.color, username: u.user.name })),
