@@ -1,8 +1,9 @@
 import { Server, type Socket } from "socket.io";
-import type { Callback, SocketKickData } from "../types/types";
 import { users } from "../objects/User";
 import { validateKick } from "../validate/kick";
 import { rooms } from "../objects/Room";
+import type { SocketKickData } from "client-types";
+import type { Callback } from "../types/types";
 
 export function registerHandlers(io: Server, socket: Socket) {
   socket.on("kick", (data: SocketKickData, callback: Callback) => {

@@ -3,8 +3,9 @@ import { createClient, emitAsync, onceAsync, setupTestServer, shutdownTestServer
 import { User } from "../objects/User";
 import { Room, rooms } from "../objects/Room";
 import { ROOM_MAX, ROOM_MAX_USERS } from "../constants";
-import type { RoomInfo, SocketJoinRoomResponse } from "../types/types";
 import type { TestServerData } from "./types";
+import type { SocketJoinRoomResponse } from "client-types";
+import type { SocketRoomInfoData } from "../types/types";
 
 let ctx: TestServerData;
 
@@ -119,13 +120,13 @@ it("host changed", async () => {
   });
 
   // client1 is warned that a new player is here using "room" event
-  const data1 = (await roomListener) as RoomInfo;
+  const data1 = (await roomListener) as SocketRoomInfoData;
   expect(rooms.get("example")?.asInfo()).toEqual(data1);
 
   ctx.test1.client.close();
 
   // a new host has been setted
-  const data2 = (await roomListener2) as RoomInfo;
+  const data2 = (await roomListener2) as SocketRoomInfoData;
   expect(rooms.get("example")?.asInfo()).toEqual(data2);
   expect(data2.host).toEqual("user2");
 

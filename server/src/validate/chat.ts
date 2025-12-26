@@ -1,8 +1,8 @@
 import z from "zod";
 import { formatSchemeError, messageValidation, roomValidation } from "./utils";
-import type { SocketChatData } from "../types/types";
 import type { User } from "../objects/User";
 import { rooms } from "../objects/Room";
+import type { SocketChatData } from "client-types";
 
 const chatSchema = z.object({
   message: messageValidation,
