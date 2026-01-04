@@ -11,6 +11,7 @@ import { registerHandlers as disconnectingHandler } from "./src/events/disconnec
 import { registerHandlers as getRoomsHandler } from "./src/events/getRooms";
 import { registerHandlers as joinRoomHandler } from "./src/events/joinRoom";
 import { registerHandlers as kickHandler } from "./src/events/kick";
+import { registerHandlers as startHandler } from "./src/events/start";
 import type { ServerData } from "./src/types/server";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -35,6 +36,7 @@ function configureSocket(io: IoServer) {
     getRoomsHandler(socket);
     joinRoomHandler(socket);
     kickHandler(io, socket);
+    startHandler(io, socket);
   });
 }
 

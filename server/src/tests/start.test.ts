@@ -1,0 +1,93 @@
+import type { SocketStartData } from "client-types";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { rooms } from "../objects/Room";
+import { User } from "../objects/User";
+import type { TestServerData } from "./types";
+import {
+  createClient,
+  emitAsync,
+  joinRoom,
+  onceAsync,
+  setupTestServer,
+  shutdownTestServer
+} from "./utils";
+
+let ctx: TestServerData;
+
+beforeEach(async () => {
+  ctx = await setupTestServer();
+});
+
+afterEach(async () => {
+  await shutdownTestServer(ctx);
+});
+
+describe("invalid start", () => {
+  it("not in a room", async () => {
+    await emitAsync(ctx.test1.client, "start", {
+      room: "example"
+    }).then(({ success, data }) => {
+      expect((data as { start: string }).start).toContain("belong to");
+      expect(success).toBe(false);
+    });
+  });
+
+  it("inexisting room", async () => {
+    await joinRoom(ctx.test1, "example", "user1");
+    await emitAsync(ctx.test1.client, "start", {
+      room: "example1"
+    }).then(({ success, data }) => {
+      expect((data as { start: string }).start).toContain("does not exist!");
+      expect(success).toBe(false);
+    });
+  });
+
+  it("not host", async () => {
+    const room = await joinRoom(ctx.test1, "example", "user1");
+
+    room.host = new User("dumb", "someone", null);
+    await emitAsync(ctx.test1.client, "start", {
+      room: "example"
+    }).then(({ success, data }) => {
+      expect((data as { start: string }).start).toContain("host of this");
+      expect(success).toBe(false);
+    });
+  });
+
+  it("already started", async () => {
+    const room = await joinRoom(ctx.test1, "example", "user1");
+    room.start();
+
+    await emitAsync(ctx.test1.client, "start", {
+      room: "example"
+    }).then(({ success, data }) => {
+      expect((data as { start: string }).start).toContain("already started");
+      expect(success).toBe(false);
+    });
+  });
+});
+
+it("valid start", async () => {
+  const test2 = await createClient(ctx.address, ctx.io);
+
+  await joinRoom(ctx.test1, "example", "user1");
+  await joinRoom(test2, "example", "user2");
+
+  const listener1 = onceAsync(ctx.test1.client, "room start");
+  const listener2 = onceAsync(test2.client, "room start");
+
+  await emitAsync(ctx.test1.client, "start", {
+    room: "example"
+  } as SocketStartData).then(({success}) => {
+    expect(success).toBe(true);
+  });
+
+  const roomInfo = rooms.get("example")?.asInfo();
+
+  await listener1.then((data) => {
+    expect(data).toEqual(roomInfo);
+  })
+  await listener2.then((data) => {
+    expect(data).toEqual(roomInfo);
+  })
+});
