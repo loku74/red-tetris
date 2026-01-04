@@ -29,6 +29,9 @@ export function validateKick(
   if (room.host != current) {
     return { kick: "You are not the host of this room!" };
   }
+  if (room.playing === true) {
+    return { kick: "You can't kick while playing!" };
+  }
   if (data.username === current.name) {
     return { kick: "You can't kick yourself! " };
   }

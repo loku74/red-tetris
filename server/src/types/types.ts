@@ -20,6 +20,7 @@ export interface SocketRoomInfoData {
   userCount: number;
   max: number;
   host: string;
+  playing: boolean;
 }
 
 export interface SocketMessageData {

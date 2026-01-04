@@ -34,6 +34,9 @@ export function validateJoinRoom(
   if (room && room.get(data.username)) {
     return { room: "This username is already taken in the room!" };
   }
+  if (room && room.playing === true) {
+    return { room: "This is room is already playing!" };
+  }
 
   return null;
 }
