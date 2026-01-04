@@ -92,7 +92,7 @@ describe("invalid join", () => {
       expect((data as SocketJoinRoomResponse).room).toContain("already playing!");
       expect(success).toBe(false);
     });
-  })
+  });
 });
 
 it("valid join", async () => {
@@ -112,7 +112,7 @@ it("valid join", async () => {
         }
       ],
       userCount: 1,
-      playing: false,
+      playing: false
     } as SocketRoomInfoData);
     expect(success).toBe(true);
   });

@@ -31,7 +31,7 @@ describe("get rooms", () => {
     });
   });
 
-  it ("ignore rooms in game", async () => {
+  it("ignore rooms in game", async () => {
     rooms.set("example", new Room("example", new User("id", "example", null)));
     rooms.set("example2", new Room("example2", new User("id2", "example2", null)));
     rooms.get("example2")?.start();

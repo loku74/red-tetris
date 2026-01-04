@@ -78,7 +78,7 @@ it("valid start", async () => {
 
   await emitAsync(ctx.test1.client, "start", {
     room: "example"
-  } as SocketStartData).then(({success}) => {
+  } as SocketStartData).then(({ success }) => {
     expect(success).toBe(true);
   });
 
@@ -86,8 +86,8 @@ it("valid start", async () => {
 
   await listener1.then((data) => {
     expect(data).toEqual(roomInfo);
-  })
+  });
   await listener2.then((data) => {
     expect(data).toEqual(roomInfo);
-  })
+  });
 });

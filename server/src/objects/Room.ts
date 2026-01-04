@@ -91,7 +91,7 @@ export class Room {
       userCount: this.users.size,
       max: ROOM_MAX_USERS,
       host: this.host.name,
-      playing: this.playing,
+      playing: this.playing
     };
   }
 
