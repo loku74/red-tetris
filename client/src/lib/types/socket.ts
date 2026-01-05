@@ -12,3 +12,7 @@ export interface SocketChatData {
   message: string;
   room: string;
 }
+
+export interface SocketStartData {
+  room: string;
+}

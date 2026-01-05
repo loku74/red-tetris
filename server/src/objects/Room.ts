@@ -4,6 +4,7 @@ import type { SocketRoomInfoData, SocketUserColor } from "../types/types";
 import { users, type User } from "./User";
 
 export class Room {
+  public playing: boolean = false;
   public users: Map<string, { color: SocketUserColor; user: User }> = new Map();
   public colors: Array<SocketUserColor> = [
     "cyan",
@@ -89,8 +90,15 @@ export class Room {
       players: [...this.users.values()].map((u) => ({ color: u.color, username: u.user.name })),
       userCount: this.users.size,
       max: ROOM_MAX_USERS,
-      host: this.host.name
+      host: this.host.name,
+      playing: this.playing
     };
+  }
+
+  public start() {
+    this.playing = true;
+
+    // initialize game variables (like pieces, boards etccc)
   }
 }
 

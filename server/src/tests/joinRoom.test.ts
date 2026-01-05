@@ -80,6 +80,19 @@ describe("invalid join", () => {
       expect(success).toBe(false);
     });
   });
+
+  it("room already started", async () => {
+    rooms.set("example", new Room("example", fakeUser));
+    rooms.get("example")?.start();
+
+    await emitAsync(ctx.test1.client, "join room", {
+      username: "user1",
+      room: "example"
+    }).then(({ success, data }) => {
+      expect((data as SocketJoinRoomResponse).room).toContain("already playing!");
+      expect(success).toBe(false);
+    });
+  });
 });
 
 it("valid join", async () => {
@@ -98,8 +111,9 @@ it("valid join", async () => {
           username: "example"
         }
       ],
-      userCount: 1
-    });
+      userCount: 1,
+      playing: false
+    } as SocketRoomInfoData);
     expect(success).toBe(true);
   });
 });

@@ -100,6 +100,19 @@ describe("invalid kick", () => {
       expect(success).toBe(false);
     });
   });
+
+  it("room already started", async () => {
+    await joinRoom(ctx.test1, "example", "user1");
+    rooms.get("example")?.start();
+
+    await emitAsync(ctx.test1.client, "kick", {
+      username: "user2",
+      room: "example"
+    }).then(({ success, data }) => {
+      expect((data as { kick: string }).kick).toContain("while playing");
+      expect(success).toBe(false);
+    });
+  });
 });
 
 it("valid kick", async () => {

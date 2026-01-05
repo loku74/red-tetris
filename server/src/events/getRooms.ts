@@ -8,6 +8,9 @@ export function registerHandlers(socket: Socket) {
     const result: SocketGetRoomsResponse[] = [];
 
     rooms.forEach((room) => {
+      if (room.playing) {
+        return;
+      }
       result.push({
         name: room.name,
         userCount: room.users.size,
