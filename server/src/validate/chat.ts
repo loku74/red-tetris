@@ -28,13 +28,12 @@ type ValidateChatResult = ValidateChatSuccess | ValidateError;
 
 export function validateChat(socket: Socket, data: SocketChatData): ValidateChatResult {
   const result = schema.safeParse(data);
-
   if (!result.success) {
     return { status: false, error: formatSchemeError(result.error) };
   }
 
   const current = users.get(socket.id);
-  const room = rooms.get(data.room);
+  const room = rooms.get(result.data.room);
 
   if (current === undefined) {
     return { status: false, error: { chat: "You do not belong to a room!" } };
