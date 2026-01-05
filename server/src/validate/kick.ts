@@ -1,9 +1,15 @@
+// global
 import z from "zod";
+
+// intern
 import { rooms, type Room } from "../objects/Room";
-import { type User } from "../objects/User";
 import { formatSchemeError, roomValidation, usernameValidation } from "./validation";
+
+// types
+import { users, type User } from "../objects/User";
 import type { SocketKickData } from "client-types";
 import type { ValidateError } from "../types/server";
+import type { Socket } from "socket.io";
 
 const schema = z.object({
   username: usernameValidation,
@@ -19,19 +25,21 @@ type ValidateKickSuccess = {
 
 export type ValidateKickResult = ValidateKickSuccess | ValidateError;
 
-export function validateKick(data: SocketKickData, current: User | undefined): ValidateKickResult {
+export function validateKick(socket: Socket, data: SocketKickData): ValidateKickResult {
   const result = schema.safeParse(data);
-
   if (!result.success) {
     return { status: false, error: formatSchemeError(result.error) };
   }
 
+  const current = users.get(socket.id);
   if (current === undefined) {
     return { status: false, error: { kick: "You do not belong to a room!" } };
   }
+  if (result.data.username === current.name) {
+    return { status: false, error: { kick: "You can't kick yourself! " } };
+  }
 
   const room = rooms.get(data.room);
-
   if (room === undefined) {
     return { status: false, error: { kick: `The room ${data.room} does not exist!` } };
   }
@@ -44,12 +52,11 @@ export function validateKick(data: SocketKickData, current: User | undefined): V
   if (room.playing) {
     return { status: false, error: { kick: "You can't kick while playing!" } };
   }
-  if (data.username === current.name) {
-    return { status: false, error: { kick: "You can't kick yourself! " } };
-  }
+
   const targetUser = room.get(data.username);
   if (targetUser === undefined) {
     return { status: false, error: { kick: `The user ${data.username} is not in the room!` } };
   }
+
   return { status: true, room, current, targetUser };
 }
