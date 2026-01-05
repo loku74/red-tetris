@@ -5,14 +5,14 @@
 
   // components
   import Piece from "$lib/components/Piece.svelte";
-  import { Crown, LogOut, Swords, UserX, X } from "@lucide/svelte";
+  import { Crown, DoorOpen, LogOut, Swords, UserX, X } from "@lucide/svelte";
   import Dialog from "$lib/components/Dialog.svelte";
 
   // socket
   import { getSocket } from "$lib/socket";
 
   // types
-  import type { SocketJoinRoomData, SocketKickData } from "$lib/types/socket";
+  import type { SocketJoinRoomData, SocketKickData, SocketLeaveRoomData } from "$lib/types/socket";
   import type { SocketJoinRoomResponse, SocketRoomInfoData, SocketPlayerData } from "server-types";
   import type { PieceColor } from "$lib/types/piece";
 
@@ -37,6 +37,8 @@
   let userToKick = $state<string>();
   let userToKickColor = $state<PieceColor>("empty");
   let userToKickPieceColor = $state<string>("#e6e6e6");
+
+  let showLeaveDialog = $state(false);
 
   const socket = getSocket();
 
@@ -78,6 +80,15 @@
     );
   }
 
+  function leaveRoom() {
+    const data: SocketLeaveRoomData = { room: room! };
+    socket.emit("leave room", data, (success: boolean) => {
+      if (success) {
+        goto("/");
+      }
+    });
+  }
+
   function handleKickUser(user: SocketPlayerData) {
     userToKick = user.username;
     userToKickColor = user.color;
@@ -86,8 +97,9 @@
   }
 
   function kickUser(data: SocketKickData) {
-    socket.emit("kick", data, (success: boolean, data?: { kick: string }) => {});
-    showKickDialog = false;
+    socket.emit("kick", data, (success: boolean) => {
+      if (success) showKickDialog = false;
+    });
   }
 
   onMount(() => {
@@ -159,7 +171,12 @@
       </ul>
       <div class="mt-auto space-y-4">
         {#if roomData.host === username}
-          <button class="btn btn-secondary text-lg py-1.5 w-full">leave room</button>
+          <button
+            onclick={() => (showLeaveDialog = true)}
+            class="btn btn-secondary text-lg py-1.5 w-full"
+          >
+            leave room
+          </button>
         {:else}
           <p class="text-center text-white/70">Waiting for the host to start...</p>
         {/if}
@@ -173,6 +190,7 @@
           </button>
         {:else}
           <button
+            onclick={() => (showLeaveDialog = true)}
             class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
             style="--btn-depth: 6px;"
           >
@@ -207,3 +225,14 @@
     </div>
   </Dialog>
 {/if}
+
+<Dialog
+  icon={DoorOpen}
+  confirm="leave"
+  confirmCallback={leaveRoom}
+  title="Leave room"
+  cancel="cancel"
+  bind:open={showLeaveDialog}
+>
+  <p class="text-white/75">Are you sure you want to leave the room?</p>
+</Dialog>

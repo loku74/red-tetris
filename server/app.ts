@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { Server as IoServer, Socket } from "socket.io";
 import { SERVER_PORT } from "./src/constants";
 import { registerHandlers as canJoinRoomHandler } from "./src/events/canJoinRoom";
+import { registerHandlers as leaveRoomHandler } from "./src/events/leaveRoom";
 import { registerHandlers as chatHandler } from "./src/events/chat";
 import { registerHandlers as disconnectingHandler } from "./src/events/disconnecting";
 import { registerHandlers as getRoomsHandler } from "./src/events/getRooms";
@@ -37,6 +38,7 @@ function configureSocket(io: IoServer) {
     joinRoomHandler(socket);
     kickHandler(io, socket);
     startHandler(io, socket);
+    leaveRoomHandler(io, socket);
   });
 }
 

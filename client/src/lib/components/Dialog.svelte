@@ -10,6 +10,7 @@
     title,
     confirm = "ok",
     confirmCallback = () => {},
+    onclose = () => {},
     cancel = null,
     children
   }: {
@@ -18,12 +19,14 @@
     title: string;
     confirm?: string;
     confirmCallback?: () => void;
+    onclose?: () => void;
     cancel?: string | null;
     children: Snippet;
   } = $props();
 
   function closeDialog() {
     open = false;
+    onclose();
   }
 
   function handleKeydown(event: KeyboardEvent) {

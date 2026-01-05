@@ -55,7 +55,9 @@ export class Room {
     return this.asInfo();
   }
 
-  public remove(user: User): SocketRoomInfoData {
+  public remove(user: User | undefined): SocketRoomInfoData {
+    if (!user) return this.asInfo();
+
     const retrieved = this.users.get(user.id);
     if (!retrieved) throw new Error("User not found");
 

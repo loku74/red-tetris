@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import * as z from "zod";
 import { ROOM_MAX, ROOM_MAX_USERS } from "../constants";
 import { rooms } from "../objects/Room";
-import { formatSchemeError, roomValidation, usernameValidation } from "./utils";
+import { formatSchemeError, roomValidation, usernameValidation } from "./validation";
 
 const schema = z.object({
   username: usernameValidation,
