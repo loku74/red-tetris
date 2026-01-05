@@ -1,35 +1,48 @@
+// global
 import z from "zod";
-import { rooms } from "../objects/Room";
-import { type User } from "../objects/User";
+
+// intern
+import { Room, rooms } from "../objects/Room";
 import { formatSchemeError, roomValidation } from "./validation";
+import { users } from "../objects/User";
+
+// types
 import type { SocketStartData } from "client-types";
+import type { ValidateError } from "../types/server";
+import type { Socket } from "socket.io";
 
 const schema = z.object({
   room: roomValidation
 });
 
-export function validateStart(
-  data: SocketStartData,
-  current: User | undefined
-): Record<string, string> | null {
-  const result = schema.safeParse(data); // à changer!
+type ValidateStartSuccess = {
+  status: true;
+  room: Room;
+};
 
+type ValideStartResult = ValidateStartSuccess | ValidateError;
+
+export function validateStart(socket: Socket, data: SocketStartData): ValideStartResult {
+  const result = schema.safeParse(data);
   if (!result.success) {
-    return formatSchemeError(result.error);
+    return { status: false, error: formatSchemeError(result.error) };
   }
-  const room = rooms.get(data.room);
 
+  const current = users.get(socket.id);
   if (current === undefined) {
-    return { start: "You do not belong to a room!" };
+    return { status: false, error: { start: "You do not belong to a room!" } };
   }
+
+  const room = rooms.get(data.room);
   if (room === undefined) {
-    return { start: `The room ${data.room} does not exist!` };
+    return { status: false, error: { start: `The room ${data.room} does not exist!` } };
   }
   if (room.host != current) {
-    return { start: "You are not the host of this room!" };
+    return { status: false, error: { start: "You are not the host of this room!" } };
   }
   if (room.playing === true) {
-    return { start: "Room is already started!" };
+    return { status: false, error: { start: "Room is already started!" } };
   }
-  return null;
+
+  return { status: true, room };
 }
