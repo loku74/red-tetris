@@ -7,3 +7,8 @@ export interface ServerData {
   server: HttpServer;
   io: IoServer;
 }
+
+export interface ValidateError {
+  status: false;
+  error: Record<string, string>;
+}

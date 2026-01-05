@@ -9,7 +9,7 @@
   import { Gamepad2, Info } from "@lucide/svelte";
 
   // stores
-  import { kickState } from "$lib/stores/kick.svelte";
+  import { kickState, setKickedDialog } from "$lib/stores/kick.svelte";
 
   // constants
   import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants";
@@ -110,7 +110,8 @@
           onclick={validate}
           class="btn btn-primary text-3xl py-4"
           style="--btn-depth: 6px;"
-          >join game
+        >
+          join game
         </button>
         <button
           disabled={emitting}
@@ -118,8 +119,9 @@
             showRoomsDialog = true;
           }}
           class="hover:bg-dark-secondary w-fit mx-auto px-4 py-2 text-white/75 not-disabled:active:scale-95 duration-75 disabled:text-white/50"
-          >Show existing room(s)</button
         >
+          Show existing room(s)
+        </button>
       </div>
       <div class="absolute grid grid-cols-2 -left-32 top-0">
         <Piece color="yellow" size={64} />
@@ -178,9 +180,9 @@
               class="w-full text-left px-4 py-3 bg-dark-secondary hover:bg-dark-accent border border-border transition-colors duration-75 flex justify-between items-center"
             >
               <span>{name}</span>
-              <span class="{userCount === max ? 'text-red-400' : 'text-white/50'} text-sm"
-                >{userCount}/{max}</span
-              >
+              <span class="{userCount === max ? 'text-red-400' : 'text-white/50'} text-sm">
+                {userCount}/{max}
+              </span>
             </button>
           </li>
         {/each}
@@ -189,7 +191,14 @@
   </Dialog>
 </div>
 
-<Dialog icon={Info} confirm="ok" title="You have been kicked" bind:open={kickState.show}>
+<Dialog
+  icon={Info}
+  confirm="ok"
+  title="You have been kicked"
+  open={kickState.show}
+  confirmCallback={() => setKickedDialog(false)}
+  onclose={() => setKickedDialog(false)}
+>
   <p class="text-white/75">
     You have been kicked from <span class="text-red-accent">{kickState.room}</span>
   </p>

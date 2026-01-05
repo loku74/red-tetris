@@ -1,31 +1,28 @@
 import { Server, type Socket } from "socket.io";
 import { users } from "../objects/User";
 import { validateKick } from "../validate/kick";
-import { rooms } from "../objects/Room";
 import type { SocketKickData } from "client-types";
 import type { Callback } from "../types/types";
+import { removeUserFromRoom } from "../core/room";
 
 export function registerHandlers(io: Server, socket: Socket) {
   socket.on("kick", (data: SocketKickData, callback: Callback) => {
     const current = users.get(socket.id);
-    const errors = validateKick(data, current);
+    const result = validateKick(data, current);
 
-    if (errors) {
-      callback(false, errors);
+    if (!result.status) {
+      callback(result.status, result.error);
       return;
     }
-    // existance checked before
-    const room = rooms.get(data.room);
-    const target = room?.get(data.username);
 
-    if (target && room) {
-      room.remove(target);
-      target.socket.emit("kick", { room: data.room });
-      console.log(`user ${data.username} has been kicked from ${data.room} room`);
+    const roomInfo = removeUserFromRoom(result.targetUser, result.room);
+    result.targetUser.socket.emit("kick", { room: result.room.name });
+    io.to(result.room.name).emit("room update", roomInfo);
 
-      io.to(data.room).emit("room update", room.asInfo());
+    console.log(
+      `User ${result.targetUser.name} was kicked from room ${result.room.name} by ${result.current.name}`
+    );
 
-      callback(true);
-    }
+    callback(true);
   });
 }

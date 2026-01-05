@@ -1,5 +1,5 @@
 import z from "zod";
-import { formatSchemeError, messageValidation, roomValidation } from "./utils";
+import { formatSchemeError, messageValidation, roomValidation } from "./validation";
 import type { User } from "../objects/User";
 import { rooms } from "../objects/Room";
 import type { SocketChatData } from "client-types";

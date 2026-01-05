@@ -1,7 +1,7 @@
 import z from "zod";
 import { rooms } from "../objects/Room";
 import { type User } from "../objects/User";
-import { formatSchemeError, roomValidation } from "./utils";
+import { formatSchemeError, roomValidation } from "./validation";
 import type { SocketStartData } from "client-types";
 
 const schema = z.object({
