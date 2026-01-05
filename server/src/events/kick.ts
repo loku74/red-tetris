@@ -1,5 +1,4 @@
 import { Server, type Socket } from "socket.io";
-import { users } from "../objects/User";
 import { validateKick } from "../validate/kick";
 import type { SocketKickData } from "client-types";
 import type { Callback } from "../types/types";
@@ -7,9 +6,7 @@ import { removeUserFromRoom } from "../core/room";
 
 export function registerHandlers(io: Server, socket: Socket) {
   socket.on("kick", (data: SocketKickData, callback: Callback) => {
-    const current = users.get(socket.id);
-    const result = validateKick(data, current);
-
+    const result = validateKick(socket, data);
     if (!result.status) {
       callback(result.status, result.error);
       return;

@@ -1,30 +1,45 @@
+// global
 import z from "zod";
-import { formatSchemeError, messageValidation, roomValidation } from "./validation";
-import type { User } from "../objects/User";
-import { rooms } from "../objects/Room";
-import type { SocketChatData } from "client-types";
 
-const chatSchema = z.object({
+// intern
+import { Room, rooms } from "../objects/Room";
+import { users } from "../objects/User";
+import { formatSchemeError, messageValidation, roomValidation } from "./validation";
+
+// types
+import type { SocketChatData } from "client-types";
+import type { Socket } from "socket.io";
+import type { User } from "../objects/User";
+import type { ValidateError } from "../types/server";
+
+const schema = z.object({
   message: messageValidation,
   room: roomValidation
 });
 
-export function validateChat(
-  data: SocketChatData,
-  current: User | undefined
-): Record<string, string> | null {
-  const result = chatSchema.safeParse(data);
+type ValidateChatSuccess = {
+  status: true;
+  current: User;
+  message: string;
+  room: Room;
+};
 
+type ValidateChatResult = ValidateChatSuccess | ValidateError;
+
+export function validateChat(socket: Socket, data: SocketChatData): ValidateChatResult {
+  const result = schema.safeParse(data);
   if (!result.success) {
-    return formatSchemeError(result.error);
+    return { status: false, error: formatSchemeError(result.error) };
   }
-  const room = rooms.get(data.room);
 
+  const current = users.get(socket.id);
+  const room = rooms.get(result.data.room);
   if (current === undefined) {
-    return { chat: "You do not belong to a room!" };
+    return { status: false, error: { chat: "You do not belong to a room!" } };
   }
   if (!current.room || room !== current.room) {
-    return { chat: `You are not in the room ${room?.name}` };
+    return { status: false, error: { chat: `You are not in the room ${room?.name}` } };
   }
-  return null;
+
+  return { status: true, current, message: result.data.message, room };
 }

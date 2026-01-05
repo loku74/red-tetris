@@ -1,5 +1,5 @@
 import type { SocketJoinRoomData } from "client-types";
-import { validateJoinRoom } from "../validate/room";
+import { validateJoinRoom } from "../validate/joinRoom";
 import type { Callback } from "../types/types";
 import { User, users } from "../objects/User";
 import { joinOrCreateRoom } from "../objects/Room";
@@ -7,24 +7,22 @@ import type { Socket } from "socket.io";
 
 export function registerHandlers(socket: Socket) {
   socket.on("join room", (data: SocketJoinRoomData, callback: Callback) => {
-    const errors = validateJoinRoom(socket, data);
-    if (errors) {
-      callback(false, errors);
+    const result = validateJoinRoom(socket, data);
+    if (!result.status) {
+      callback(false, result.error);
       return;
     }
 
-    const user = new User(socket.id, data.username, socket);
+    const user = new User(socket.id, result.username, socket);
     users.set(socket.id, user);
 
-    const room = joinOrCreateRoom(user, data.room);
+    const room = joinOrCreateRoom(user, result.roomName);
     socket.join(data.room);
 
-    // the current socket will receive information with the callback
-    // we can exclude him on this call
-    // see: https://socket.io/docs/v4/rooms/
-    user.socket.to(room.name).emit("room update", room.asInfo());
+    user.socket.to(result.roomName).emit("room update", room.asInfo());
 
-    console.log(`User ${users.get(socket.id)?.name} joined room ${data.room} ${socket.rooms.size}`);
+    console.log(`User ${result.username} joined room ${result.roomName} ${socket.rooms.size}`);
+
     callback(true, room.asInfo());
   });
 }
