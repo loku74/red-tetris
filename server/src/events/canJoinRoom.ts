@@ -1,6 +1,6 @@
 import type { SocketJoinRoomData } from "client-types";
 import type { Callback } from "../types/types";
-import { validateJoinRoom } from "../validate/room";
+import { validateJoinRoom } from "../validate/joinRoom";
 import type { Socket } from "socket.io";
 
 export function registerHandlers(socket: Socket) {
