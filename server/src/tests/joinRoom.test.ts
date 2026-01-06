@@ -37,7 +37,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).room).toContain("is full");
+      expect((data as SocketJoinRoomResponse).joinRoom).toContain("is full");
       expect(success).toBe(false);
     });
   });
@@ -50,7 +50,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).room).toContain("number of rooms reached");
+      expect((data as SocketJoinRoomResponse).joinRoom).toContain("number of rooms reached");
       expect(success).toBe(false);
     });
   });
@@ -62,7 +62,7 @@ describe("invalid join", () => {
       username: "name",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).room).toContain("is already taken");
+      expect((data as SocketJoinRoomResponse).joinRoom).toContain("is already taken");
       expect(success).toBe(false);
     });
   });
@@ -76,7 +76,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example2"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).room).toContain("already in room example");
+      expect((data as SocketJoinRoomResponse).joinRoom).toContain("already in room example");
       expect(success).toBe(false);
     });
   });
@@ -89,7 +89,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).room).toContain("already playing!");
+      expect((data as SocketJoinRoomResponse).joinRoom).toContain("already playing!");
       expect(success).toBe(false);
     });
   });

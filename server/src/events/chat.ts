@@ -15,7 +15,7 @@ export function registerHandlers(socket: Socket) {
       .to(result.room.name)
       .emit("message", { from: result.current.name, message: result.message });
 
-    console.log(`user ${result.current.name} wrote: "${result.message}" to ${result.room} `);
+    console.log(`user ${result.current.name} wrote: "${result.message}" to ${result.room.name} `);
 
     callback(true);
   });
