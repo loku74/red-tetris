@@ -27,7 +27,7 @@ describe("invalid chat", () => {
       message: "test",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { room: string }).room).toContain(NOT_IN_A_ROOM);
+      expect((data as { room: string }).room).toBe(NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -37,7 +37,7 @@ describe("invalid chat", () => {
       message: "test",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { room: string }).room).toContain(NOT_IN_THIS_ROOM);
+      expect((data as { room: string }).room).toBe(NOT_IN_THIS_ROOM);
       expect(success).toBe(false);
     });
   });
