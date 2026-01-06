@@ -6,7 +6,7 @@ export const INEXISTING_ROOM = "This room does not exist";
 export const NOT_HOST = "You are not the host of this room";
 
 // join room
-export const ROOM_IS_FULL = "Room is full!";
+export const ROOM_IS_FULL = "Room is full";
 export const MAX_ROOMS = "Maximum number of rooms reached, please join an existing one";
 export const USERNAME_TAKEN = "This username is already taken in this room";
 export const ALREADY_IN_A_ROOM = "You are already in a room";
