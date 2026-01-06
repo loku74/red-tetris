@@ -250,7 +250,7 @@
             </div>
 
             <div
-              class="p-2 wrap-break-word w-fit max-w-64 text-white
+              class="p-2 wrap-break-word w-fit max-w-64 text-white text-sm
               {username === m.from ? 'ml-auto' : ' bg-dark-accent'}"
               style="background-color: {username === m.from
                 ? pieceColors[m.color as PieceColor].dark
