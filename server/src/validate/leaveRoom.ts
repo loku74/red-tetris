@@ -10,6 +10,7 @@ import { formatSchemeError, roomValidation } from "./validation";
 import type { SocketLeaveRoomData } from "client-types";
 import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/server";
+import { INEXISTING_ROOM, NOT_IN_THIS_ROOM, USER_NOT_FOUND } from "../constants/error";
 
 const schema = z.object({
   room: roomValidation
@@ -34,15 +35,15 @@ export function validateLeaveRoom(
 
   const current = users.get(socket.id);
   if (current === undefined) {
-    return { status: false, error: { leaveRoom: "User not found" } };
+    return { status: false, error: { room: USER_NOT_FOUND } };
   }
 
   const room = rooms.get(result.data.room);
   if (room === undefined) {
-    return { status: false, error: { leaveRoom: `The room ${data.room} does not exist` } };
+    return { status: false, error: { room: INEXISTING_ROOM } };
   }
   if (!room.exist(current)) {
-    return { status: false, error: { leaveRoom: "You do not belong to this room" } };
+    return { status: false, error: { room: NOT_IN_THIS_ROOM } };
   }
 
   return { status: true, room, current };

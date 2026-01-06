@@ -1,5 +1,5 @@
 import type { Socket } from "socket.io";
-import { ROOM_MAX_USERS } from "../constants";
+import { ROOM_MAX_USERS } from "../constants/core";
 import type { SocketRoomInfoData, SocketUserColor } from "../types/types";
 import { users, type User } from "./User";
 

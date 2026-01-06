@@ -2,10 +2,17 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createClient, emitAsync, onceAsync, setupTestServer, shutdownTestServer } from "./utils";
 import { User } from "../objects/User";
 import { Room, rooms } from "../objects/Room";
-import { ROOM_MAX, ROOM_MAX_USERS } from "../constants";
+import { ROOM_MAX, ROOM_MAX_USERS } from "../constants/core";
 import type { TestServerData } from "./types";
 import type { SocketJoinRoomResponse } from "client-types";
 import type { SocketRoomInfoData } from "../types/types";
+import {
+  ALREADY_IN_A_ROOM,
+  MAX_ROOMS,
+  PLAYING_ROOM,
+  ROOM_IS_FULL,
+  USERNAME_TAKEN
+} from "../constants/error";
 
 let ctx: TestServerData;
 
@@ -37,7 +44,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).joinRoom).toContain("is full");
+      expect((data as SocketJoinRoomResponse).roomName).toBe(ROOM_IS_FULL);
       expect(success).toBe(false);
     });
   });
@@ -50,7 +57,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).joinRoom).toContain("number of rooms reached");
+      expect((data as SocketJoinRoomResponse).roomName).toBe(MAX_ROOMS);
       expect(success).toBe(false);
     });
   });
@@ -62,7 +69,7 @@ describe("invalid join", () => {
       username: "name",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).joinRoom).toContain("is already taken");
+      expect((data as SocketJoinRoomResponse).username).toBe(USERNAME_TAKEN);
       expect(success).toBe(false);
     });
   });
@@ -76,7 +83,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example2"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).joinRoom).toContain("already in room example");
+      expect((data as SocketJoinRoomResponse).roomName).toBe(ALREADY_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -89,7 +96,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).joinRoom).toContain("already playing!");
+      expect((data as SocketJoinRoomResponse).roomName).toBe(PLAYING_ROOM);
       expect(success).toBe(false);
     });
   });

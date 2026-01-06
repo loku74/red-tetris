@@ -11,6 +11,7 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
+import { INEXISTING_ROOM, NOT_IN_THIS_ROOM, USER_NOT_FOUND } from "../constants/error";
 
 let ctx: TestServerData;
 
@@ -27,7 +28,7 @@ describe("invalid leave room", () => {
     await emitAsync(ctx.test1.client, "leave room", {
       room: "example"
     } as SocketLeaveRoomData).then(({ success, data }) => {
-      expect((data as { leaveRoom: string }).leaveRoom).toContain("not found");
+      expect((data as { room: string }).room).toBe(USER_NOT_FOUND);
       expect(success).toBe(false);
     });
   });
@@ -37,7 +38,7 @@ describe("invalid leave room", () => {
     await emitAsync(ctx.test1.client, "leave room", {
       room: "wrong"
     } as SocketLeaveRoomData).then(({ success, data }) => {
-      expect((data as { leaveRoom: string }).leaveRoom).toContain("does not exist");
+      expect((data as { room: string }).room).toBe(INEXISTING_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -51,7 +52,7 @@ describe("invalid leave room", () => {
     await emitAsync(ctx.test1.client, "leave room", {
       room: "example2"
     } as SocketLeaveRoomData).then(({ success, data }) => {
-      expect((data as { leaveRoom: string }).leaveRoom).toContain("not belong to");
+      expect((data as { room: string }).room).toBe(NOT_IN_THIS_ROOM);
       expect(success).toBe(false);
     });
   });

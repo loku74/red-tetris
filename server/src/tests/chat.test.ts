@@ -9,6 +9,7 @@ import {
 } from "./utils";
 import type { TestServerData } from "./types";
 import type { SocketMessageData } from "../types/types";
+import { NOT_IN_A_ROOM, NOT_IN_THIS_ROOM } from "../constants/error";
 
 let ctx: TestServerData;
 
@@ -26,7 +27,7 @@ describe("invalid chat", () => {
       message: "test",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { chat: string }).chat).toContain("do not belong to a room");
+      expect((data as { room: string }).room).toBe(NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -36,7 +37,7 @@ describe("invalid chat", () => {
       message: "test",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { chat: string }).chat).toContain("not in the room");
+      expect((data as { room: string }).room).toBe(NOT_IN_THIS_ROOM);
       expect(success).toBe(false);
     });
   });
