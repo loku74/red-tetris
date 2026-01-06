@@ -42,7 +42,7 @@
       emitting = false;
       if (!success) {
         usernameError = data.username;
-        roomError = data.room;
+        roomError = data.roomName;
       } else {
         goto(`/${room}/${username}`);
       }

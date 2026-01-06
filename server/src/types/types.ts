@@ -33,7 +33,7 @@ export type Callback = (success: boolean, data?: unknown) => void;
 
 export interface SocketJoinRoomResponse {
   username?: string;
-  room?: string;
+  roomName?: string;
 }
 
 export interface SocketGetRoomsResponse {

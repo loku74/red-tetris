@@ -55,7 +55,7 @@
       (success: boolean, data: SocketRoomInfoData | SocketJoinRoomResponse) => {
         if (!success) {
           const errorData = data as SocketJoinRoomResponse;
-          roomError = errorData.room;
+          roomError = errorData.roomName;
           userError = errorData.username;
           if (!userError && !roomError) {
             unusualError = "Failed to join room";
