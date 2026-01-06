@@ -10,6 +10,14 @@ import { formatSchemeError, roomValidation, usernameValidation } from "./validat
 import type { SocketKickData } from "client-types";
 import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/server";
+import {
+  INEXISTING_ROOM,
+  KICK_INEXISTING,
+  KICK_ITSELF,
+  KICK_PLAYING,
+  NOT_HOST,
+  NOT_IN_A_ROOM
+} from "../constants/error";
 
 const schema = z.object({
   username: usernameValidation,
@@ -33,29 +41,26 @@ export function validateKick(socket: Socket, data: SocketKickData): ValidateKick
 
   const current = users.get(socket.id);
   if (current === undefined) {
-    return { status: false, error: { kick: "You do not belong to a room!" } };
+    return { status: false, error: { kick: NOT_IN_A_ROOM } };
   }
   if (result.data.username === current.name) {
-    return { status: false, error: { kick: "You can't kick yourself! " } };
+    return { status: false, error: { kick: KICK_ITSELF } };
   }
 
   const room = rooms.get(data.room);
   if (room === undefined) {
-    return { status: false, error: { kick: `The room ${data.room} does not exist!` } };
+    return { status: false, error: { kick: INEXISTING_ROOM } };
   }
   if (room.host != current) {
-    return { status: false, error: { kick: "You are not the host of this room!" } };
+    return { status: false, error: { kick: NOT_HOST } };
   }
   if (room.playing === true) {
-    return { status: false, error: { kick: "You can't kick while playing!" } };
-  }
-  if (room.playing) {
-    return { status: false, error: { kick: "You can't kick while playing!" } };
+    return { status: false, error: { kick: KICK_PLAYING } };
   }
 
   const targetUser = room.get(data.username);
   if (targetUser === undefined) {
-    return { status: false, error: { kick: `The user ${data.username} is not in the room!` } };
+    return { status: false, error: { kick: KICK_INEXISTING } };
   }
 
   return { status: true, room, current, targetUser };

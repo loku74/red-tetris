@@ -10,6 +10,14 @@ import {
 import { Room, rooms } from "../objects/Room";
 import { User, users } from "../objects/User";
 import type { TestServerData } from "./types";
+import {
+  INEXISTING_ROOM,
+  KICK_INEXISTING,
+  KICK_ITSELF,
+  KICK_PLAYING,
+  NOT_HOST,
+  NOT_IN_A_ROOM
+} from "../constants/error";
 
 let ctx: TestServerData;
 
@@ -27,7 +35,7 @@ describe("invalid kick", () => {
       username: "user2",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { kick: string }).kick).toContain("belong to");
+      expect((data as { kick: string }).kick).toContain(NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -38,7 +46,7 @@ describe("invalid kick", () => {
       username: "user2",
       room: "example1"
     }).then(({ success, data }) => {
-      expect((data as { kick: string }).kick).toContain("does not exist!");
+      expect((data as { kick: string }).kick).toContain(INEXISTING_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -51,7 +59,7 @@ describe("invalid kick", () => {
       username: "user2",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { kick: string }).kick).toContain("host of this");
+      expect((data as { kick: string }).kick).toContain(NOT_HOST);
       expect(success).toBe(false);
     });
   });
@@ -62,7 +70,7 @@ describe("invalid kick", () => {
       username: "user1",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { kick: string }).kick).toContain("yourself");
+      expect((data as { kick: string }).kick).toContain(KICK_ITSELF);
       expect(success).toBe(false);
     });
   });
@@ -75,7 +83,7 @@ describe("invalid kick", () => {
       username: "user3",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { kick: string }).kick).toContain("is not in");
+      expect((data as { kick: string }).kick).toContain(KICK_INEXISTING);
       expect(success).toBe(false);
     });
   });
@@ -96,7 +104,7 @@ describe("invalid kick", () => {
       username: "test",
       room: "example2"
     }).then(({ success, data }) => {
-      expect((data as { kick: string }).kick).toContain("host of");
+      expect((data as { kick: string }).kick).toContain(NOT_HOST);
       expect(success).toBe(false);
     });
   });
@@ -109,7 +117,7 @@ describe("invalid kick", () => {
       username: "user2",
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { kick: string }).kick).toContain("while playing");
+      expect((data as { kick: string }).kick).toContain(KICK_PLAYING);
       expect(success).toBe(false);
     });
   });

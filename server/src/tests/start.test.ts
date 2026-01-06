@@ -11,6 +11,7 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
+import { INEXISTING_ROOM, NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
 
 let ctx: TestServerData;
 
@@ -27,7 +28,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain("belong to");
+      expect((data as { start: string }).start).toContain(NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -37,7 +38,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example1"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain("does not exist!");
+      expect((data as { start: string }).start).toContain(INEXISTING_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -49,7 +50,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain("host of this");
+      expect((data as { start: string }).start).toContain(NOT_HOST);
       expect(success).toBe(false);
     });
   });
@@ -61,7 +62,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain("already started");
+      expect((data as { start: string }).start).toContain(PLAYING_ROOM);
       expect(success).toBe(false);
     });
   });

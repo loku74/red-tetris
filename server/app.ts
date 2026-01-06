@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Server as IoServer, Socket } from "socket.io";
-import { SERVER_PORT } from "./src/constants";
+import { SERVER_PORT } from "./src/constants/core";
 import { registerHandlers as canJoinRoomHandler } from "./src/events/canJoinRoom";
 import { registerHandlers as leaveRoomHandler } from "./src/events/leaveRoom";
 import { registerHandlers as chatHandler } from "./src/events/chat";

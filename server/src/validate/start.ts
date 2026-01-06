@@ -10,6 +10,7 @@ import { formatSchemeError, roomValidation } from "./validation";
 import type { SocketStartData } from "client-types";
 import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/server";
+import { INEXISTING_ROOM, NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
 
 const schema = z.object({
   room: roomValidation
@@ -30,18 +31,18 @@ export function validateStart(socket: Socket, data: SocketStartData): ValideStar
 
   const current = users.get(socket.id);
   if (current === undefined) {
-    return { status: false, error: { start: "You do not belong to a room!" } };
+    return { status: false, error: { start: NOT_IN_A_ROOM } };
   }
 
   const room = rooms.get(data.room);
   if (room === undefined) {
-    return { status: false, error: { start: `The room ${data.room} does not exist!` } };
+    return { status: false, error: { start: INEXISTING_ROOM } };
   }
   if (room.host != current) {
-    return { status: false, error: { start: "You are not the host of this room!" } };
+    return { status: false, error: { start: NOT_HOST } };
   }
   if (room.playing === true) {
-    return { status: false, error: { start: "Room is already started!" } };
+    return { status: false, error: { start: PLAYING_ROOM } };
   }
 
   return { status: true, room };

@@ -1,5 +1,5 @@
 import z, { ZodError } from "zod";
-import { CHAT_MAX_LENGTH, ROOM_MAX_LENGTH, USERNAME_MAX_LENGTH } from "../constants";
+import { CHAT_MAX_LENGTH, ROOM_MAX_LENGTH, USERNAME_MAX_LENGTH } from "../constants/core";
 
 export function formatSchemeError(error: ZodError) {
   return error.issues.reduce(
