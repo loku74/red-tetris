@@ -28,7 +28,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain(NOT_IN_A_ROOM);
+      expect((data as { room: string }).room).toContain(NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -38,7 +38,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example1"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain(INEXISTING_ROOM);
+      expect((data as { room: string }).room).toContain(INEXISTING_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -50,7 +50,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain(NOT_HOST);
+      expect((data as { room: string }).room).toContain(NOT_HOST);
       expect(success).toBe(false);
     });
   });
@@ -62,7 +62,7 @@ describe("invalid start", () => {
     await emitAsync(ctx.test1.client, "start", {
       room: "example"
     }).then(({ success, data }) => {
-      expect((data as { start: string }).start).toContain(PLAYING_ROOM);
+      expect((data as { room: string }).room).toContain(PLAYING_ROOM);
       expect(success).toBe(false);
     });
   });

@@ -35,15 +35,15 @@ export function validateLeaveRoom(
 
   const current = users.get(socket.id);
   if (current === undefined) {
-    return { status: false, error: { leaveRoom: USER_NOT_FOUND } };
+    return { status: false, error: { room: USER_NOT_FOUND } };
   }
 
   const room = rooms.get(result.data.room);
   if (room === undefined) {
-    return { status: false, error: { leaveRoom: INEXISTING_ROOM } };
+    return { status: false, error: { room: INEXISTING_ROOM } };
   }
   if (!room.exist(current)) {
-    return { status: false, error: { leaveRoom: NOT_IN_THIS_ROOM } };
+    return { status: false, error: { room: NOT_IN_THIS_ROOM } };
   }
 
   return { status: true, room, current };

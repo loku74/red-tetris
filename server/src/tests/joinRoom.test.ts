@@ -83,7 +83,7 @@ describe("invalid join", () => {
       username: "user1",
       room: "example2"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).joinRoom).toContain(ALREADY_IN_A_ROOM);
+      expect((data as SocketJoinRoomResponse).roomName).toContain(ALREADY_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });

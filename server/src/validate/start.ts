@@ -31,18 +31,18 @@ export function validateStart(socket: Socket, data: SocketStartData): ValideStar
 
   const current = users.get(socket.id);
   if (current === undefined) {
-    return { status: false, error: { start: NOT_IN_A_ROOM } };
+    return { status: false, error: { room: NOT_IN_A_ROOM } };
   }
 
   const room = rooms.get(data.room);
   if (room === undefined) {
-    return { status: false, error: { start: INEXISTING_ROOM } };
+    return { status: false, error: { room: INEXISTING_ROOM } };
   }
   if (room.host != current) {
-    return { status: false, error: { start: NOT_HOST } };
+    return { status: false, error: { room: NOT_HOST } };
   }
   if (room.playing === true) {
-    return { status: false, error: { start: PLAYING_ROOM } };
+    return { status: false, error: { room: PLAYING_ROOM } };
   }
 
   return { status: true, room };

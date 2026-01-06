@@ -36,10 +36,10 @@ export function validateChat(socket: Socket, data: SocketChatData): ValidateChat
   const current = users.get(socket.id);
   const room = rooms.get(result.data.room);
   if (current === undefined) {
-    return { status: false, error: { chat: NOT_IN_A_ROOM } };
+    return { status: false, error: { room: NOT_IN_A_ROOM } };
   }
   if (!current.room || room !== current.room) {
-    return { status: false, error: { chat: NOT_IN_THIS_ROOM } };
+    return { status: false, error: { room: NOT_IN_THIS_ROOM } };
   }
 
   return { status: true, current, message: result.data.message, room };

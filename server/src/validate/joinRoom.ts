@@ -40,7 +40,7 @@ export function validateJoinRoom(socket: Socket, data: SocketJoinRoomData): Vali
   if (socket.rooms.size > 1) {
     return {
       status: false,
-      error: { joinRoom: ALREADY_IN_A_ROOM }
+      error: { roomName: ALREADY_IN_A_ROOM }
     };
   }
 

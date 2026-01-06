@@ -41,26 +41,26 @@ export function validateKick(socket: Socket, data: SocketKickData): ValidateKick
 
   const current = users.get(socket.id);
   if (current === undefined) {
-    return { status: false, error: { kick: NOT_IN_A_ROOM } };
+    return { status: false, error: { room: NOT_IN_A_ROOM } };
   }
   if (result.data.username === current.name) {
-    return { status: false, error: { kick: KICK_ITSELF } };
+    return { status: false, error: { username: KICK_ITSELF } };
   }
 
   const room = rooms.get(data.room);
   if (room === undefined) {
-    return { status: false, error: { kick: INEXISTING_ROOM } };
+    return { status: false, error: { room: INEXISTING_ROOM } };
   }
   if (room.host != current) {
-    return { status: false, error: { kick: NOT_HOST } };
+    return { status: false, error: { room: NOT_HOST } };
   }
   if (room.playing === true) {
-    return { status: false, error: { kick: KICK_PLAYING } };
+    return { status: false, error: { room: KICK_PLAYING } };
   }
 
   const targetUser = room.get(data.username);
   if (targetUser === undefined) {
-    return { status: false, error: { kick: KICK_INEXISTING } };
+    return { status: false, error: { username: KICK_INEXISTING } };
   }
 
   return { status: true, room, current, targetUser };

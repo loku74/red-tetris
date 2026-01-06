@@ -28,7 +28,7 @@ describe("invalid leave room", () => {
     await emitAsync(ctx.test1.client, "leave room", {
       room: "example"
     } as SocketLeaveRoomData).then(({ success, data }) => {
-      expect((data as { leaveRoom: string }).leaveRoom).toContain(USER_NOT_FOUND);
+      expect((data as { room: string }).room).toContain(USER_NOT_FOUND);
       expect(success).toBe(false);
     });
   });
@@ -38,7 +38,7 @@ describe("invalid leave room", () => {
     await emitAsync(ctx.test1.client, "leave room", {
       room: "wrong"
     } as SocketLeaveRoomData).then(({ success, data }) => {
-      expect((data as { leaveRoom: string }).leaveRoom).toContain(INEXISTING_ROOM);
+      expect((data as { room: string }).room).toContain(INEXISTING_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -52,7 +52,7 @@ describe("invalid leave room", () => {
     await emitAsync(ctx.test1.client, "leave room", {
       room: "example2"
     } as SocketLeaveRoomData).then(({ success, data }) => {
-      expect((data as { leaveRoom: string }).leaveRoom).toContain(NOT_IN_THIS_ROOM);
+      expect((data as { room: string }).room).toContain(NOT_IN_THIS_ROOM);
       expect(success).toBe(false);
     });
   });
