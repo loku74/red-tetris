@@ -26,8 +26,11 @@
 
   let username = $state("");
   let usernameError = $state<string | undefined>(undefined);
+
   let room = $state("");
   let roomError = $state<string | undefined>(undefined);
+  let roomNameInput = $state<HTMLInputElement>();
+
   let emitting = $state(false);
   let showRoomsDialog = $state(false);
   let rooms = $state<SocketGetRoomsResponse[]>([]);
@@ -42,7 +45,7 @@
       emitting = false;
       if (!success) {
         usernameError = data.username;
-        roomError = data.room;
+        roomError = data.roomName;
       } else {
         goto(`/${room}/${username}`);
       }
@@ -96,12 +99,19 @@
           maxlength={USERNAME_MAX_LENGTH}
           placeholder="Username"
           error={usernameError}
+          onEnter={() => {
+            roomNameInput?.focus();
+          }}
         />
         <TextInput
           bind:value={room}
+          bind:input={roomNameInput}
           maxlength={ROOM_NAME_MAX_LENGTH}
           placeholder="Room Name"
           error={roomError}
+          onEnter={() => {
+            validate();
+          }}
         />
       </div>
       <div class="pt-8 flex flex-col space-y-4 w-xs">
