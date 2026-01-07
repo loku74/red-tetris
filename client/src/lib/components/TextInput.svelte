@@ -37,7 +37,7 @@
   }
 </script>
 
-<div class="w-xs {fill ? 'h-full w-full' : ''}">
+<div class={fill ? "h-full w-full" : "w-xs"}>
   <div class="relative {fill ? 'h-full w-full' : ''}">
     <input
       onkeydown={(e) => {

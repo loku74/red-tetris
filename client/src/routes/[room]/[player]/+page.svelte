@@ -189,119 +189,123 @@
 
     <!-- connected -->
   {:else if roomData}
-    <div class="p-4 bg-dark-secondary border border-border h-[640px] w-[360px] flex flex-col">
-      <h1 class="text-center text-red-primary overflow-hidden text-ellipsis text-3xl pb-2">
-        {room}
-      </h1>
-      <span class="text-center text-xl">{roomData.userCount} / {roomData.max}</span>
-      <ul class="py-4">
-        {#each roomData.players as player, index (player.color)}
-          <li
-            class="p-2 text-lg flex items-center gap-2 group/list {username === player.username
-              ? `border-l-2`
-              : ''} {index % 2 === 0 ? 'bg-dark-list-accent' : ''}"
-            style={username === player.username
-              ? `border-color: ${userColor}; color: ${userColor};`
-              : ""}
-          >
-            <Piece color={player.color} size={24} />
-            <span class="overflow-hidden text-ellipsis">
-              {player.username}
-            </span>
-            {#if roomData.host === player.username}
-              <Crown color="#FFC832" />
-            {/if}
-            {#if roomData.host === username && player.username !== username}
-              <button
-                onclick={() => handleKickUser(player)}
-                class="ml-auto btn btn-secondary group/button group-hover/list:opacity-100 opacity-0 duration-75 p-1"
-                style="--btn-depth: 2px;"
-              >
-                <X size={20} class="group-hover/button:text-red-500 duration-100" />
-              </button>
-            {/if}
-          </li>
-        {/each}
-      </ul>
-      <div class="mt-auto space-y-4">
-        {#if roomData.host === username}
-          <button
-            onclick={() => (showLeaveDialog = true)}
-            class="btn btn-secondary text-lg py-1.5 w-full"
-          >
-            leave room
-          </button>
-        {:else}
-          <p class="text-center text-white/70">Waiting for the host to start...</p>
-        {/if}
-        {#if roomData.host === username}
-          <button
-            class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
-            style="--btn-depth: 6px;"
-          >
-            START GAME
-            <Swords size={32} />
-          </button>
-        {:else}
-          <button
-            onclick={() => (showLeaveDialog = true)}
-            class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
-            style="--btn-depth: 6px;"
-          >
-            EXIT ROOM
-            <LogOut size={32} />
-          </button>
-        {/if}
+    <div class="h-[640px] flex">
+      <div class="p-4 bg-dark-secondary border border-border w-[360px] h-full flex flex-col">
+        <h1 class="text-center text-red-primary overflow-hidden text-ellipsis text-3xl pb-2">
+          {room}
+        </h1>
+        <span class="text-center text-xl">{roomData.userCount} / {roomData.max}</span>
+        <ul class="py-4">
+          {#each roomData.players as player, index (player.color)}
+            <li
+              class="p-2 text-lg flex items-center gap-2 group/list {username === player.username
+                ? `border-l-2`
+                : ''} {index % 2 === 0 ? 'bg-dark-list-accent' : ''}"
+              style={username === player.username
+                ? `border-color: ${userColor}; color: ${userColor};`
+                : ""}
+            >
+              <Piece color={player.color} size={24} />
+              <span class="overflow-hidden text-ellipsis">
+                {player.username}
+              </span>
+              {#if roomData.host === player.username}
+                <Crown color="#FFC832" />
+              {/if}
+              {#if roomData.host === username && player.username !== username}
+                <button
+                  onclick={() => handleKickUser(player)}
+                  class="ml-auto btn btn-secondary group/button group-hover/list:opacity-100 opacity-0 duration-75 p-1"
+                  style="--btn-depth: 2px;"
+                >
+                  <X size={20} class="group-hover/button:text-red-500 duration-100" />
+                </button>
+              {/if}
+            </li>
+          {/each}
+        </ul>
+        <div class="mt-auto space-y-4">
+          {#if roomData.host === username}
+            <button
+              onclick={() => (showLeaveDialog = true)}
+              class="btn btn-secondary text-lg py-1.5 w-full"
+            >
+              leave room
+            </button>
+          {:else}
+            <p class="text-center text-white/70">Waiting for the host to start...</p>
+          {/if}
+          {#if roomData.host === username}
+            <button
+              class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
+              style="--btn-depth: 6px;"
+            >
+              START GAME
+              <Swords size={32} />
+            </button>
+          {:else}
+            <button
+              onclick={() => (showLeaveDialog = true)}
+              class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
+              style="--btn-depth: 6px;"
+            >
+              EXIT ROOM
+              <LogOut size={32} />
+            </button>
+          {/if}
+        </div>
       </div>
-    </div>
 
-    <!-- message & warm-up -->
-    <div class="bg-dark-secondary border border-border flex flex-col h-[640px] w-[320px]">
-      <div bind:this={messagesContainer} class="flex-1 flex flex-col overflow-y-auto py-1 gap-3">
-        {#each messages as m}
-          <div class="space-y-1 flex flex-col">
-            <div
-              class="flex items-center gap-2
+      <!-- message -->
+      <div class="bg-dark-secondary border border-border flex flex-col h-[640px] w-96">
+        <div bind:this={messagesContainer} class="flex-1 flex flex-col overflow-y-auto py-1 gap-3">
+          {#each messages as m}
+            <div class="space-y-1 flex flex-col">
+              <div
+                class="flex items-center gap-2
               {username === m.from ? 'ml-auto pr-2' : 'pl-2'}"
-              style="color: {username === m.from ? pieceColors[m.color as PieceColor].light : ''}"
-            >
-              <Piece color={m.color} size={16} />
-              {m.from}
-            </div>
+                style="color: {username === m.from ? pieceColors[m.color as PieceColor].light : ''}"
+              >
+                <Piece color={m.color} size={16} />
+                {m.from}
+              </div>
 
-            <div
-              class="p-2 wrap-break-word w-fit max-w-64 text-white text-sm
+              <div
+                class="p-2 wrap-break-word w-fit max-w-64 text-white text-sm
               {username === m.from ? 'ml-auto' : ' bg-dark-accent'}"
-              style="background-color: {username === m.from
-                ? pieceColors[m.color as PieceColor].dark
-                : ''}"
-            >
-              {m.message}
+                style="background-color: {username === m.from
+                  ? pieceColors[m.color as PieceColor].dark
+                  : ''}"
+              >
+                {m.message}
+              </div>
             </div>
-          </div>
-        {/each}
-      </div>
-      <div class="h-10 border-t border-border mt-auto w-full flex">
-        <TextInput
-          bind:value={message}
-          maxlength={MESSAGE_MAX_LENGTH}
-          placeholder="Type your message..."
-          border={false}
-          fontSize="sm"
-          fill={true}
-          outline={false}
-          onEnter={sendMessage}
-          regex={REGEX_MESSAGE}
-          bright
-        />
-        <button
-          class="btn btn-primary w-12 flex items-center justify-center"
-          style="--btn-depth: 0px;"
-        >
-          <Send />
-        </button>
+          {/each}
+        </div>
+        <div class="h-10 border-t border-border mt-auto flex">
+          <TextInput
+            bind:value={message}
+            maxlength={MESSAGE_MAX_LENGTH}
+            placeholder="Type your message..."
+            border={false}
+            fontSize="sm"
+            fill={true}
+            outline={false}
+            onEnter={sendMessage}
+            regex={REGEX_MESSAGE}
+            bright
+          />
+          <button
+            class="btn btn-primary w-12 flex items-center justify-center ml-auto"
+            style="--btn-depth: 0px;"
+          >
+            <Send />
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- warm-up -->
   {/if}
 </div>
 
