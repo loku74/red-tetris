@@ -308,7 +308,7 @@
   <Dialog
     icon={UserX}
     confirm="kick"
-    confirmCallback={() => kickUser({ username: userToKick!, room: room! })}
+    confirmCallback={() => kickUser({ username: userToKick! })}
     title="Confirm kick"
     cancel="cancel"
     bind:open={showKickDialog}

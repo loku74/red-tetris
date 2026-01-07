@@ -9,7 +9,6 @@ export interface SocketLeaveRoomData {
 
 export interface SocketKickData {
   username: string;
-  room: string;
 }
 
 export interface SocketChatData {
