@@ -6,4 +6,4 @@ export const SERVER_PORT = Number(process.env.SERVER_PORT) || 8080;
 export const CHAT_MAX_LENGTH = Number(process.env.CHAT_MAX_LENGTH) || 128;
 
 export const REGEX_ROOM_USER = /^[a-zA-Z0-9_-]+$/;
-export const REGEX_MESSAGE = /^[a-zA-Z0-9 .,!?;:'"()_@#$%&*+=-]+$/;
+export const REGEX_MESSAGE = /^[\P{C}]+$/u;
