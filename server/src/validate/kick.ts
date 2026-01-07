@@ -19,7 +19,7 @@ import {
 } from "../constants/error";
 
 const schema = z.object({
-  username: usernameValidation,
+  username: usernameValidation
 });
 
 type ValidateKickSuccess = {

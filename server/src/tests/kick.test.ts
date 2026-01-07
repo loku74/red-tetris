@@ -31,7 +31,7 @@ afterEach(async () => {
 describe("invalid kick", () => {
   it("not in a room", async () => {
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user2",
+      username: "user2"
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(NOT_IN_A_ROOM);
       expect(success).toBe(false);
@@ -43,7 +43,7 @@ describe("invalid kick", () => {
 
     room.host = new User("dumb", "someone", null);
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user2",
+      username: "user2"
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(NOT_HOST);
       expect(success).toBe(false);
@@ -53,7 +53,7 @@ describe("invalid kick", () => {
   it("him self", async () => {
     await joinRoom(ctx.test1, "example", "user1");
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user1",
+      username: "user1"
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(KICK_ITSELF);
       expect(success).toBe(false);
@@ -65,7 +65,7 @@ describe("invalid kick", () => {
 
     users.set("test", new User("test", "user3", null));
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user3",
+      username: "user3"
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(KICK_INEXISTING);
       expect(success).toBe(false);
@@ -75,7 +75,7 @@ describe("invalid kick", () => {
   it("same host name, but different rooms", async () => {
     const test2 = await createClient(ctx.address, ctx.io);
     const test3 = await createClient(ctx.address, ctx.io);
-  
+
     await joinRoom(ctx.test1, "example", "user1");
     await joinRoom(test2, "example", "user2");
     await joinRoom(test3, "example", "user2");
@@ -83,9 +83,8 @@ describe("invalid kick", () => {
     // try to usurpate another room with an host
     // with the same name
     await emitAsync(test2.client, "kick", {
-      username: "test",
+      username: "test"
     }).then(({ success, data }) => {
-      console.log(data)
       expect((data as { username: string }).username).toBe(NOT_HOST);
       expect(success).toBe(false);
     });
@@ -96,7 +95,7 @@ describe("invalid kick", () => {
     rooms.get("example")?.start();
 
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user2",
+      username: "user2"
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(KICK_PLAYING);
       expect(success).toBe(false);
@@ -120,7 +119,7 @@ it("valid kick", async () => {
 
   roomListener = onceAsync(ctx.test1.client, "room update");
   await emitAsync(ctx.test1.client, "kick", {
-    username: "user2",
+    username: "user2"
   }).then(({ success }) => {
     // check the callback value
     expect(success).toBe(true);
