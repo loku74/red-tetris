@@ -32,12 +32,14 @@ describe("invalid leave room", () => {
 
   it("inexisting room", async () => {
     await joinRoom(ctx.test1, "example", "test");
+    // TO CHANGE AFTER REFACTOR
     const retrieveUser = rooms.get("example")?.get("test");
 
     if (retrieveUser) {
       retrieveUser.room = null;
       rooms.clear();
     }
+    //
 
     await emitAsync(ctx.test1.client, "leave room").then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(INEXISTING_ROOM);
