@@ -31,7 +31,7 @@ afterEach(async () => {
 describe("invalid kick", () => {
   it("not in a room", async () => {
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user2"
+      username: "user2",
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(NOT_IN_A_ROOM);
       expect(success).toBe(false);
@@ -43,7 +43,7 @@ describe("invalid kick", () => {
 
     room.host = new User("dumb", "someone", null);
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user2"
+      username: "user2",
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(NOT_HOST);
       expect(success).toBe(false);
@@ -65,7 +65,7 @@ describe("invalid kick", () => {
 
     users.set("test", new User("test", "user3", null));
     await emitAsync(ctx.test1.client, "kick", {
-      username: "user3"
+      username: "user3",
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(KICK_INEXISTING);
       expect(success).toBe(false);
@@ -83,7 +83,7 @@ describe("invalid kick", () => {
     // try to usurpate another room with an host
     // with the same name
     await emitAsync(test2.client, "kick", {
-      username: "test"
+      username: "test",
     }).then(({ success, data }) => {
       expect((data as { username: string }).username).toBe(NOT_HOST);
       expect(success).toBe(false);
