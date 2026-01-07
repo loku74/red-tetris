@@ -32,7 +32,7 @@ function configureSocket(io: IoServer) {
     console.log("New client connected");
 
     canJoinRoomHandler(socket);
-    chatHandler(socket);
+    chatHandler(io, socket);
     disconnectingHandler(io, socket);
     getRoomsHandler(socket);
     joinRoomHandler(socket);

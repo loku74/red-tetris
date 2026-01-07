@@ -9,7 +9,8 @@
     fontSize = "",
     fill = false,
     outline = true,
-    onEnter = () => {}
+    onEnter = () => {},
+    bright = false
   }: {
     value: string;
     input?: HTMLInputElement;
@@ -21,6 +22,7 @@
     fill?: boolean;
     outline?: boolean;
     onEnter?: () => void;
+    bright?: boolean;
   } = $props();
 
   let isFocused = $state(false);
@@ -38,7 +40,8 @@
       bind:value
       onfocus={() => (isFocused = true)}
       onblur={() => (isFocused = false)}
-      class="w-full outline-red-primary py-2 pl-4 pr-18 bg-dark-secondary
+      class="w-full outline-red-primary py-2 pl-4 pr-18
+      {bright ? 'bg-dark-accent' : ' bg-dark-secondary'}
       {outline ? `focus:outline-2` : 'outline-none'}
       {fill ? 'h-full w-full' : ''}
       {error ? 'border-red-400' : ''}

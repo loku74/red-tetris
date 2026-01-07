@@ -20,7 +20,7 @@ import {
 
 const schema = z.object({
   username: usernameValidation,
-  room: roomValidation
+  roomName: roomValidation
 });
 
 type ValidateJoinRoomSuccess = {
@@ -44,7 +44,7 @@ export function validateJoinRoom(socket: Socket, data: SocketJoinRoomData): Vali
     };
   }
 
-  const room = rooms.get(result.data.room);
+  const room = rooms.get(result.data.roomName);
   if (room && room.users.size >= ROOM_MAX_USERS) {
     return { status: false, error: { roomName: ROOM_IS_FULL } };
   }
@@ -61,5 +61,5 @@ export function validateJoinRoom(socket: Socket, data: SocketJoinRoomData): Vali
     return { status: false, error: { roomName: PLAYING_ROOM } };
   }
 
-  return { status: true, roomName: result.data.room, username: result.data.username };
+  return { status: true, roomName: result.data.roomName, username: result.data.username };
 }

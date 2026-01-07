@@ -15,8 +15,8 @@ body {
   --color-red-accent: #eb0000;
   --color-red-secondary: #770000;
   --color-dark-primary: hsl(0, 0%, 10%);
-  --color-dark-secondary: hsl(0, 0%, 20%);
-  --color-dark-list-accent: hsl(0, 0%, 25%);
+  --color-dark-secondary: hsl(0, 0%, 17%);
+  --color-dark-list-accent: hsl(0, 0%, 24%);
   --color-dark-accent: hsl(0, 0%, 30%);
   --color-dark-hover: hsl(0, 0%, 35%);
   --color-border: hsl(0, 0%, 40%);
@@ -55,7 +55,7 @@ body {
   cursor: not-allowed;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background-color: var(--color-red-accent);
 }
 

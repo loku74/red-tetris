@@ -1,9 +1,9 @@
-import { type Socket } from "socket.io";
+import type { Server, Socket } from "socket.io";
 import { validateChat } from "../validate/chat";
 import type { SocketChatData } from "client-types";
 import type { Callback } from "../types/types";
 
-export function registerHandlers(socket: Socket) {
+export function registerHandlers(io: Server, socket: Socket) {
   socket.on("chat", (data: SocketChatData, callback: Callback) => {
     const result = validateChat(socket, data);
     if (!result.status) {
@@ -11,9 +11,11 @@ export function registerHandlers(socket: Socket) {
       return;
     }
 
-    result.current.socket
-      .to(result.room.name)
-      .emit("message", { from: result.current.name, message: result.message });
+    io.to(result.room.name).emit("message", {
+      from: result.current.name,
+      color: result.current.color,
+      message: result.message
+    });
 
     console.log(`user ${result.current.name} wrote: "${result.message}" to ${result.room.name} `);
 

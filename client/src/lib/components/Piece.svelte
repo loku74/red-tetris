@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Piece } from "$lib/types/piece";
-  import { pieceColors } from "$lib/utils/piece";
+  import { pieceColors } from "$lib/constants/pieceColors";
 
   let { size, color }: Piece = $props();
 

@@ -31,16 +31,6 @@ describe("invalid chat", () => {
       expect(success).toBe(false);
     });
   });
-  it("wrong room", async () => {
-    await joinRoom(ctx.test1, "example2", "user1");
-    await emitAsync(ctx.test1.client, "chat", {
-      message: "test",
-      room: "example"
-    }).then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(NOT_IN_THIS_ROOM);
-      expect(success).toBe(false);
-    });
-  });
 });
 
 it("valid chat", async () => {

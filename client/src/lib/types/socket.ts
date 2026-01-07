@@ -1,6 +1,6 @@
 export interface SocketJoinRoomData {
   username: string;
-  room: string;
+  roomName: string;
 }
 
 export interface SocketLeaveRoomData {
@@ -14,7 +14,6 @@ export interface SocketKickData {
 
 export interface SocketChatData {
   message: string;
-  room: string;
 }
 
 export interface SocketStartData {

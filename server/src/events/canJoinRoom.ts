@@ -11,6 +11,6 @@ export function registerHandlers(socket: Socket) {
       return;
     }
 
-    callback(true);
+    callback(true, { roomName: result.roomName, username: result.username });
   });
 }

@@ -44,5 +44,6 @@ export interface SocketGetRoomsResponse {
 
 export interface SocketMessageResponse {
   from: string;
+  color: SocketUserColor;
   message: string;
 }
