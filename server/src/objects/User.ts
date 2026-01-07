@@ -11,5 +11,3 @@ export class User {
     public socket: Socket
   ) {}
 }
-
-export const users: Map<string, User> = new Map();

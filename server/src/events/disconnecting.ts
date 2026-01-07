@@ -1,11 +1,11 @@
 import { Server, type Socket } from "socket.io";
-import { users } from "../objects/User";
-import { getRoom } from "../objects/Room";
+import { getUser } from "../core/user";
+import { getRoomBySocket } from "../core/room";
 
 export function registerHandlers(io: Server, socket: Socket) {
   socket.on("disconnecting", () => {
-    const user = users.get(socket.id);
-    const room = getRoom(socket);
+    const user = getUser(socket.id);
+    const room = getRoomBySocket(socket);
 
     // user can only we waiting to join a room
     if (user && room) {

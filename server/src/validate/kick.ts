@@ -2,9 +2,8 @@
 import z from "zod";
 
 // intern
-import { type Room } from "../objects/Room";
-import { users, type User } from "../objects/User";
 import { formatSchemeError, usernameValidation } from "./validation";
+import { users } from "../core/user";
 
 // types
 import type { SocketKickData } from "client-types";
@@ -17,6 +16,8 @@ import {
   NOT_IN_A_ROOM
 } from "../constants/validateErrors";
 import type { ValidateError } from "../types/server";
+import type { Room } from "../objects/Room";
+import type { User } from "../objects/User";
 
 const schema = z.object({
   username: usernameValidation

@@ -3,8 +3,8 @@ import z from "zod";
 
 // intern
 import { ROOM_MAX, ROOM_MAX_USERS } from "../constants/core";
-import { rooms } from "../objects/Room";
 import { formatSchemeError, roomValidation, usernameValidation } from "./validation";
+import { rooms } from "../core/room";
 
 // types
 import type { SocketJoinRoomData } from "client-types";

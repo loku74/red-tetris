@@ -1,7 +1,8 @@
-import type { Socket } from "socket.io";
 import { ROOM_MAX_USERS } from "../constants/core";
+import { rooms } from "../core/room";
+import { users } from "../core/user";
 import type { SocketRoomInfoData, SocketUserColor } from "../types/types";
-import { users, type User } from "./User";
+import { type User } from "./User";
 
 export class Room {
   public playing: boolean = false;
@@ -103,31 +104,4 @@ export class Room {
 
     // initialize game variables (like pieces, boards etccc)
   }
-}
-
-export const rooms: Map<string, Room> = new Map();
-
-export function joinOrCreateRoom(user: User, room_id: string): Room {
-  let room = rooms.get(room_id);
-
-  if (room == undefined) {
-    room = new Room(room_id, user);
-
-    rooms.set(room_id, room);
-  } else {
-    const userColor = room.add(user);
-    user.color = userColor;
-  }
-
-  user.room = room;
-  return room;
-}
-
-export function getRoom(socket: Socket): Room | null {
-  for (const roomId of socket.rooms) {
-    if (roomId !== socket.id) {
-      return rooms.get(roomId) ?? null;
-    }
-  }
-  return null;
 }

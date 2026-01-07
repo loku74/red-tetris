@@ -1,5 +1,5 @@
-import { rooms } from "../objects/Room";
 import { ROOM_MAX_USERS } from "../constants/core";
+import { rooms } from "../core/room";
 import type { Socket } from "socket.io";
 import type { Callback, SocketGetRoomsResponse } from "../types/types";
 

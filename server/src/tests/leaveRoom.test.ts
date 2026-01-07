@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { INEXISTING_ROOM, USER_NOT_FOUND } from "../constants/validateErrors";
-import { rooms } from "../objects/Room";
-import { users } from "../objects/User";
-import type { TestServerData } from "./types";
 import {
   createClient,
   emitAsync,
@@ -11,6 +8,9 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
+import { users } from "../core/user";
+import { rooms } from "../core/room";
+import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
 

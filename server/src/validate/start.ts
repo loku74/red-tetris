@@ -1,6 +1,7 @@
 // intern
 import { Room } from "../objects/Room";
-import { users } from "../objects/User";
+import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
+import { users } from "../core/user";
 
 // types
 import type { Socket } from "socket.io";

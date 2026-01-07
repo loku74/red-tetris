@@ -1,8 +1,11 @@
 // intern
-import { type Room } from "../objects/Room";
-import { users, type User } from "../objects/User";
+import { INEXISTING_ROOM, USER_NOT_FOUND } from "../constants/error";
+import { users } from "../core/user";
+import { roomValidation } from "./validation";
 
 // types
+import type { Room } from "../objects/Room";
+import type { User } from "../objects/User";
 import type { Socket } from "socket.io";
 import { INEXISTING_ROOM, USER_NOT_FOUND } from "../constants/validateErrors";
 import type { ValidateError } from "../types/server";

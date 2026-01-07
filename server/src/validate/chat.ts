@@ -3,8 +3,9 @@ import z from "zod";
 
 // intern
 import { Room } from "../objects/Room";
-import { users } from "../objects/User";
 import { formatSchemeError, messageValidation } from "./validation";
+import { users } from "../core/user";
+import { NOT_IN_A_ROOM } from "../constants/error";
 
 // types
 import type { SocketChatData } from "client-types";
