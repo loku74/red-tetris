@@ -2,11 +2,11 @@ import type { SocketJoinRoomResponse } from "client-types";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { ROOM_MAX, ROOM_MAX_USERS } from "../constants/core";
 import {
-  ALREADY_IN_A_ROOM,
-  MAX_ROOMS,
-  PLAYING_ROOM,
-  ROOM_IS_FULL,
-  USERNAME_TAKEN
+  ERROR_ALREADY_IN_A_ROOM,
+  ERROR_MAX_ROOMS,
+  ERROR_PLAYING_ROOM,
+  ERROR_ROOM_IS_FULL,
+  ERROR_USERNAME_TAKEN
 } from "../constants/validateErrors";
 import { getRoom, getRooms, setRoom } from "../core/room";
 import { Room } from "../objects/Room";
@@ -51,7 +51,7 @@ describe("invalid join", () => {
       username: "user1",
       roomName: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(ROOM_IS_FULL);
+      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_ROOM_IS_FULL);
       expect(success).toBe(false);
     });
   });
@@ -64,7 +64,7 @@ describe("invalid join", () => {
       username: "user1",
       roomName: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(MAX_ROOMS);
+      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_MAX_ROOMS);
       expect(success).toBe(false);
     });
   });
@@ -76,7 +76,7 @@ describe("invalid join", () => {
       username: "name",
       roomName: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).username).toBe(USERNAME_TAKEN);
+      expect((data as SocketJoinRoomResponse).username).toBe(ERROR_USERNAME_TAKEN);
       expect(success).toBe(false);
     });
   });
@@ -90,7 +90,7 @@ describe("invalid join", () => {
       username: "user1",
       roomName: "example2"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(ALREADY_IN_A_ROOM);
+      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_ALREADY_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -103,7 +103,7 @@ describe("invalid join", () => {
       username: "user1",
       roomName: "example"
     }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(PLAYING_ROOM);
+      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_PLAYING_ROOM);
       expect(success).toBe(false);
     });
   });

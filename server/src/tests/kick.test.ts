@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  KICK_INEXISTING,
-  KICK_ITSELF,
-  KICK_PLAYING,
-  NOT_HOST,
-  NOT_IN_A_ROOM
+  ERROR_KICK_INEXISTING,
+  ERROR_KICK_SELF,
+  ERROR_KICK_PLAYING,
+  ERROR_NOT_HOST,
+  ERROR_NOT_IN_A_ROOM
 } from "../constants/validateErrors";
 import type { TestServerData } from "./types";
 import {
@@ -34,7 +34,7 @@ describe("invalid kick", () => {
     await emitAsync(ctx.test1.client, "kick", {
       username: "user2"
     }).then(({ success, data }) => {
-      expect((data as { username: string }).username).toBe(NOT_IN_A_ROOM);
+      expect((data as { username: string }).username).toBe(ERROR_NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -46,7 +46,7 @@ describe("invalid kick", () => {
     await emitAsync(ctx.test1.client, "kick", {
       username: "user2"
     }).then(({ success, data }) => {
-      expect((data as { username: string }).username).toBe(NOT_HOST);
+      expect((data as { username: string }).username).toBe(ERROR_NOT_HOST);
       expect(success).toBe(false);
     });
   });
@@ -56,7 +56,7 @@ describe("invalid kick", () => {
     await emitAsync(ctx.test1.client, "kick", {
       username: "user1"
     }).then(({ success, data }) => {
-      expect((data as { username: string }).username).toBe(KICK_ITSELF);
+      expect((data as { username: string }).username).toBe(ERROR_KICK_SELF);
       expect(success).toBe(false);
     });
   });
@@ -68,7 +68,7 @@ describe("invalid kick", () => {
     await emitAsync(ctx.test1.client, "kick", {
       username: "user3"
     }).then(({ success, data }) => {
-      expect((data as { username: string }).username).toBe(KICK_INEXISTING);
+      expect((data as { username: string }).username).toBe(ERROR_KICK_INEXISTING);
       expect(success).toBe(false);
     });
   });
@@ -86,7 +86,7 @@ describe("invalid kick", () => {
     await emitAsync(test2.client, "kick", {
       username: "test"
     }).then(({ success, data }) => {
-      expect((data as { username: string }).username).toBe(NOT_HOST);
+      expect((data as { username: string }).username).toBe(ERROR_NOT_HOST);
       expect(success).toBe(false);
     });
   });
@@ -98,7 +98,7 @@ describe("invalid kick", () => {
     await emitAsync(ctx.test1.client, "kick", {
       username: "user2"
     }).then(({ success, data }) => {
-      expect((data as { username: string }).username).toBe(KICK_PLAYING);
+      expect((data as { username: string }).username).toBe(ERROR_KICK_PLAYING);
       expect(success).toBe(false);
     });
   });

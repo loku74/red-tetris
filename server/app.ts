@@ -1,18 +1,26 @@
-import type { Express } from "express";
+// global
 import express from "express";
 import { createServer } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Server as IoServer, Socket } from "socket.io";
+
+// intern
 import { SERVER_PORT } from "./src/constants/core";
+
+// handlers
 import { registerHandlers as canJoinRoomHandler } from "./src/events/canJoinRoom";
-import { registerHandlers as leaveRoomHandler } from "./src/events/leaveRoom";
 import { registerHandlers as chatHandler } from "./src/events/chat";
 import { registerHandlers as disconnectingHandler } from "./src/events/disconnecting";
 import { registerHandlers as getRoomsHandler } from "./src/events/getRooms";
 import { registerHandlers as joinRoomHandler } from "./src/events/joinRoom";
 import { registerHandlers as kickHandler } from "./src/events/kick";
+import { registerHandlers as leaveRoomHandler } from "./src/events/leaveRoom";
 import { registerHandlers as startHandler } from "./src/events/start";
+import { registerHandlers as warmUpHandler } from "./src/events/warmUp";
+
+// types
+import type { Express } from "express";
 import type { ServerData } from "./src/types/server";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -39,6 +47,7 @@ function configureSocket(io: IoServer) {
     kickHandler(io, socket);
     startHandler(io, socket);
     leaveRoomHandler(io, socket);
+    warmUpHandler(socket);
   });
 }
 

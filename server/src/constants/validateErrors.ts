@@ -1,20 +1,22 @@
 // commons
-export const NOT_IN_A_ROOM = "You do not belong to a room";
-export const NOT_IN_THIS_ROOM = "You do not belong to this room";
-export const PLAYING_ROOM = "This room is already playing";
-export const INEXISTING_ROOM = "This room does not exist";
-export const NOT_HOST = "You are not the host of this room";
+export const ERROR_NOT_IN_A_ROOM = "You do not belong to a room";
+export const ERROR_PLAYING_ROOM = "This room is already playing";
+export const ERROR_INEXISTING_ROOM = "This room does not exist";
+export const ERROR_NOT_HOST = "You are not the host of this room";
 
 // join room
-export const ROOM_IS_FULL = "Room is full";
-export const MAX_ROOMS = "Maximum number of rooms reached, please join an existing one";
-export const USERNAME_TAKEN = "This username is already taken in this room";
-export const ALREADY_IN_A_ROOM = "You are already in a room";
+export const ERROR_ROOM_IS_FULL = "Room is full";
+export const ERROR_MAX_ROOMS = "Maximum number of rooms reached, please join an existing one";
+export const ERROR_USERNAME_TAKEN = "This username is already taken in this room";
+export const ERROR_ALREADY_IN_A_ROOM = "You are already in a room";
 
 // kick
-export const KICK_ITSELF = "You can't kick yourself";
-export const KICK_PLAYING = "You can't kick while playing";
-export const KICK_INEXISTING = "This user is not in this room";
+export const ERROR_KICK_SELF = "You can't kick yourself";
+export const ERROR_KICK_PLAYING = "You can't kick while playing";
+export const ERROR_KICK_INEXISTING = "This user is not in this room";
 
 // leave room
-export const USER_NOT_FOUND = "User not found";
+export const ERROR_USER_NOT_FOUND = "User not found";
+
+// warm-up
+export const ERROR_WARM_UP = "You are already in warm-up";
