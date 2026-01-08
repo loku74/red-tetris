@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/validateErrors";
-import { User } from "../objects/User";
 import {
   createClient,
   emitAsync,
+  fakeUser,
   joinRoom,
   onceAsync,
   setupTestServer,
@@ -33,7 +33,7 @@ describe("invalid start", () => {
   it("not host", async () => {
     const room = await joinRoom(ctx.test1, "example", "user1");
 
-    room.host = new User("dumb", "someone", null);
+    room.host = fakeUser("dumb", "someone");
     await emitAsync(ctx.test1.client, "start").then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(NOT_HOST);
       expect(success).toBe(false);

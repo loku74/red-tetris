@@ -8,6 +8,7 @@ import { getUsers } from "../core/user";
 import type { AddressInfo } from "net";
 import type { Callback } from "../types/types";
 import type { TestServerData, TestSocket } from "./types";
+import { User } from "../objects/User";
 
 export function createClient(address: string, io: Server): Promise<TestSocket> {
   return new Promise((resolve) => {
@@ -85,8 +86,14 @@ export async function joinRoom(
 
   const room = getRoom(roomname);
 
-  expect(room).toBeDefined();
+  if (!room) {
+    expect.fail("Room isn't defined!");
+  }
   expect(room).toBeInstanceOf(Room);
 
   return room;
+}
+
+export function fakeUser(id: string, name: string): User {
+  return new User(id, name, {} as ServerSocket);
 }

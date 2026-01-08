@@ -6,11 +6,11 @@ import {
   NOT_HOST,
   NOT_IN_A_ROOM
 } from "../constants/validateErrors";
-import { User } from "../objects/User";
 import type { TestServerData } from "./types";
 import {
   createClient,
   emitAsync,
+  fakeUser,
   joinRoom,
   onceAsync,
   setupTestServer,
@@ -42,7 +42,7 @@ describe("invalid kick", () => {
   it("not host", async () => {
     const room = await joinRoom(ctx.test1, "example", "user1");
 
-    room.host = new User("dumb", "someone", null);
+    room.host = fakeUser("dumb", "someone");
     await emitAsync(ctx.test1.client, "kick", {
       username: "user2"
     }).then(({ success, data }) => {
@@ -64,7 +64,7 @@ describe("invalid kick", () => {
   it("an user not in the room", async () => {
     await joinRoom(ctx.test1, "example", "user1");
 
-    setUser("test", new User("test", "user3", null));
+    setUser("test", fakeUser("test", "user3"));
     await emitAsync(ctx.test1.client, "kick", {
       username: "user3"
     }).then(({ success, data }) => {

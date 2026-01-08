@@ -10,10 +10,16 @@ import {
 } from "../constants/validateErrors";
 import { getRoom, getRooms, setRoom } from "../core/room";
 import { Room } from "../objects/Room";
-import { User } from "../objects/User";
 import type { SocketRoomInfoData } from "../types/types";
 import type { TestServerData } from "./types";
-import { createClient, emitAsync, onceAsync, setupTestServer, shutdownTestServer } from "./utils";
+import {
+  createClient,
+  emitAsync,
+  fakeUser,
+  onceAsync,
+  setupTestServer,
+  shutdownTestServer
+} from "./utils";
 
 let ctx: TestServerData;
 
@@ -26,7 +32,7 @@ afterEach(async () => {
 });
 
 describe("invalid join", () => {
-  const fakeUser = new User("id", "name", null);
+  const user = fakeUser("id", "name");
 
   it("invalid scheme", async () => {
     await emitAsync(ctx.test1.client, "join room", {}).then(({ success }) => {
@@ -35,9 +41,9 @@ describe("invalid join", () => {
   });
 
   it("room is full", async () => {
-    const room = new Room("example", fakeUser);
+    const room = new Room("example", user);
     for (let i = 1; i < ROOM_MAX_USERS; i++) {
-      room.add(new User(`a${i}`, `a${i}`, null));
+      room.add(fakeUser(`a${i}`, `a${i}`));
     }
     setRoom("example", room);
 
@@ -52,7 +58,7 @@ describe("invalid join", () => {
 
   it("maximum of rooms", async () => {
     for (let i = 0; i < ROOM_MAX; i++) {
-      setRoom(i.toString(), new Room(`test${i}`, fakeUser));
+      setRoom(i.toString(), new Room(`test${i}`, user));
     }
     await emitAsync(ctx.test1.client, "join room", {
       username: "user1",
@@ -64,7 +70,7 @@ describe("invalid join", () => {
   });
 
   it("username already taken", async () => {
-    setRoom("example", new Room("example", fakeUser));
+    setRoom("example", new Room("example", user));
 
     await emitAsync(ctx.test1.client, "join room", {
       username: "name",
@@ -90,7 +96,7 @@ describe("invalid join", () => {
   });
 
   it("room already started", async () => {
-    setRoom("example", new Room("example", fakeUser));
+    setRoom("example", new Room("example", user));
     getRoom("example")?.start();
 
     await emitAsync(ctx.test1.client, "join room", {
