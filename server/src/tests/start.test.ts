@@ -1,4 +1,3 @@
-import type { SocketStartData } from "client-types";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { rooms } from "../objects/Room";
 import { User } from "../objects/User";
@@ -11,7 +10,7 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
-import { INEXISTING_ROOM, NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
+import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
 
 let ctx: TestServerData;
 
@@ -25,20 +24,8 @@ afterEach(async () => {
 
 describe("invalid start", () => {
   it("not in a room", async () => {
-    await emitAsync(ctx.test1.client, "start", {
-      room: "example"
-    }).then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, "start").then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(NOT_IN_A_ROOM);
-      expect(success).toBe(false);
-    });
-  });
-
-  it("inexisting room", async () => {
-    await joinRoom(ctx.test1, "example", "user1");
-    await emitAsync(ctx.test1.client, "start", {
-      room: "example1"
-    }).then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(INEXISTING_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -47,9 +34,7 @@ describe("invalid start", () => {
     const room = await joinRoom(ctx.test1, "example", "user1");
 
     room.host = new User("dumb", "someone", null);
-    await emitAsync(ctx.test1.client, "start", {
-      room: "example"
-    }).then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, "start").then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(NOT_HOST);
       expect(success).toBe(false);
     });
@@ -59,9 +44,7 @@ describe("invalid start", () => {
     const room = await joinRoom(ctx.test1, "example", "user1");
     room.start();
 
-    await emitAsync(ctx.test1.client, "start", {
-      room: "example"
-    }).then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, "start").then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(PLAYING_ROOM);
       expect(success).toBe(false);
     });
@@ -77,9 +60,7 @@ it("valid start", async () => {
   const listener1 = onceAsync(ctx.test1.client, "room start");
   const listener2 = onceAsync(test2.client, "room start");
 
-  await emitAsync(ctx.test1.client, "start", {
-    room: "example"
-  } as SocketStartData).then(({ success }) => {
+  await emitAsync(ctx.test1.client, "start").then(({ success }) => {
     expect(success).toBe(true);
   });
 

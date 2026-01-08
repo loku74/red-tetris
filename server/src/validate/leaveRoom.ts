@@ -1,20 +1,11 @@
-// global
-import z from "zod";
-
 // intern
-import { rooms, type Room } from "../objects/Room";
+import { type Room } from "../objects/Room";
 import { users, type User } from "../objects/User";
-import { formatSchemeError, roomValidation } from "./validation";
 
 // types
-import type { SocketLeaveRoomData } from "client-types";
 import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/server";
-import { INEXISTING_ROOM, NOT_IN_THIS_ROOM, USER_NOT_FOUND } from "../constants/error";
-
-const schema = z.object({
-  room: roomValidation
-});
+import { INEXISTING_ROOM, USER_NOT_FOUND } from "../constants/error";
 
 type ValidateLeaveRoomSuccess = {
   status: true;
@@ -24,26 +15,15 @@ type ValidateLeaveRoomSuccess = {
 
 type ValidateLeaveRoomResult = ValidateLeaveRoomSuccess | ValidateError;
 
-export function validateLeaveRoom(
-  socket: Socket,
-  data: SocketLeaveRoomData
-): ValidateLeaveRoomResult {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    return { status: false, error: formatSchemeError(result.error) };
-  }
-
+export function validateLeaveRoom(socket: Socket): ValidateLeaveRoomResult {
   const current = users.get(socket.id);
+  const room = current?.room;
+
   if (current === undefined) {
     return { status: false, error: { room: USER_NOT_FOUND } };
   }
-
-  const room = rooms.get(result.data.room);
-  if (room === undefined) {
+  if (room === undefined || room === null) {
     return { status: false, error: { room: INEXISTING_ROOM } };
-  }
-  if (!room.exist(current)) {
-    return { status: false, error: { room: NOT_IN_THIS_ROOM } };
   }
 
   return { status: true, room, current };

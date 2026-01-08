@@ -1,4 +1,3 @@
-import type { SocketLeaveRoomData } from "client-types";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { rooms } from "../objects/Room";
 import { users } from "../objects/User";
@@ -11,7 +10,7 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
-import { INEXISTING_ROOM, NOT_IN_THIS_ROOM, USER_NOT_FOUND } from "../constants/error";
+import { INEXISTING_ROOM, USER_NOT_FOUND } from "../constants/error";
 
 let ctx: TestServerData;
 
@@ -25,9 +24,7 @@ afterEach(async () => {
 
 describe("invalid leave room", () => {
   it("user not found", async () => {
-    await emitAsync(ctx.test1.client, "leave room", {
-      room: "example"
-    } as SocketLeaveRoomData).then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, "leave room").then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(USER_NOT_FOUND);
       expect(success).toBe(false);
     });
@@ -35,24 +32,17 @@ describe("invalid leave room", () => {
 
   it("inexisting room", async () => {
     await joinRoom(ctx.test1, "example", "test");
-    await emitAsync(ctx.test1.client, "leave room", {
-      room: "wrong"
-    } as SocketLeaveRoomData).then(({ success, data }) => {
+    // TO CHANGE AFTER REFACTOR
+    const retrieveUser = rooms.get("example")?.get("test");
+
+    if (retrieveUser) {
+      retrieveUser.room = null;
+      rooms.clear();
+    }
+    //
+
+    await emitAsync(ctx.test1.client, "leave room").then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(INEXISTING_ROOM);
-      expect(success).toBe(false);
-    });
-  });
-
-  it("not in the room", async () => {
-    const test2 = await createClient(ctx.address, ctx.io);
-
-    await joinRoom(ctx.test1, "example", "test");
-    await joinRoom(test2, "example2", "test2");
-
-    await emitAsync(ctx.test1.client, "leave room", {
-      room: "example2"
-    } as SocketLeaveRoomData).then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(NOT_IN_THIS_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -70,9 +60,7 @@ it("valid leave room", async () => {
 
   const listener = onceAsync(test2.client, "room update");
 
-  await emitAsync(ctx.test1.client, "leave room", {
-    room: "example"
-  } as SocketLeaveRoomData).then(({ success }) => {
+  await emitAsync(ctx.test1.client, "leave room").then(({ success }) => {
     expect(success).toBe(true);
   });
 

@@ -6,6 +6,7 @@ import { init } from "../../app";
 import { Room, rooms } from "../objects/Room";
 import { expect } from "vitest";
 import type { TestServerData, TestSocket } from "./types";
+import { users } from "../objects/User";
 
 export function createClient(address: string, io: Server): Promise<TestSocket> {
   return new Promise((resolve) => {
@@ -68,6 +69,7 @@ export async function setupTestServer(): Promise<TestServerData> {
 export async function shutdownTestServer(ctx: TestServerData): Promise<void> {
   await ctx.io.close();
   rooms.clear();
+  users.clear();
 }
 
 export async function joinRoom(

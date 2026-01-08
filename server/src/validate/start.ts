@@ -1,20 +1,11 @@
-// global
-import z from "zod";
-
 // intern
-import { Room, rooms } from "../objects/Room";
+import { Room } from "../objects/Room";
 import { users } from "../objects/User";
-import { formatSchemeError, roomValidation } from "./validation";
 
 // types
-import type { SocketStartData } from "client-types";
 import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/server";
-import { INEXISTING_ROOM, NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
-
-const schema = z.object({
-  room: roomValidation
-});
+import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
 
 type ValidateStartSuccess = {
   status: true;
@@ -23,20 +14,12 @@ type ValidateStartSuccess = {
 
 type ValideStartResult = ValidateStartSuccess | ValidateError;
 
-export function validateStart(socket: Socket, data: SocketStartData): ValideStartResult {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    return { status: false, error: formatSchemeError(result.error) };
-  }
-
+export function validateStart(socket: Socket): ValideStartResult {
   const current = users.get(socket.id);
-  if (current === undefined) {
-    return { status: false, error: { room: NOT_IN_A_ROOM } };
-  }
+  const room = current?.room;
 
-  const room = rooms.get(data.room);
-  if (room === undefined) {
-    return { status: false, error: { room: INEXISTING_ROOM } };
+  if (current === undefined || room === undefined || room === null) {
+    return { status: false, error: { room: NOT_IN_A_ROOM } };
   }
   if (room.host != current) {
     return { status: false, error: { room: NOT_HOST } };

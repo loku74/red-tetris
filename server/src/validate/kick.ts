@@ -2,16 +2,15 @@
 import z from "zod";
 
 // intern
-import { rooms, type Room } from "../objects/Room";
+import { type Room } from "../objects/Room";
 import { users, type User } from "../objects/User";
-import { formatSchemeError, roomValidation, usernameValidation } from "./validation";
+import { formatSchemeError, usernameValidation } from "./validation";
 
 // types
 import type { SocketKickData } from "client-types";
 import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/server";
 import {
-  INEXISTING_ROOM,
   KICK_INEXISTING,
   KICK_ITSELF,
   KICK_PLAYING,
@@ -20,8 +19,7 @@ import {
 } from "../constants/error";
 
 const schema = z.object({
-  username: usernameValidation,
-  room: roomValidation
+  username: usernameValidation
 });
 
 type ValidateKickSuccess = {
@@ -40,22 +38,19 @@ export function validateKick(socket: Socket, data: SocketKickData): ValidateKick
   }
 
   const current = users.get(socket.id);
-  if (current === undefined) {
-    return { status: false, error: { room: NOT_IN_A_ROOM } };
+  if (current === undefined || current.room === null) {
+    return { status: false, error: { username: NOT_IN_A_ROOM } };
   }
   if (result.data.username === current.name) {
     return { status: false, error: { username: KICK_ITSELF } };
   }
 
-  const room = rooms.get(data.room);
-  if (room === undefined) {
-    return { status: false, error: { room: INEXISTING_ROOM } };
-  }
+  const room = current.room;
   if (room.host != current) {
-    return { status: false, error: { room: NOT_HOST } };
+    return { status: false, error: { username: NOT_HOST } };
   }
   if (room.playing === true) {
-    return { status: false, error: { room: KICK_PLAYING } };
+    return { status: false, error: { username: KICK_PLAYING } };
   }
 
   const targetUser = room.get(data.username);
