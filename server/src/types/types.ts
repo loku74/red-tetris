@@ -29,6 +29,8 @@ export interface SocketMessageData {
   message: string;
 }
 
+export type PieceType = "I" | "J" | "L" | "O" | "Z" | "T" | "S";
+
 // responses (callback)
 export type Callback = (success: boolean, data?: unknown) => void;
 
