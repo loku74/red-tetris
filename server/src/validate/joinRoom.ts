@@ -9,14 +9,14 @@ import { formatSchemeError, roomValidation, usernameValidation } from "./validat
 // types
 import type { SocketJoinRoomData } from "client-types";
 import type { Socket } from "socket.io";
-import type { ValidateError } from "../types/server";
 import {
   ALREADY_IN_A_ROOM,
   MAX_ROOMS,
   PLAYING_ROOM,
   ROOM_IS_FULL,
   USERNAME_TAKEN
-} from "../constants/error";
+} from "../constants/validateErrors";
+import type { ValidateError } from "../types/server";
 
 const schema = z.object({
   username: usernameValidation,

@@ -1,5 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  KICK_INEXISTING,
+  KICK_ITSELF,
+  KICK_PLAYING,
+  NOT_HOST,
+  NOT_IN_A_ROOM
+} from "../constants/validateErrors";
+import { rooms } from "../objects/Room";
+import { User, users } from "../objects/User";
+import type { TestServerData } from "./types";
+import {
   createClient,
   emitAsync,
   joinRoom,
@@ -7,16 +17,6 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
-import { rooms } from "../objects/Room";
-import { User, users } from "../objects/User";
-import type { TestServerData } from "./types";
-import {
-  KICK_INEXISTING,
-  KICK_ITSELF,
-  KICK_PLAYING,
-  NOT_HOST,
-  NOT_IN_A_ROOM
-} from "../constants/error";
 
 let ctx: TestServerData;
 

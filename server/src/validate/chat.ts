@@ -9,9 +9,9 @@ import { formatSchemeError, messageValidation } from "./validation";
 // types
 import type { SocketChatData } from "client-types";
 import type { Socket } from "socket.io";
+import { NOT_IN_A_ROOM } from "../constants/validateErrors";
 import type { User } from "../objects/User";
 import type { ValidateError } from "../types/server";
-import { NOT_IN_A_ROOM } from "../constants/error";
 
 const schema = z.object({
   message: messageValidation

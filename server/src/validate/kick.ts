@@ -9,14 +9,14 @@ import { formatSchemeError, usernameValidation } from "./validation";
 // types
 import type { SocketKickData } from "client-types";
 import type { Socket } from "socket.io";
-import type { ValidateError } from "../types/server";
 import {
   KICK_INEXISTING,
   KICK_ITSELF,
   KICK_PLAYING,
   NOT_HOST,
   NOT_IN_A_ROOM
-} from "../constants/error";
+} from "../constants/validateErrors";
+import type { ValidateError } from "../types/server";
 
 const schema = z.object({
   username: usernameValidation

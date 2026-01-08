@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/validateErrors";
 import { rooms } from "../objects/Room";
 import { User } from "../objects/User";
 import type { TestServerData } from "./types";
@@ -10,7 +11,6 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
-import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
 
 let ctx: TestServerData;
 

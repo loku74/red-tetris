@@ -4,8 +4,8 @@ import { users } from "../objects/User";
 
 // types
 import type { Socket } from "socket.io";
+import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/validateErrors";
 import type { ValidateError } from "../types/server";
-import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/error";
 
 type ValidateStartSuccess = {
   status: true;

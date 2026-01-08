@@ -1,11 +1,14 @@
 import z, { ZodError } from "zod";
+
 import {
   CHAT_MAX_LENGTH,
   REGEX_MESSAGE,
-  REGEX_ROOM_USER,
+  REGEX_ROOM_AND_USER,
   ROOM_MAX_LENGTH,
   USERNAME_MAX_LENGTH
 } from "../constants/core";
+
+import * as ZodSchemaErrors from "../constants/zodSchemaErrors";
 
 export function formatSchemeError(error: ZodError) {
   return error.issues.reduce(
@@ -20,18 +23,18 @@ export function formatSchemeError(error: ZodError) {
 
 export const roomValidation = z
   .string()
-  .regex(REGEX_ROOM_USER, "Only alphanumeric characters and -_ are authorized")
-  .min(1, "Room name cannot be empty")
-  .max(ROOM_MAX_LENGTH, `Room name cannot be longer than ${ROOM_MAX_LENGTH} characters`);
+  .regex(REGEX_ROOM_AND_USER, ZodSchemaErrors.Z_REGEX_ROOM_AND_USER)
+  .min(1, ZodSchemaErrors.Z_ROOM_EMPTY)
+  .max(ROOM_MAX_LENGTH, ZodSchemaErrors.Z_ROOM_MAX);
 
 export const usernameValidation = z
   .string()
-  .regex(REGEX_ROOM_USER, "Only alphanumeric characters and -_ are authorized")
-  .min(1, "Username cannot be empty")
-  .max(USERNAME_MAX_LENGTH, `Username cannot be longer than ${USERNAME_MAX_LENGTH} characters`);
+  .regex(REGEX_ROOM_AND_USER, ZodSchemaErrors.Z_REGEX_ROOM_AND_USER)
+  .min(1, ZodSchemaErrors.Z_USERNAME_EMPTY)
+  .max(USERNAME_MAX_LENGTH, ZodSchemaErrors.Z_USERNAME_MAX);
 
 export const messageValidation = z
   .string()
-  .regex(REGEX_MESSAGE)
-  .min(1, "Message cannot be empty")
-  .max(CHAT_MAX_LENGTH, `Message cannot be longer than ${CHAT_MAX_LENGTH} characters`);
+  .regex(REGEX_MESSAGE, ZodSchemaErrors.Z_REGEX_MESSAGE)
+  .min(1, ZodSchemaErrors.Z_MESSAGE_EMPTY)
+  .max(CHAT_MAX_LENGTH, ZodSchemaErrors.Z_MESSAGE_MAX);

@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { emitAsync, setupTestServer, shutdownTestServer } from "./utils";
+import { ROOM_MAX_USERS } from "../constants/core";
 import { Room, rooms } from "../objects/Room";
 import { User } from "../objects/User";
-import { ROOM_MAX_USERS } from "../constants/core";
 import type { TestServerData } from "./types";
+import { emitAsync, setupTestServer, shutdownTestServer } from "./utils";
 
 let ctx: TestServerData;
 

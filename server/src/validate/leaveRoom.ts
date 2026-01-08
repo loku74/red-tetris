@@ -4,8 +4,8 @@ import { users, type User } from "../objects/User";
 
 // types
 import type { Socket } from "socket.io";
+import { INEXISTING_ROOM, USER_NOT_FOUND } from "../constants/validateErrors";
 import type { ValidateError } from "../types/server";
-import { INEXISTING_ROOM, USER_NOT_FOUND } from "../constants/error";
 
 type ValidateLeaveRoomSuccess = {
   status: true;

@@ -1,12 +1,12 @@
+import type { AddressInfo } from "net";
 import { Server, type Socket as ServerSocket } from "socket.io";
 import { io as ioc, type Socket as ClientSocket } from "socket.io-client";
-import type { Callback } from "../types/types";
-import type { AddressInfo } from "net";
+import { expect } from "vitest";
 import { init } from "../../app";
 import { Room, rooms } from "../objects/Room";
-import { expect } from "vitest";
-import type { TestServerData, TestSocket } from "./types";
 import { users } from "../objects/User";
+import type { Callback } from "../types/types";
+import type { TestServerData, TestSocket } from "./types";
 
 export function createClient(address: string, io: Server): Promise<TestSocket> {
   return new Promise((resolve) => {

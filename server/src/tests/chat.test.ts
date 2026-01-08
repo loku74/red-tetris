@@ -1,4 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { NOT_IN_A_ROOM } from "../constants/validateErrors";
+import type { SocketMessageResponse } from "../types/types";
+import type { TestServerData } from "./types";
 import {
   createClient,
   emitAsync,
@@ -7,9 +10,6 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
-import type { TestServerData } from "./types";
-import type { SocketMessageResponse } from "../types/types";
-import { NOT_IN_A_ROOM } from "../constants/error";
 
 let ctx: TestServerData;
 
