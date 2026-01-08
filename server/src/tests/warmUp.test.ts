@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { WARMUP_RESTART_DELAY } from "../constants/core";
 import {
   ERROR_NOT_IN_A_ROOM,
   ERROR_PLAYING_ROOM,
@@ -46,10 +47,20 @@ describe("invalid warm-up", () => {
   });
 });
 
-it("valid warm-up", async () => {
-  await joinRoom(ctx.test1, "example", "user1");
+it(
+  "valid warm-up",
+  async () => {
+    await joinRoom(ctx.test1, "example", "user1");
 
-  await emitAsync(ctx.test1.client, "warm-up").then(({ success }) => {
-    expect(success).toBe(true);
-  });
-});
+    await emitAsync(ctx.test1.client, "warm-up").then(({ success }) => {
+      expect(success).toBe(true);
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, WARMUP_RESTART_DELAY * 1_000));
+
+    await emitAsync(ctx.test1.client, "warm-up").then(({ success }) => {
+      expect(success).toBe(true);
+    });
+  },
+  (WARMUP_RESTART_DELAY + 1) * 1_000
+);

@@ -22,6 +22,6 @@ export class User {
 
     const now = new Date();
     const timeSinceLastWarmUp = now.getTime() - this.lastWarmUp.getTime();
-    return timeSinceLastWarmUp > WARMUP_RESTART_DELAY;
+    return timeSinceLastWarmUp > WARMUP_RESTART_DELAY * 1_000;
   }
 }
