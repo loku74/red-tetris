@@ -2,10 +2,20 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
+  import { fade } from "svelte/transition";
 
   // components
   import Piece from "$lib/components/Piece.svelte";
-  import { Crown, DoorOpen, LogOut, Swords, UserX, X, Send } from "@lucide/svelte";
+  import {
+    Crown,
+    DoorOpen,
+    LogOut,
+    UserX,
+    X,
+    Send,
+    GamepadDirectional,
+    RotateCcw
+  } from "@lucide/svelte";
   import Dialog from "$lib/components/Dialog.svelte";
   import TextInput from "$lib/components/TextInput.svelte";
 
@@ -16,11 +26,7 @@
   import { getSocket } from "$lib/socket";
 
   // types
-  import type {
-    SocketChatData,
-    SocketJoinRoomData,
-    SocketKickData,
-  } from "$lib/types/socket";
+  import type { SocketChatData, SocketJoinRoomData, SocketKickData } from "$lib/types/socket";
   import type {
     SocketJoinRoomResponse,
     SocketRoomInfoData,
@@ -156,6 +162,20 @@
     messages.push({ from: data.from, message: data.message, color: data.color });
   }
 
+  // warm-up
+  let warmUp = $state<boolean>(false);
+  let showWarmUpRestart = $state<boolean>(false);
+  function startWarmUp() {
+    socket.emit("warm-up", (success: boolean) => {
+      if (success) {
+        warmUp = true;
+        setTimeout(() => {
+          showWarmUpRestart = true;
+        }, roomData?.warmUpRestartDelay || 5000);
+      }
+    });
+  }
+
   onMount(() => {
     if (socket.connected) joinRoom();
     else socket.on("connect", joinRoom);
@@ -251,7 +271,6 @@
               style="--btn-depth: 6px;"
             >
               START GAME
-              <Swords size={32} />
             </button>
           {:else}
             <button
@@ -316,6 +335,34 @@
     </div>
 
     <!-- warm-up -->
+    <div class="relative border-4 border-red-secondary">
+      {#each { length: 20 }}
+        <div class="flex">
+          {#each { length: 10 }}
+            <Piece color="empty" size={32} />
+          {/each}
+        </div>
+      {/each}
+
+      {#if warmUp == false}
+        <button
+          out:fade={{ duration: 200 }}
+          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-16 flex items-center gap-2"
+          onclick={startWarmUp}
+        >
+          <GamepadDirectional />
+          warm-up
+        </button>
+      {:else if showWarmUpRestart}
+        <button
+          in:fade={{ duration: 200 }}
+          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-16 flex items-center gap-2"
+        >
+          <RotateCcw />
+          restart
+        </button>
+      {/if}
+    </div>
   {/if}
 </div>
 

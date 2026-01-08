@@ -1,37 +1,37 @@
 // intern
 import {
-  ERROR_NOT_HOST,
   ERROR_NOT_IN_A_ROOM,
-  ERROR_PLAYING_ROOM
+  ERROR_PLAYING_ROOM,
+  ERROR_WARM_UP_TIMEOUT
 } from "../constants/validateErrors";
 import { getRoomBySocket } from "../core/room";
 import { getUser } from "../core/user";
-import { Room } from "../objects/Room";
 
 // types
 import type { Socket } from "socket.io";
+import type { User } from "../objects/User";
 import type { ValidateError } from "../types/server";
 
-type ValidateStartSuccess = {
+type ValidateWarmUpSuccess = {
   status: true;
-  room: Room;
+  current: User;
 };
 
-type ValideStartResult = ValidateStartSuccess | ValidateError;
+type ValidateWarmUpResult = ValidateWarmUpSuccess | ValidateError;
 
-export function validateStart(socket: Socket): ValideStartResult {
+export function validateWarmUp(socket: Socket): ValidateWarmUpResult {
   const current = getUser(socket.id);
   const room = getRoomBySocket(socket);
 
   if (current === undefined || room === undefined) {
     return { status: false, error: { room: ERROR_NOT_IN_A_ROOM } };
   }
-  if (room.host != current) {
-    return { status: false, error: { room: ERROR_NOT_HOST } };
-  }
-  if (room.playing === true) {
+  if (room.playing) {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
+  if (current.canWarmUp() == false) {
+    return { status: false, error: { room: ERROR_WARM_UP_TIMEOUT } };
+  }
 
-  return { status: true, room };
+  return { status: true, current: current };
 }

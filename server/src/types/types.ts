@@ -21,6 +21,7 @@ export interface SocketRoomInfoData {
   max: number;
   host: string;
   playing: boolean;
+  warmUpRestartDelay: number;
 }
 
 export interface SocketMessageData {

@@ -37,6 +37,7 @@ body {
 
   text-align: center;
   text-transform: uppercase;
+  white-space: nowrap;
 
   background-color: var(--bg-color);
   box-shadow: 0 var(--btn-depth) 0 var(--shadow-color);

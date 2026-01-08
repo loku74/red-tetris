@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { NOT_HOST, NOT_IN_A_ROOM, PLAYING_ROOM } from "../constants/validateErrors";
+import {
+  ERROR_NOT_HOST,
+  ERROR_NOT_IN_A_ROOM,
+  ERROR_PLAYING_ROOM
+} from "../constants/validateErrors";
+import { getRoom } from "../core/room";
+import type { TestServerData } from "./types";
 import {
   createClient,
   emitAsync,
@@ -9,8 +15,6 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
-import { getRoom } from "../core/room";
-import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
 
@@ -25,7 +29,7 @@ afterEach(async () => {
 describe("invalid start", () => {
   it("not in a room", async () => {
     await emitAsync(ctx.test1.client, "start").then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(NOT_IN_A_ROOM);
+      expect((data as { room: string }).room).toBe(ERROR_NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });
@@ -35,7 +39,7 @@ describe("invalid start", () => {
 
     room.host = fakeUser("dumb", "someone");
     await emitAsync(ctx.test1.client, "start").then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(NOT_HOST);
+      expect((data as { room: string }).room).toBe(ERROR_NOT_HOST);
       expect(success).toBe(false);
     });
   });
@@ -45,7 +49,7 @@ describe("invalid start", () => {
     room.start();
 
     await emitAsync(ctx.test1.client, "start").then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(PLAYING_ROOM);
+      expect((data as { room: string }).room).toBe(ERROR_PLAYING_ROOM);
       expect(success).toBe(false);
     });
   });

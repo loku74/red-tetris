@@ -1,4 +1,4 @@
-import { ROOM_MAX_USERS } from "../constants/core";
+import { ROOM_MAX_USERS, WARMUP_RESTART_DELAY } from "../constants/core";
 import { getRooms } from "../core/room";
 import { deleteUser } from "../core/user";
 import type { SocketRoomInfoData, SocketUserColor } from "../types/types";
@@ -95,7 +95,8 @@ export class Room {
       userCount: this.users.size,
       max: ROOM_MAX_USERS,
       host: this.host.name,
-      playing: this.playing
+      playing: this.playing,
+      warmUpRestartDelay: WARMUP_RESTART_DELAY
     };
   }
 

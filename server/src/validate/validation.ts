@@ -23,18 +23,18 @@ export function formatSchemeError(error: ZodError) {
 
 export const roomValidation = z
   .string()
-  .regex(REGEX_ROOM_AND_USER, ZodSchemaErrors.Z_REGEX_ROOM_AND_USER)
-  .min(1, ZodSchemaErrors.Z_ROOM_EMPTY)
-  .max(ROOM_MAX_LENGTH, ZodSchemaErrors.Z_ROOM_MAX);
+  .regex(REGEX_ROOM_AND_USER, ZodSchemaErrors.Z_ERROR_REGEX_ROOM_AND_USER)
+  .min(1, ZodSchemaErrors.Z_ERROR_ROOM_EMPTY)
+  .max(ROOM_MAX_LENGTH, ZodSchemaErrors.Z_ERROR_ROOM_MAX);
 
 export const usernameValidation = z
   .string()
-  .regex(REGEX_ROOM_AND_USER, ZodSchemaErrors.Z_REGEX_ROOM_AND_USER)
-  .min(1, ZodSchemaErrors.Z_USERNAME_EMPTY)
-  .max(USERNAME_MAX_LENGTH, ZodSchemaErrors.Z_USERNAME_MAX);
+  .regex(REGEX_ROOM_AND_USER, ZodSchemaErrors.Z_ERROR_REGEX_ROOM_AND_USER)
+  .min(1, ZodSchemaErrors.Z_ERROR_USERNAME_EMPTY)
+  .max(USERNAME_MAX_LENGTH, ZodSchemaErrors.Z_ERROR_USERNAME_MAX);
 
 export const messageValidation = z
   .string()
-  .regex(REGEX_MESSAGE, ZodSchemaErrors.Z_REGEX_MESSAGE)
-  .min(1, ZodSchemaErrors.Z_MESSAGE_EMPTY)
-  .max(CHAT_MAX_LENGTH, ZodSchemaErrors.Z_MESSAGE_MAX);
+  .regex(REGEX_MESSAGE, ZodSchemaErrors.Z_ERROR_REGEX_MESSAGE)
+  .min(1, ZodSchemaErrors.Z_ERROR_MESSAGE_EMPTY)
+  .max(CHAT_MAX_LENGTH, ZodSchemaErrors.Z_ERROR_MESSAGE_MAX);

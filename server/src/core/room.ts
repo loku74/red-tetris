@@ -37,10 +37,9 @@ export function getRooms(): Map<string, Room> {
 export function getRoomBySocket(socket: Socket): Room | undefined {
   for (const roomId of socket.rooms) {
     if (roomId !== socket.id) {
-      return rooms.get(roomId) ?? undefined;
+      return rooms.get(roomId);
     }
   }
-  return undefined;
 }
 
 export function setRoom(name: string, room: Room) {

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { NOT_IN_A_ROOM } from "../constants/validateErrors";
+import { ERROR_NOT_IN_A_ROOM } from "../constants/validateErrors";
 import type { SocketMessageResponse } from "../types/types";
 import type { TestServerData } from "./types";
 import {
@@ -26,7 +26,7 @@ describe("invalid chat", () => {
     await emitAsync(ctx.test1.client, "chat", {
       message: "test"
     }).then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(NOT_IN_A_ROOM);
+      expect((data as { room: string }).room).toBe(ERROR_NOT_IN_A_ROOM);
       expect(success).toBe(false);
     });
   });

@@ -2,11 +2,11 @@
 import z from "zod";
 
 // intern
+import { ERROR_NOT_IN_A_ROOM } from "../constants/validateErrors";
+import { getRoomBySocket } from "../core/room";
+import { getUser } from "../core/user";
 import { Room } from "../objects/Room";
 import { formatSchemeError, messageValidation } from "./validation";
-import { getUser } from "../core/user";
-import { NOT_IN_A_ROOM } from "../constants/validateErrors";
-import { getRoomBySocket } from "../core/room";
 
 // types
 import type { SocketChatData } from "client-types";
@@ -37,7 +37,7 @@ export function validateChat(socket: Socket, data: SocketChatData): ValidateChat
   const room = getRoomBySocket(socket);
 
   if (!current || !room) {
-    return { status: false, error: { room: NOT_IN_A_ROOM } };
+    return { status: false, error: { room: ERROR_NOT_IN_A_ROOM } };
   }
 
   return { status: true, current, message: result.data.message, room: room };
