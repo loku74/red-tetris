@@ -23,7 +23,7 @@
   import { setKickedDialog, setKickedRoom } from "$lib/stores/kick.svelte";
 
   // socket
-  import { getSocket } from "$lib/socket";
+  import { getSocket } from "$lib/socket/socket.svelte";
 
   // events
   import {
@@ -37,7 +37,7 @@
   } from "server-events";
 
   // types
-  import type { SocketChatData, SocketJoinRoomData, SocketKickData } from "$lib/types/socket";
+  import type { SocketChatData, SocketJoinRoomData, SocketKickData } from "$lib/types/emitData";
   import type {
     SocketJoinRoomResponse,
     SocketRoomInfoData,

@@ -15,13 +15,13 @@
   import { kickState, setKickedDialog } from "$lib/stores/kick.svelte";
 
   // socket
-  import { getSocket } from "$lib/socket";
+  import { getSocket } from "$lib/socket/socket.svelte";
 
   // events
   import { EVENT_CAN_JOIN_ROOM, EVENT_GET_ROOMS, EVENT_JOIN_ROOM } from "server-events";
 
   // types
-  import type { SocketJoinRoomData } from "$lib/types/socket";
+  import type { SocketJoinRoomData } from "$lib/types/emitData";
   import type { SocketJoinRoomResponse, SocketGetRoomsResponse } from "server-types";
 
   // constants
