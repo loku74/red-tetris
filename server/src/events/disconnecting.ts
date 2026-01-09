@@ -1,9 +1,13 @@
-import { Server, type Socket } from "socket.io";
-import { getUser } from "../core/user";
+// global
+import { Server, Socket } from "socket.io";
+
+// intern
+import { EVENT_ROOM_UPDATE, EVENT_USER_DISCONNECT } from "../constants/events";
 import { getRoomBySocket } from "../core/room";
+import { getUser } from "../core/user";
 
 export function registerHandlers(io: Server, socket: Socket) {
-  socket.on("disconnecting", () => {
+  socket.on(EVENT_USER_DISCONNECT, () => {
     const user = getUser(socket.id);
     const room = getRoomBySocket(socket);
 
@@ -12,7 +16,7 @@ export function registerHandlers(io: Server, socket: Socket) {
       const roomInfo = room.remove(user);
 
       socket.leave(room.name);
-      io.to(room.name).emit("room update", roomInfo);
+      io.to(room.name).emit(EVENT_ROOM_UPDATE, roomInfo);
     }
     console.log("user disconnected");
   });

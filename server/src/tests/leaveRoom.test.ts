@@ -1,8 +1,11 @@
+// global
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
+// intern
+import { EVENT_LEAVE_ROOM, EVENT_ROOM_UPDATE } from "../constants/events";
 import { ERROR_INEXISTING_ROOM, ERROR_USER_NOT_FOUND } from "../constants/validateErrors";
 import { getRoom, getRooms } from "../core/room";
 import { getUser, getUsers } from "../core/user";
-import type { TestServerData } from "./types";
 import {
   createClient,
   emitAsync,
@@ -11,6 +14,9 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
+
+// types
+import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
 
@@ -24,7 +30,7 @@ afterEach(async () => {
 
 describe("invalid leave room", () => {
   it("user not found", async () => {
-    await emitAsync(ctx.test1.client, "leave room").then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(ERROR_USER_NOT_FOUND);
       expect(success).toBe(false);
     });
@@ -34,7 +40,7 @@ describe("invalid leave room", () => {
     await joinRoom(ctx.test1, "example", "test");
     getRooms().clear();
 
-    await emitAsync(ctx.test1.client, "leave room").then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(ERROR_INEXISTING_ROOM);
       expect(success).toBe(false);
     });
@@ -51,9 +57,9 @@ it("valid leave room", async () => {
   expect(userBefore).toBeDefined();
   expect(getUsers().size).toBe(2);
 
-  const listener = onceAsync(test2.client, "room update");
+  const listener = onceAsync(test2.client, EVENT_ROOM_UPDATE);
 
-  await emitAsync(ctx.test1.client, "leave room").then(({ success }) => {
+  await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then(({ success }) => {
     expect(success).toBe(true);
   });
 

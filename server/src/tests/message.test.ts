@@ -1,7 +1,9 @@
+// global
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
+// intern
+import { EVENT_MESSAGE } from "../constants/events";
 import { ERROR_NOT_IN_A_ROOM } from "../constants/validateErrors";
-import type { SocketMessageResponse } from "../types/types";
-import type { TestServerData } from "./types";
 import {
   createClient,
   emitAsync,
@@ -10,6 +12,10 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
+
+// types
+import type { SocketMessageResponse } from "../types/types";
+import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
 
@@ -23,7 +29,7 @@ afterEach(async () => {
 
 describe("invalid chat", () => {
   it("not in a room", async () => {
-    await emitAsync(ctx.test1.client, "chat", {
+    await emitAsync(ctx.test1.client, EVENT_MESSAGE, {
       message: "test"
     }).then(({ success, data }) => {
       expect((data as { room: string }).room).toBe(ERROR_NOT_IN_A_ROOM);
@@ -42,7 +48,7 @@ it("valid chat", async () => {
   await joinRoom(test2, "example", "user2");
 
   // users talks
-  await emitAsync(ctx.test1.client, "chat", {
+  await emitAsync(ctx.test1.client, EVENT_MESSAGE, {
     message: message
   }).then(({ success }) => {
     expect(success).toBe(true);

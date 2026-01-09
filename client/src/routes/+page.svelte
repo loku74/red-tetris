@@ -17,6 +17,9 @@
   // socket
   import { getSocket } from "$lib/socket";
 
+  // events
+  import { EVENT_CAN_JOIN_ROOM, EVENT_GET_ROOMS, EVENT_JOIN_ROOM } from "server-events";
+
   // types
   import type { SocketJoinRoomData } from "$lib/types/socket";
   import type { SocketJoinRoomResponse, SocketGetRoomsResponse } from "server-types";
@@ -42,7 +45,7 @@
     emitting = true;
     localStorage.setItem("username", username);
     const data: SocketJoinRoomData = { username: username || "", roomName: room || "" };
-    socket.emit("can join room", data, (success: boolean, data: SocketJoinRoomResponse) => {
+    socket.emit(EVENT_CAN_JOIN_ROOM, data, (success: boolean, data: SocketJoinRoomResponse) => {
       if (!success) {
         usernameError = data.username;
         roomError = data.roomName;
@@ -64,7 +67,7 @@
   let showRoomsDialog = $state(false);
 
   function getRooms() {
-    socket.emit("get rooms", (success: boolean, data: SocketGetRoomsResponse[]) => {
+    socket.emit(EVENT_GET_ROOMS, (success: boolean, data: SocketGetRoomsResponse[]) => {
       if (success) rooms = data;
     });
   }

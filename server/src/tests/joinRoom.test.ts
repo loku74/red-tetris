@@ -1,6 +1,9 @@
-import type { SocketJoinRoomResponse } from "client-types";
+// global
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
+// intern
 import { ROOM_MAX, ROOM_MAX_USERS, WARMUP_RESTART_DELAY } from "../constants/core";
+import { EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE } from "../constants/events";
 import {
   ERROR_ALREADY_IN_A_ROOM,
   ERROR_MAX_ROOMS,
@@ -10,8 +13,6 @@ import {
 } from "../constants/validateErrors";
 import { getRoom, getRooms, setRoom } from "../core/room";
 import { Room } from "../objects/Room";
-import type { SocketRoomInfoData } from "../types/types";
-import type { TestServerData } from "./types";
 import {
   createClient,
   emitAsync,
@@ -20,6 +21,11 @@ import {
   setupTestServer,
   shutdownTestServer
 } from "./utils";
+
+// types
+import type { SocketJoinRoomResponse } from "client-types";
+import type { SocketRoomInfoData } from "../types/types";
+import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
 
@@ -35,7 +41,7 @@ describe("invalid join", () => {
   const user = fakeUser("id", "name");
 
   it("invalid scheme", async () => {
-    await emitAsync(ctx.test1.client, "join room", {}).then(({ success }) => {
+    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {}).then(({ success }) => {
       expect(success).toEqual(false);
     });
   });
@@ -47,7 +53,7 @@ describe("invalid join", () => {
     }
     setRoom("example", room);
 
-    await emitAsync(ctx.test1.client, "join room", {
+    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example"
     }).then(({ success, data }) => {
@@ -60,7 +66,7 @@ describe("invalid join", () => {
     for (let i = 0; i < ROOM_MAX; i++) {
       setRoom(i.toString(), new Room(`test${i}`, user));
     }
-    await emitAsync(ctx.test1.client, "join room", {
+    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example"
     }).then(({ success, data }) => {
@@ -72,7 +78,7 @@ describe("invalid join", () => {
   it("username already taken", async () => {
     setRoom("example", new Room("example", user));
 
-    await emitAsync(ctx.test1.client, "join room", {
+    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "name",
       roomName: "example"
     }).then(({ success, data }) => {
@@ -82,11 +88,11 @@ describe("invalid join", () => {
   });
 
   it("already in a room", async () => {
-    await emitAsync(ctx.test1.client, "join room", {
+    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example"
     });
-    await emitAsync(ctx.test1.client, "join room", {
+    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example2"
     }).then(({ success, data }) => {
@@ -99,7 +105,7 @@ describe("invalid join", () => {
     setRoom("example", new Room("example", user));
     getRoom("example")?.start();
 
-    await emitAsync(ctx.test1.client, "join room", {
+    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example"
     }).then(({ success, data }) => {
@@ -114,7 +120,7 @@ it("valid join", async () => {
     username: "example",
     roomName: "example"
   };
-  await emitAsync(ctx.test1.client, "join room", data).then(({ success, data }) => {
+  await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, data).then(({ success, data }) => {
     expect(data).toEqual({
       host: "example",
       max: ROOM_MAX_USERS,
@@ -127,7 +133,7 @@ it("valid join", async () => {
       ],
       userCount: 1,
       playing: false,
-      warmUpRestartDelay: WARMUP_RESTART_DELAY
+      warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
     } as SocketRoomInfoData);
     expect(success).toBe(true);
   });
@@ -135,15 +141,15 @@ it("valid join", async () => {
 
 it("host changed", async () => {
   const test2 = await createClient(ctx.address, ctx.io);
-  const roomListener = onceAsync(ctx.test1.client, "room update");
-  const roomListener2 = onceAsync(test2.client, "room update");
+  const roomListener = onceAsync(ctx.test1.client, EVENT_ROOM_UPDATE);
+  const roomListener2 = onceAsync(test2.client, EVENT_ROOM_UPDATE);
   const disconnectListener = onceAsync(test2.server, "disconnect");
 
-  await emitAsync(ctx.test1.client, "join room", {
+  await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
     username: "user1",
     roomName: "example"
   });
-  await emitAsync(test2.client, "join room", {
+  await emitAsync(test2.client, EVENT_JOIN_ROOM, {
     username: "user2",
     roomName: "example"
   });

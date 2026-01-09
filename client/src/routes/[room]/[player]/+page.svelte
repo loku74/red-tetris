@@ -25,6 +25,17 @@
   // socket
   import { getSocket } from "$lib/socket";
 
+  // events
+  import {
+    EVENT_ROOM_UPDATE,
+    EVENT_JOIN_ROOM,
+    EVENT_LEAVE_ROOM,
+    EVENT_KICK,
+    EVENT_MESSAGE,
+    EVENT_WARM_UP,
+    EVENT_USER_CONNECT
+  } from "server-events";
+
   // types
   import type { SocketChatData, SocketJoinRoomData, SocketKickData } from "$lib/types/socket";
   import type {
@@ -68,7 +79,7 @@
     localStorage.setItem("username", username?.substring(0, USERNAME_MAX_LENGTH)!);
     const data: SocketJoinRoomData = { username: username || "", roomName: room || "" };
     socket.emit(
-      "join room",
+      EVENT_JOIN_ROOM,
       data,
       (success: boolean, data: SocketRoomInfoData | SocketJoinRoomResponse) => {
         if (!success) {
@@ -87,7 +98,7 @@
           }, 1000);
         } else {
           roomData = data as SocketRoomInfoData;
-          socket.on("room update", (data: SocketRoomInfoData) => {
+          socket.on(EVENT_ROOM_UPDATE, (data: SocketRoomInfoData) => {
             roomData = data;
           });
           const player = roomData.players.find((p) => p.username === username)!;
@@ -102,7 +113,7 @@
   let showLeaveDialog = $state(false);
 
   function leaveRoom() {
-    socket.emit("leave room", (success: boolean) => {
+    socket.emit(EVENT_LEAVE_ROOM, (success: boolean) => {
       if (success) {
         goto("/");
       }
@@ -123,7 +134,7 @@
   }
 
   function kickUser(data: SocketKickData) {
-    socket.emit("kick", data, (success: boolean) => {
+    socket.emit(EVENT_KICK, data, (success: boolean) => {
       if (success) showKickDialog = false;
     });
   }
@@ -150,7 +161,7 @@
   function sendMessage() {
     if (message) {
       const data: SocketChatData = { message };
-      socket.emit("chat", data, (success: boolean) => {
+      socket.emit(EVENT_MESSAGE, data, (success: boolean) => {
         if (success) {
           message = "";
         }
@@ -166,7 +177,7 @@
   let warmUp = $state<boolean>(false);
   let showWarmUpRestart = $state<boolean>(false);
   function startWarmUp() {
-    socket.emit("warm-up", (success: boolean) => {
+    socket.emit(EVENT_WARM_UP, (success: boolean) => {
       if (success) {
         warmUp = true;
         setTimeout(() => {
@@ -178,13 +189,13 @@
 
   onMount(() => {
     if (socket.connected) joinRoom();
-    else socket.on("connect", joinRoom);
+    else socket.on(EVENT_USER_CONNECT, joinRoom);
 
-    socket.on("kick", onKick);
-    socket.on("message", onMessage);
+    socket.on(EVENT_KICK, onKick);
+    socket.on(EVENT_MESSAGE, onMessage);
 
     return () => {
-      socket.off("connect", joinRoom);
+      socket.off(EVENT_USER_CONNECT, joinRoom);
     };
   });
 </script>

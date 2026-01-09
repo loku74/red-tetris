@@ -1,10 +1,14 @@
+// intern
 import { validateJoinRoom } from "../validate/joinRoom";
+import { EVENT_CAN_JOIN_ROOM } from "../constants/events";
+
+// types
 import type { SocketJoinRoomData } from "client-types";
-import type { Callback } from "../types/types";
 import type { Socket } from "socket.io";
+import type { Callback } from "../types/types";
 
 export function registerHandlers(socket: Socket) {
-  socket.on("can join room", (data: SocketJoinRoomData, callback: Callback) => {
+  socket.on(EVENT_CAN_JOIN_ROOM, (data: SocketJoinRoomData, callback: Callback) => {
     const result = validateJoinRoom(socket, data);
     if (!result.status) {
       callback(result.status, result.error);

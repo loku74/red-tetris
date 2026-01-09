@@ -10,13 +10,13 @@ import { SERVER_PORT } from "./src/constants/core";
 
 // handlers
 import { registerHandlers as canJoinRoomHandler } from "./src/events/canJoinRoom";
-import { registerHandlers as chatHandler } from "./src/events/chat";
 import { registerHandlers as disconnectingHandler } from "./src/events/disconnecting";
 import { registerHandlers as getRoomsHandler } from "./src/events/getRooms";
 import { registerHandlers as joinRoomHandler } from "./src/events/joinRoom";
 import { registerHandlers as kickHandler } from "./src/events/kick";
 import { registerHandlers as leaveRoomHandler } from "./src/events/leaveRoom";
 import { registerHandlers as startHandler } from "./src/events/start";
+import { registerHandlers as messageHandler } from "./src/events/message";
 import { registerHandlers as warmUpHandler } from "./src/events/warmUp";
 
 // types
@@ -40,7 +40,7 @@ function configureSocket(io: IoServer) {
     console.log("New client connected");
 
     canJoinRoomHandler(socket);
-    chatHandler(io, socket);
+    messageHandler(io, socket);
     disconnectingHandler(io, socket);
     getRoomsHandler(socket);
     joinRoomHandler(socket);

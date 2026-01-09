@@ -21,7 +21,8 @@ const config = {
       bundleStrategy: "single"
     },
     alias: {
-      "server-types": "../server/src/types/types.ts"
+      "server-types": "../server/src/types/types.ts",
+      "server-events": "../server/src/constants/events.ts"
     }
   }
 };

@@ -96,7 +96,7 @@ export class Room {
       max: ROOM_MAX_USERS,
       host: this.host.name,
       playing: this.playing,
-      warmUpRestartDelay: WARMUP_RESTART_DELAY
+      warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
     };
   }
 

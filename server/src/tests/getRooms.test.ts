@@ -1,8 +1,14 @@
+// global
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { emitAsync, fakeUser, setupTestServer, shutdownTestServer } from "./utils";
-import { Room } from "../objects/Room";
+
+// intern
 import { ROOM_MAX_USERS } from "../constants/core";
+import { EVENT_GET_ROOMS } from "../constants/events";
 import { getRoom, setRoom } from "../core/room";
+import { Room } from "../objects/Room";
+import { emitAsync, fakeUser, setupTestServer, shutdownTestServer } from "./utils";
+
+// types
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -15,11 +21,11 @@ afterEach(async () => {
   await shutdownTestServer(ctx);
 });
 
-describe("get rooms", () => {
+describe(EVENT_GET_ROOMS, () => {
   it("simple", async () => {
     setRoom("example", new Room("example", fakeUser("id", "example")));
 
-    await emitAsync(ctx.test1.client, "get rooms").then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, EVENT_GET_ROOMS).then(({ success, data }) => {
       expect(data).toEqual([
         {
           name: "example",
@@ -36,7 +42,7 @@ describe("get rooms", () => {
     setRoom("example2", new Room("example2", fakeUser("id2", "example2")));
     getRoom("example2")?.start();
 
-    await emitAsync(ctx.test1.client, "get rooms").then(({ success, data }) => {
+    await emitAsync(ctx.test1.client, EVENT_GET_ROOMS).then(({ success, data }) => {
       expect(data).toEqual([
         {
           name: "example",
