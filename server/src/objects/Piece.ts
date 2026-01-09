@@ -1,12 +1,17 @@
-import type { PieceType } from "../types/types";
+import type { Matrix2D, PieceType } from "../types/types";
 
 export class Piece {
   public rotation: number = 0;
 
   constructor(
     public type: PieceType,
-    public matrix: number[][] // row, column
-  ) {}
+    public matrix: Matrix2D<number> // row, column
+  ) {
+    const width = matrix[0].length;
+    for (const row of matrix) {
+      if (row.length != width) throw new Error("Matrix must be rectangular!");
+    }
+  }
 
   private addRotation() {
     this.rotation = (this.rotation + 1) % 4;
@@ -18,8 +23,6 @@ export class Piece {
     if (this.type === "O") return this;
 
     for (let i = 0; i < nb; i++) {
-      if (!this.matrix.length || !this.matrix[0]) return this;
-
       /**
        * clockwise rotation:
        * iterate over each column, then
@@ -28,13 +31,8 @@ export class Piece {
        * readed from bottom to top)
        */
       const newMatrix = this.matrix[0].map((_, index) =>
-        this.matrix
-          .map((row) => {
-            if (row[index] === undefined) throw new Error("Matrix must be rectangular!");
-            return row[index];
-          })
-          .reverse()
-      );
+        this.matrix.map((row) => row[index]).reverse()
+      ) as Matrix2D<number>;
 
       this.matrix = newMatrix;
       this.addRotation();

@@ -1,6 +1,6 @@
-import type { PieceType } from "../types/types";
+import type { Matrix2D, PieceType } from "../types/types";
 
-export const PIECES: Record<PieceType, number[][]> = {
+export const PIECES: Record<PieceType, Matrix2D<number>> = {
   I: [
     [0, 0, 0, 0],
     [1, 1, 1, 1],
