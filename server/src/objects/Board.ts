@@ -16,7 +16,7 @@ export class Board {
     this.matrix = grid as Matrix2D<number>;
   }
 
-  private getRow(index: number) : NonEmptyArray<number> {
+  private getRow(index: number): NonEmptyArray<number> {
     const result = this.matrix[index];
     if (!result) throw new Error("Invalid row index!");
     return result;
@@ -28,20 +28,14 @@ export class Board {
     const pieceHeight = piece.matrix.length;
     const pieceWidth = piece.matrix[0].length;
 
-    if (
-      x < 0 || y < 0
-    ) {
-      return false;
-    }
-
     for (let i = 0; i < pieceHeight; i++) {
       for (let j = 0; j < pieceWidth; j++) {
-        const row = piece.matrix[i];
-        if (!row) return false;
-        const cell = row[j];
-        if (cell === undefined) return false;
+        const pieceRow = piece.matrix[i];
+        if (!pieceRow) return false;
+        const pieceCell = pieceRow[j];
+        if (pieceCell === undefined) return false;
 
-        if (cell === 1) {
+        if (pieceCell === 1) {
           const boardRow = this.matrix[x + i];
           if (!boardRow) return false;
           const boardCell = boardRow[y + j];
@@ -58,9 +52,13 @@ export class Board {
     }
 
     piece.matrix.forEach((pieceRow, i) => {
+      // we skip empty piece lines
+      if (!pieceRow.find((v) => v === 1)) return;
       const boardRow = this.getRow(x + i);
 
       pieceRow.forEach((cell, j) => {
+        // skip zeros
+        if (!cell) return;
         boardRow[y + j] = cell;
       });
     });
@@ -73,7 +71,7 @@ export class Board {
     // iterate from bottom to top
     for (let rowIndex = start; rowIndex >= 0; rowIndex--) {
       const row = this.getRow(rowIndex);
-  
+
       const toClear = row.every((v) => v === 1);
       if (toClear) {
         lines++;
@@ -85,12 +83,19 @@ export class Board {
           rowActual.forEach((_, j) => {
             if (rowBefore[j] === undefined) throw new Error("Invalid column index!");
             rowActual[j] = rowBefore[j];
-          })
+          });
         }
         this.matrix[0].fill(0);
         rowIndex++;
       }
     }
     return lines;
+  }
+
+  // only for debugging
+  public print() {
+    for (const row of this.matrix) {
+      console.log(row.join(""));
+    }
   }
 }
