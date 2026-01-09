@@ -5,6 +5,7 @@ import { expect } from "vitest";
 
 // intern
 import { init } from "../../app";
+import { EVENT_JOIN_ROOM } from "../constants/events";
 import { getRoom, getRooms } from "../core/room";
 import { getUsers } from "../core/user";
 import { Room } from "../objects/Room";
@@ -86,7 +87,7 @@ export async function joinRoom(
   roomname: string,
   username: string
 ): Promise<Room> {
-  await emitAsync(test.client, "join room", {
+  await emitAsync(test.client, EVENT_JOIN_ROOM, {
     username: username,
     roomName: roomname
   });

@@ -67,8 +67,8 @@ it("valid start", async () => {
   await joinRoom(ctx.test1, "example", "user1");
   await joinRoom(test2, "example", "user2");
 
-  const listener1 = onceAsync(ctx.test1.client, "room start");
-  const listener2 = onceAsync(test2.client, "room start");
+  const listener1 = onceAsync(ctx.test1.client, EVENT_GAME_START);
+  const listener2 = onceAsync(test2.client, EVENT_GAME_START);
 
   await emitAsync(ctx.test1.client, EVENT_GAME_START).then(({ success }) => {
     expect(success).toBe(true);

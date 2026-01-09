@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
-import { EVENT_KICK } from "../constants/events";
+import { EVENT_KICK, EVENT_ROOM_UPDATE } from "../constants/events";
 import {
   ERROR_KICK_INEXISTING,
   ERROR_KICK_PLAYING,
@@ -116,7 +116,7 @@ it("valid kick", async () => {
   let roomListener = null;
 
   // basic
-  roomListener = onceAsync(ctx.test1.client, "room update");
+  roomListener = onceAsync(ctx.test1.client, EVENT_ROOM_UPDATE);
   await joinRoom(ctx.test1, "example", "user1");
   await joinRoom(test2, "example", "user2");
 
@@ -124,7 +124,7 @@ it("valid kick", async () => {
     expect(data).toEqual(getRoom("example")?.asInfo());
   });
 
-  roomListener = onceAsync(ctx.test1.client, "room update");
+  roomListener = onceAsync(ctx.test1.client, EVENT_ROOM_UPDATE);
   await emitAsync(ctx.test1.client, EVENT_KICK, {
     username: "user2"
   }).then(({ success }) => {

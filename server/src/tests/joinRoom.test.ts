@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
 import { ROOM_MAX, ROOM_MAX_USERS, WARMUP_RESTART_DELAY } from "../constants/core";
-import { EVENT_JOIN_ROOM } from "../constants/events";
+import { EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE } from "../constants/events";
 import {
   ERROR_ALREADY_IN_A_ROOM,
   ERROR_MAX_ROOMS,
@@ -133,7 +133,7 @@ it("valid join", async () => {
       ],
       userCount: 1,
       playing: false,
-      warmUpRestartDelay: WARMUP_RESTART_DELAY
+      warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
     } as SocketRoomInfoData);
     expect(success).toBe(true);
   });
@@ -141,8 +141,8 @@ it("valid join", async () => {
 
 it("host changed", async () => {
   const test2 = await createClient(ctx.address, ctx.io);
-  const roomListener = onceAsync(ctx.test1.client, "room update");
-  const roomListener2 = onceAsync(test2.client, "room update");
+  const roomListener = onceAsync(ctx.test1.client, EVENT_ROOM_UPDATE);
+  const roomListener2 = onceAsync(test2.client, EVENT_ROOM_UPDATE);
   const disconnectListener = onceAsync(test2.server, "disconnect");
 
   await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
