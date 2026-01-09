@@ -55,7 +55,7 @@ describe("matrix rotations", () => {
     expect(rotationB.matrix).toEqual([
       [0, 0, 0],
       [1, 1, 1],
-      [0, 0, 1],
+      [0, 0, 1]
     ]);
     expect(rotationC.matrix).toEqual([
       [0, 1, 0],
@@ -76,7 +76,7 @@ describe("matrix rotations", () => {
     expect(rotationB.matrix).toEqual([
       [0, 0, 0],
       [1, 1, 1],
-      [1, 0, 0],
+      [1, 0, 0]
     ]);
     expect(rotationC.matrix).toEqual([
       [1, 1, 0],
@@ -106,7 +106,7 @@ describe("matrix rotations", () => {
     expect(rotationB.matrix).toEqual([
       [0, 0, 0],
       [0, 1, 1],
-      [1, 1, 0],
+      [1, 1, 0]
     ]);
     expect(rotationC.matrix).toEqual([
       [1, 0, 0],
@@ -127,12 +127,12 @@ describe("matrix rotations", () => {
     expect(rotationB.matrix).toEqual([
       [0, 0, 0],
       [1, 1, 1],
-      [0, 1, 0],
+      [0, 1, 0]
     ]);
     expect(rotationC.matrix).toEqual([
       [0, 1, 0],
       [1, 1, 0],
-      [0, 1, 0],
+      [0, 1, 0]
     ]);
   });
 
@@ -143,12 +143,12 @@ describe("matrix rotations", () => {
     expect(rotationA.matrix).toEqual([
       [0, 0, 1],
       [0, 1, 1],
-      [0, 1, 0],
+      [0, 1, 0]
     ]);
     expect(rotationB.matrix).toEqual([
       [0, 0, 0],
       [1, 1, 0],
-      [0, 1, 1],
+      [0, 1, 1]
     ]);
     expect(rotationC.matrix).toEqual([
       [0, 1, 0],
