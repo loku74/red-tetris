@@ -31,7 +31,7 @@ export interface SocketMessageData {
 
 export type PieceType = "I" | "J" | "L" | "O" | "Z" | "T" | "S";
 export type NonEmptyArray<T> = [T, ...T[]];
-export type Matrix2D<T> = NonEmptyArray<NonEmptyArray<T>>
+export type Matrix2D<T> = NonEmptyArray<NonEmptyArray<T>>;
 
 // responses (callback)
 export type Callback = (success: boolean, data?: unknown) => void;
