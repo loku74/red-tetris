@@ -1,8 +1,10 @@
+import type { PieceType } from "../types/types";
+
 export class Piece {
   public rotation: number = 0;
 
   constructor(
-    public name: string,
+    public type: PieceType,
     public matrix: number[][] // row, column
   ) {}
 
@@ -13,6 +15,7 @@ export class Piece {
   public rotate90(nb: number = 1): Piece {
     if (nb < 1) throw new Error("Invalid rotation index!");
     if (nb > 3) throw new Error("Too much rotations!");
+    if (this.type === "O") return this;
 
     for (let i = 0; i < nb; i++) {
       if (!this.matrix.length || !this.matrix[0]) return this;
@@ -38,12 +41,5 @@ export class Piece {
     }
 
     return this;
-  }
-
-  // for debugging
-  public toString(): string | undefined {
-    for (const row of this.matrix) {
-      return row.map((cell) => cell.toString()).join("");
-    }
   }
 }

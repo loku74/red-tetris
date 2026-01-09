@@ -16,8 +16,5 @@ export function createPiece() {
   const matrix = PIECES[randomType];
   if (!matrix) throw new Error("Matrix generation failed!");
 
-  const rotations = randint(0, 3);
-  const piece = new Piece(randomType, matrix);
-
-  return piece.rotate90(rotations);
+  return new Piece(randomType, matrix);
 }
