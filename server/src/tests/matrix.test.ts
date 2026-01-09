@@ -22,9 +22,24 @@ describe("matrix rotations", () => {
     const rotationA = new Piece("I", PIECES.I).rotate90(1);
     const rotationB = new Piece("I", PIECES.I).rotate90(2);
     const rotationC = new Piece("I", PIECES.I).rotate90(3);
-    expect(rotationA.matrix).toEqual([[1], [1], [1], [1]]);
-    expect(rotationB.matrix).toEqual([[1, 1, 1, 1]]);
-    expect(rotationC.matrix).toEqual([[1], [1], [1], [1]]);
+    expect(rotationA.matrix).toEqual([
+      [0, 0, 1, 0],
+      [0, 0, 1, 0],
+      [0, 0, 1, 0],
+      [0, 0, 1, 0],
+    ]);
+    expect(rotationB.matrix).toEqual([
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [1, 1, 1, 1],
+      [0, 0, 0, 0],
+    ]);
+    expect(rotationC.matrix).toEqual([
+      [0, 1, 0, 0],
+      [0, 1, 0, 0],
+      [0, 1, 0, 0],
+      [0, 1, 0, 0],
+    ]);
   });
 
   it("J", () => {
@@ -32,18 +47,19 @@ describe("matrix rotations", () => {
     const rotationB = new Piece("J", PIECES.J).rotate90(2);
     const rotationC = new Piece("J", PIECES.J).rotate90(3);
     expect(rotationA.matrix).toEqual([
-      [1, 1],
-      [1, 0],
-      [1, 0]
+      [0, 1, 1],
+      [0, 1, 0],
+      [0, 1, 0],
     ]);
     expect(rotationB.matrix).toEqual([
+      [0, 0, 0],
       [1, 1, 1],
-      [0, 0, 1]
+      [0, 0, 1],
     ]);
     expect(rotationC.matrix).toEqual([
-      [0, 1],
-      [0, 1],
-      [1, 1]
+      [0, 1, 0],
+      [0, 1, 0],
+      [1, 1, 0],
     ]);
   });
 
@@ -52,18 +68,19 @@ describe("matrix rotations", () => {
     const rotationB = new Piece("L", PIECES.L).rotate90(2);
     const rotationC = new Piece("L", PIECES.L).rotate90(3);
     expect(rotationA.matrix).toEqual([
-      [1, 0],
-      [1, 0],
-      [1, 1]
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 1],
     ]);
     expect(rotationB.matrix).toEqual([
+      [0, 0, 0],
       [1, 1, 1],
-      [1, 0, 0]
+      [1, 0, 0],
     ]);
     expect(rotationC.matrix).toEqual([
-      [1, 1],
-      [0, 1],
-      [0, 1]
+      [1, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
     ]);
   });
 
@@ -76,23 +93,24 @@ describe("matrix rotations", () => {
     expect(rotationC.matrix).toEqual(PIECES.O);
   });
 
-  it("Z", () => {
-    const rotationA = new Piece("Z", PIECES.Z).rotate90(1);
-    const rotationB = new Piece("Z", PIECES.Z).rotate90(2);
-    const rotationC = new Piece("Z", PIECES.Z).rotate90(3);
+  it("S", () => {
+    const rotationA = new Piece("S", PIECES.S).rotate90(1);
+    const rotationB = new Piece("S", PIECES.S).rotate90(2);
+    const rotationC = new Piece("S", PIECES.S).rotate90(3);
     expect(rotationA.matrix).toEqual([
-      [1, 0],
-      [1, 1],
-      [0, 1]
+      [0, 1, 0],
+      [0, 1, 1],
+      [0, 0, 1],
     ]);
     expect(rotationB.matrix).toEqual([
+      [0, 0, 0],
       [0, 1, 1],
-      [1, 1, 0]
+      [1, 1, 0],
     ]);
     expect(rotationC.matrix).toEqual([
-      [1, 0],
-      [1, 1],
-      [0, 1]
+      [1, 0, 0],
+      [1, 1, 0],
+      [0, 1, 0],
     ]);
   });
 
@@ -101,18 +119,40 @@ describe("matrix rotations", () => {
     const rotationB = new Piece("T", PIECES.T).rotate90(2);
     const rotationC = new Piece("T", PIECES.T).rotate90(3);
     expect(rotationA.matrix).toEqual([
-      [1, 0],
-      [1, 1],
-      [1, 0]
+      [0, 1, 0],
+      [0, 1, 1],
+      [0, 1, 0],
     ]);
     expect(rotationB.matrix).toEqual([
+      [0, 0, 0],
       [1, 1, 1],
-      [0, 1, 0]
+      [0, 1, 0],
     ]);
     expect(rotationC.matrix).toEqual([
-      [0, 1],
-      [1, 1],
-      [0, 1]
+      [0, 1, 0],
+      [1, 1, 0],
+      [0, 1, 0],
+    ]);
+  });
+
+  it("Z", () => {
+    const rotationA = new Piece("Z", PIECES.Z).rotate90(1);
+    const rotationB = new Piece("Z", PIECES.Z).rotate90(2);
+    const rotationC = new Piece("Z", PIECES.Z).rotate90(3);
+    expect(rotationA.matrix).toEqual([
+      [0, 0, 1],
+      [0, 1, 1],
+      [0, 1, 0],
+    ]);
+    expect(rotationB.matrix).toEqual([
+      [0, 0, 0],
+      [1, 1, 0],
+      [0, 1, 1],
+    ]);
+    expect(rotationC.matrix).toEqual([
+      [0, 1, 0],
+      [1, 1, 0],
+      [1, 0, 0],
     ]);
   });
 });
