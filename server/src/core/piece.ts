@@ -13,8 +13,12 @@ export function createPiece() {
   const randomType = types[randint(0, types.length - 1)];
 
   if (!randomType) throw new Error("Key generation failed!");
-  const matrix = PIECES[randomType];
-  if (!matrix) throw new Error("Matrix generation failed!");
+  const data = PIECES[randomType];
 
-  return new Piece(randomType, matrix);
+  // position spawn based on rules
+  // see: https://tetris.wiki/Super_Rotation_System#Spawn_Orientation_and_Location
+  let offsetX = 0;
+  if (randomType === "I") offsetX--;
+
+  return new Piece(randomType, data.matrix, offsetX, 3, data.color);
 }
