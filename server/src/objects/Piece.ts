@@ -7,8 +7,8 @@ export class Piece {
   constructor(
     public type: PieceType,
     public matrix: Matrix2D<number>, // row, column
-    public x: number,
-    public y: number,
+    public x: number = 0,
+    public y: number = 0,
     public color: SocketPieceColor = "grey"
   ) {
     const width = matrix[0].length;
