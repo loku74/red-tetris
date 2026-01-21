@@ -22,10 +22,6 @@ export class Piece {
     this.rotation = (this.rotation + 1) % 4;
   }
 
-  private setMoved() {
-    if (!this.alreadyMoved) this.alreadyMoved = true;
-  }
-
   public rotate90(nb: number = 1): Piece {
     if (nb < 1) throw new Error("Invalid rotation index!");
     if (nb > 3) throw new Error("Too much rotations!");
