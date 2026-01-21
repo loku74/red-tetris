@@ -1,3 +1,4 @@
+import { asMatrix } from "../core/piece";
 import type { Matrix2D, PieceType, SocketPieceColor } from "../types/types";
 
 export class Piece {
@@ -21,16 +22,12 @@ export class Piece {
     this.rotation = (this.rotation + 1) % 4;
   }
 
-  private setMoved() {
-    if (!this.alreadyMoved) this.alreadyMoved = true;
-  }
-
   public rotate90(nb: number = 1): Piece {
     if (nb < 1) throw new Error("Invalid rotation index!");
     if (nb > 3) throw new Error("Too much rotations!");
     if (this.type === "O") return this;
 
-    this.setMoved();
+    this.alreadyMoved = true;
     for (let i = 0; i < nb; i++) {
       /**
        * clockwise rotation:
@@ -39,11 +36,11 @@ export class Piece {
        * (each new row is a column of the original matrix
        * readed from bottom to top)
        */
-      const newMatrix = this.matrix[0].map((_, index) =>
+      const newRows = this.matrix[0].map((_, index) =>
         this.matrix.map((row) => row[index]).reverse()
-      ) as Matrix2D<number>;
+      );
 
-      this.matrix = newMatrix;
+      this.matrix = asMatrix(newRows);
       this.addRotation();
     }
 
@@ -51,19 +48,19 @@ export class Piece {
   }
 
   public moveDown(): Piece {
-    this.setMoved();
+    this.alreadyMoved = true;
     this.x++;
     return this;
   }
 
   public moveLeft(): Piece {
-    this.setMoved();
+    this.alreadyMoved = true;
     this.y--;
     return this;
   }
 
   public moveRight(): Piece {
-    this.setMoved();
+    this.alreadyMoved = true;
     this.y++;
     return this;
   }
