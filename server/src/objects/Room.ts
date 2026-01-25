@@ -1,13 +1,14 @@
 import { ROOM_MAX_USERS, WARMUP_RESTART_DELAY } from "../constants/core";
 import { getRooms } from "../core/room";
 import { deleteUser } from "../core/user";
-import type { SocketRoomInfoData, SocketUserColor } from "../types/types";
+
+import type { RoomData, UserColor } from "@app/shared";
 import type { User } from "./User";
 
 export class Room {
   public playing: boolean = false;
-  public users: Map<string, { color: SocketUserColor; user: User }> = new Map();
-  public colors: Array<SocketUserColor> = [
+  public users: Map<string, { color: UserColor; user: User }> = new Map();
+  public colors: Array<UserColor> = [
     "cyan",
     "red",
     "green",
@@ -57,7 +58,7 @@ export class Room {
     return color;
   }
 
-  public remove(user: User | undefined): SocketRoomInfoData {
+  public remove(user: User | undefined): RoomData {
     if (!user) return this.asInfo();
 
     const retrieved = this.users.get(user.id);
@@ -88,7 +89,7 @@ export class Room {
     return found?.user;
   }
 
-  public asInfo(): SocketRoomInfoData {
+  public asInfo(): RoomData {
     return {
       name: this.name,
       players: [...this.users.values()].map((u) => ({ color: u.color, username: u.user.name })),

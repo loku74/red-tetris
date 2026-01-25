@@ -1,8 +1,9 @@
-import type { Socket } from "socket.io";
 import { WARMUP_RESTART_DELAY } from "../constants/core";
+import type { Socket } from "socket.io";
+import type { UserColor } from "@app/shared";
 
 export class User {
-  public color: string = "";
+  public color: UserColor = "cyan";
   public warmUp: boolean = false;
   public lastWarmUp: Date | null = null;
 
