@@ -1,3 +1,5 @@
+import type { UserColor } from "../user";
+
 export type EventMessagePayload = {
   message: string;
 };
@@ -10,6 +12,6 @@ export type EventMessageError = {
 
 export type EventMessageData = {
   from: string;
-  color: string;
+  color: UserColor;
   message: string;
 };
