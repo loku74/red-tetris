@@ -107,4 +107,9 @@ export class Room {
     this.playing = true;
     this.game = new Game(this.users);
   }
+
+  public finish() {
+    this.playing = false;
+    this.game = null;
+  }
 }

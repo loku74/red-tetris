@@ -31,7 +31,7 @@ export class Game {
   }
 
   public isFinish(): boolean {
-    return this.deadPlayers === this.players.size - 1;
+    return this.deadPlayers === this.players.size;
   }
 
   public nextPiece(i: number): Piece {

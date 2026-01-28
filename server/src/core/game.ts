@@ -3,7 +3,12 @@ import type { Game } from "../objects/Game";
 import type { Room } from "../objects/Room";
 import type { Player } from "../objects/Player";
 import { GAME_FALL_SLEEP, GAME_START_DELAY } from "../constants/core";
-import { EVENT_GAME_INFO, EVENT_GAME_PENALITY, EVENT_GAME_SPECTRUM } from "../constants/events";
+import {
+  EVENT_GAME_FINISH,
+  EVENT_GAME_INFO,
+  EVENT_GAME_PENALITY,
+  EVENT_GAME_SPECTRUM
+} from "../constants/events";
 
 export const helpers = {
   applyPenality(game: Game, from: Player) {
@@ -70,6 +75,8 @@ export async function gameLoop(room: Room, io: Server) {
       const { penality, attached } = helpers.handleGravity(game, player);
       if (game.isFinish()) {
         clearInterval(timer);
+        io.to(room.name).emit(EVENT_GAME_FINISH, {});
+        room.finish();
         return;
       }
 
