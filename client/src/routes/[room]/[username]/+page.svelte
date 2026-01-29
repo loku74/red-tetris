@@ -94,10 +94,10 @@
       } else {
         roomData = response.data.roomInfo;
         username = response.data.username;
-        room = response.data.roomName;
+        room = roomData.name;
 
-        socket.on(EVENT_ROOM_UPDATE, (data) => {
-          roomData = data;
+        socket.on(EVENT_ROOM_UPDATE, (roomUpdateData) => {
+          roomData = roomUpdateData;
         });
 
         const player = roomData.players.find((p) => p.username === username)!;
@@ -241,7 +241,7 @@
             <li
               class="p-2 text-lg flex items-center gap-2 group/list {username === player.username
                 ? `border-l-2`
-                : ''} {index % 2 === 0 ? 'bg-dark-list-accent' : ''}"
+                : ''} {index % 2 === 0 ? 'bg-dark-accent' : ''}"
               style={username === player.username
                 ? `border-color: ${userColor}; color: ${userColor};`
                 : ""}

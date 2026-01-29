@@ -6,7 +6,6 @@ export type EventJoinRoomPayload = {
 };
 
 export type EventJoinRoomSuccess = {
-  roomName: string;
   username: string;
   roomInfo: RoomData;
 };
