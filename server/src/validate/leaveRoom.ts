@@ -7,7 +7,7 @@ import { getUser } from "../core/user";
 import type { Socket } from "socket.io";
 import type { Room } from "../objects/Room";
 import type { User } from "../objects/User";
-import type { ValidateError } from "../types/server";
+import type { ValidateError } from "../types/validate";
 
 type ValidateLeaveRoomSuccess = {
   status: true;

@@ -1,19 +1,18 @@
 // global
-import { Server, Socket } from "socket.io";
+import { EVENT_LEAVE_ROOM, EVENT_ROOM_UPDATE } from "@app/shared";
 
 // intern
-import { EVENT_LEAVE_ROOM, EVENT_ROOM_UPDATE } from "../constants/events";
 import { removeUserFromRoom } from "../core/room";
 import { validateLeaveRoom } from "../validate/leaveRoom";
 
 // types
-import type { Callback } from "../types/types";
+import type { AppServer, ServerSocket } from "../types/socket";
 
-export function registerHandlers(io: Server, socket: Socket) {
-  socket.on(EVENT_LEAVE_ROOM, (callback: Callback) => {
+export function registerHandlers(io: AppServer, socket: ServerSocket) {
+  socket.on(EVENT_LEAVE_ROOM, (callback) => {
     const result = validateLeaveRoom(socket);
     if (!result.status) {
-      callback(result.status, result.error);
+      callback({ success: false, error: result.error });
       return;
     }
 
@@ -22,6 +21,6 @@ export function registerHandlers(io: Server, socket: Socket) {
 
     console.log(`User ${result.current.name} left room ${result.room.name}`);
 
-    callback(result.status);
+    callback({ success: true });
   });
 }

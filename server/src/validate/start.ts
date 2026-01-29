@@ -10,7 +10,7 @@ import { Room } from "../objects/Room";
 
 // types
 import type { Socket } from "socket.io";
-import type { ValidateError } from "../types/server";
+import type { ValidateError } from "../types/validate";
 
 type ValidateStartSuccess = {
   status: true;

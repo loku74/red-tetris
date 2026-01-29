@@ -1,15 +1,17 @@
+// global
+import { EVENT_GET_ROOMS } from "@app/shared";
+
 // intern
 import { ROOM_MAX_USERS } from "../constants/core";
-import { EVENT_GET_ROOMS } from "../constants/events";
 import { getRooms } from "../core/room";
 
 // types
-import type { Socket } from "socket.io";
-import type { Callback, SocketGetRoomsResponse } from "../types/types";
+import type { RoomListData } from "@app/shared";
+import type { ServerSocket } from "../types/socket";
 
-export function registerHandlers(socket: Socket) {
-  socket.on(EVENT_GET_ROOMS, (callback: Callback) => {
-    const result: SocketGetRoomsResponse[] = [];
+export function registerHandlers(socket: ServerSocket) {
+  socket.on(EVENT_GET_ROOMS, (callback) => {
+    const result: RoomListData[] = [];
 
     getRooms().forEach((room) => {
       if (room.playing) {
@@ -22,6 +24,6 @@ export function registerHandlers(socket: Socket) {
       });
     });
 
-    callback(true, result);
+    callback({ success: true, data: result });
   });
 }

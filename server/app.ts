@@ -3,7 +3,7 @@ import express from "express";
 import { createServer } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { Server as IoServer, Socket } from "socket.io";
+import { Server as IoServer } from "socket.io";
 
 // intern
 import { SERVER_PORT } from "./src/constants/core";
@@ -22,6 +22,7 @@ import { registerHandlers as warmUpHandler } from "./src/events/warmUp";
 // types
 import type { Express } from "express";
 import type { ServerData } from "./src/types/server";
+import type { AppServer, ServerSocket } from "./src/types/socket";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,8 +36,8 @@ function configureHttp(app: Express) {
   });
 }
 
-function configureSocket(io: IoServer) {
-  io.on("connection", (socket: Socket) => {
+function configureSocket(io: AppServer) {
+  io.on("connection", (socket: ServerSocket) => {
     console.log("New client connected");
 
     canJoinRoomHandler(socket);
@@ -54,7 +55,7 @@ function configureSocket(io: IoServer) {
 export function init(): ServerData {
   const app = express();
   const server = createServer(app);
-  const io = new IoServer(server);
+  const io: AppServer = new IoServer(server);
 
   configureHttp(app);
   configureSocket(io);

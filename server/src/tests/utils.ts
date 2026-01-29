@@ -1,11 +1,10 @@
 // global
-import { Server } from "socket.io";
 import { io as ioc } from "socket.io-client";
 import { expect } from "vitest";
 
 // intern
 import { init } from "../../app";
-import { EVENT_JOIN_ROOM } from "../constants/events";
+import { EVENT_JOIN_ROOM } from "@app/shared";
 import { getRoom, getRooms } from "../core/room";
 import { getUsers } from "../core/user";
 import { Room } from "../objects/Room";
@@ -13,12 +12,12 @@ import { User } from "../objects/User";
 
 // types
 import type { AddressInfo } from "net";
-import type { Socket as ServerSocket } from "socket.io";
 import type { Socket as ClientSocket } from "socket.io-client";
-import type { Callback } from "../types/types";
+import type { SocketResponse } from "@app/shared";
+import type { AppServer, ServerSocket } from "../types/socket";
 import type { TestServerData, TestSocket } from "./types";
 
-export function createClient(address: string, io: Server): Promise<TestSocket> {
+export function createClient(address: string, io: AppServer): Promise<TestSocket> {
   return new Promise((resolve) => {
     const client = ioc(address);
     let server: ServerSocket;
@@ -32,27 +31,27 @@ export function createClient(address: string, io: Server): Promise<TestSocket> {
   });
 }
 
-export function emitAsync(
-  socket: ClientSocket | ServerSocket,
+export function emitAsync<S = unknown, E = unknown>(
+  socket: ClientSocket,
   event: string,
   data?: unknown
-): Promise<{ success: boolean; data?: unknown }> {
+): Promise<SocketResponse<S, E>> {
   return new Promise((resolve) => {
     if (data) {
-      socket.emit(event, data, ((success: boolean, data?: unknown) => {
-        resolve({ success, data });
-      }) as Callback);
+      socket.emit(event, data, (response: SocketResponse<S, E>) => {
+        resolve(response);
+      });
     } else {
-      socket.emit(event, ((success: boolean, data?: unknown) => {
-        resolve({ success, data });
-      }) as Callback);
+      socket.emit(event, (response: SocketResponse<S, E>) => {
+        resolve(response);
+      });
     }
   });
 }
 
-export function onceAsync(socket: ClientSocket | ServerSocket, event: string): Promise<unknown> {
+export function onceAsync<T = unknown>(socket: ClientSocket, event: string): Promise<T> {
   return new Promise((resolve) => {
-    socket.once(event, (data) => {
+    socket.once(event, (data: T) => {
       resolve(data);
     });
   });
@@ -60,7 +59,7 @@ export function onceAsync(socket: ClientSocket | ServerSocket, event: string): P
 
 export async function setupTestServer(): Promise<TestServerData> {
   const struct = init();
-  const io: Server = struct.io;
+  const io = struct.io;
 
   await new Promise<void>((resolve) => {
     struct.server.listen(() => resolve());
@@ -70,9 +69,9 @@ export async function setupTestServer(): Promise<TestServerData> {
   const test1 = await createClient(address, io);
 
   return {
-    io: io,
-    address: address,
-    test1: test1
+    io,
+    address,
+    test1
   };
 }
 

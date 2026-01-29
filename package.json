@@ -1,8 +1,9 @@
 {
   "name": "red-tetris",
   "private": true,
-  "workspaces": ["client", "server"],
-  "scripts": {
-    "production": "bun run --cwd=client build && bun run --cwd=server production"
-  }
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ]
 }

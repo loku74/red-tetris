@@ -1,9 +1,9 @@
 // global
+import { EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE } from "@app/shared";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
 import { ROOM_MAX, ROOM_MAX_USERS, WARMUP_RESTART_DELAY } from "../constants/core";
-import { EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE } from "../constants/events";
 import {
   ERROR_ALREADY_IN_A_ROOM,
   ERROR_MAX_ROOMS,
@@ -23,8 +23,7 @@ import {
 } from "./utils";
 
 // types
-import type { SocketJoinRoomResponse } from "client-types";
-import type { SocketRoomInfoData } from "../types/types";
+import type { EventJoinRoomError, EventJoinRoomSuccess, RoomData } from "@app/shared";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -53,12 +52,14 @@ describe("invalid join", () => {
     }
     setRoom("example", room);
 
-    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
+    await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example"
-    }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_ROOM_IS_FULL);
-      expect(success).toBe(false);
+    }).then((response) => {
+      expect(response.success).toBe(false);
+      if (!response.success) {
+        expect(response.error.roomName).toBe(ERROR_ROOM_IS_FULL);
+      }
     });
   });
 
@@ -66,24 +67,28 @@ describe("invalid join", () => {
     for (let i = 0; i < ROOM_MAX; i++) {
       setRoom(i.toString(), new Room(`test${i}`, user));
     }
-    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
+    await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example"
-    }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_MAX_ROOMS);
-      expect(success).toBe(false);
+    }).then((response) => {
+      expect(response.success).toBe(false);
+      if (!response.success) {
+        expect(response.error.roomName).toBe(ERROR_MAX_ROOMS);
+      }
     });
   });
 
   it("username already taken", async () => {
     setRoom("example", new Room("example", user));
 
-    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
+    await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "name",
       roomName: "example"
-    }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).username).toBe(ERROR_USERNAME_TAKEN);
-      expect(success).toBe(false);
+    }).then((response) => {
+      expect(response.success).toBe(false);
+      if (!response.success) {
+        expect(response.error.username).toBe(ERROR_USERNAME_TAKEN);
+      }
     });
   });
 
@@ -92,12 +97,14 @@ describe("invalid join", () => {
       username: "user1",
       roomName: "example"
     });
-    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
+    await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example2"
-    }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_ALREADY_IN_A_ROOM);
-      expect(success).toBe(false);
+    }).then((response) => {
+      expect(response.success).toBe(false);
+      if (!response.success) {
+        expect(response.error.roomName).toBe(ERROR_ALREADY_IN_A_ROOM);
+      }
     });
   });
 
@@ -105,45 +112,50 @@ describe("invalid join", () => {
     setRoom("example", new Room("example", user));
     getRoom("example")?.start();
 
-    await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
+    await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
       roomName: "example"
-    }).then(({ success, data }) => {
-      expect((data as SocketJoinRoomResponse).roomName).toBe(ERROR_PLAYING_ROOM);
-      expect(success).toBe(false);
+    }).then((response) => {
+      expect(response.success).toBe(false);
+      if (!response.success) {
+        expect(response.error.roomName).toBe(ERROR_PLAYING_ROOM);
+      }
     });
   });
 });
 
 it("valid join", async () => {
-  const data = {
+  const payload = {
     username: "example",
     roomName: "example"
   };
-  await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, data).then(({ success, data }) => {
-    expect(data).toEqual({
-      host: "example",
-      max: ROOM_MAX_USERS,
-      name: "example",
-      players: [
-        {
-          color: "cyan",
-          username: "example"
-        }
-      ],
-      userCount: 1,
-      playing: false,
-      warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
-    } as SocketRoomInfoData);
-    expect(success).toBe(true);
-  });
+  await emitAsync<EventJoinRoomSuccess>(ctx.test1.client, EVENT_JOIN_ROOM, payload).then(
+    (response) => {
+      expect(response.success).toBe(true);
+      if (response.success) {
+        expect(response.data.roomInfo).toEqual({
+          host: "example",
+          max: ROOM_MAX_USERS,
+          name: "example",
+          players: [
+            {
+              color: "cyan",
+              username: "example"
+            }
+          ],
+          userCount: 1,
+          playing: false,
+          warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
+        } as RoomData);
+      }
+    }
+  );
 });
 
 it("host changed", async () => {
   const test2 = await createClient(ctx.address, ctx.io);
-  const roomListener = onceAsync(ctx.test1.client, EVENT_ROOM_UPDATE);
-  const roomListener2 = onceAsync(test2.client, EVENT_ROOM_UPDATE);
-  const disconnectListener = onceAsync(test2.server, "disconnect");
+  const roomListener = onceAsync<RoomData>(ctx.test1.client, EVENT_ROOM_UPDATE);
+  const roomListener2 = onceAsync<RoomData>(test2.client, EVENT_ROOM_UPDATE);
 
   await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
     username: "user1",
@@ -154,18 +166,20 @@ it("host changed", async () => {
     roomName: "example"
   });
 
-  const data1 = (await roomListener) as SocketRoomInfoData;
+  const data1 = await roomListener;
   expect(getRoom("example")?.asInfo()).toEqual(data1);
 
   ctx.test1.client.close();
 
   // a new host has been setted
-  const data2 = (await roomListener2) as SocketRoomInfoData;
+  const data2 = await roomListener2;
   expect(getRoom("example")?.asInfo()).toEqual(data2);
   expect(data2.host).toEqual("user2");
 
   test2.client.close();
-  await disconnectListener;
+
+  // wait for disconnect to complete
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   expect(getRooms().size).toEqual(0);
 });

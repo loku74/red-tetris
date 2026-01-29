@@ -1,5 +1,6 @@
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import path from "path";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -21,8 +22,7 @@ const config = {
       bundleStrategy: "single"
     },
     alias: {
-      "server-types": "../server/src/types/types.ts",
-      "server-events": "../server/src/constants/events.ts"
+      "@app/shared": path.resolve("../shared/index.ts")
     }
   }
 };

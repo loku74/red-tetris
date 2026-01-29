@@ -10,7 +10,7 @@ import { getUser } from "../core/user";
 // types
 import type { Socket } from "socket.io";
 import type { User } from "../objects/User";
-import type { ValidateError } from "../types/server";
+import type { ValidateError } from "../types/validate";
 
 type ValidateWarmUpSuccess = {
   status: true;

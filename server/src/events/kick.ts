@@ -1,20 +1,18 @@
 // global
-import { Server, Socket } from "socket.io";
+import { EVENT_KICK, EVENT_ROOM_UPDATE } from "@app/shared";
 
 // intern
-import { EVENT_KICK, EVENT_ROOM_UPDATE } from "../constants/events";
 import { removeUserFromRoom } from "../core/room";
 import { validateKick } from "../validate/kick";
 
 // types
-import type { SocketKickData } from "client-types";
-import type { Callback } from "../types/types";
+import type { AppServer, ServerSocket } from "../types/socket";
 
-export function registerHandlers(io: Server, socket: Socket) {
-  socket.on(EVENT_KICK, (data: SocketKickData, callback: Callback) => {
-    const result = validateKick(socket, data);
+export function registerHandlers(io: AppServer, socket: ServerSocket) {
+  socket.on(EVENT_KICK, (payload, callback) => {
+    const result = validateKick(socket, payload);
     if (!result.status) {
-      callback(result.status, result.error);
+      callback({ success: result.status, error: result.error });
       return;
     }
 
@@ -26,6 +24,6 @@ export function registerHandlers(io: Server, socket: Socket) {
       `User ${result.targetUser.name} was kicked from room ${result.room.name} by ${result.current.name}`
     );
 
-    callback(true);
+    callback({ success: true });
   });
 }

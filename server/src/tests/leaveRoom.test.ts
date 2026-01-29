@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
-import { EVENT_LEAVE_ROOM, EVENT_ROOM_UPDATE } from "../constants/events";
+import { EVENT_LEAVE_ROOM, EVENT_ROOM_UPDATE } from "@app/shared";
 import { ERROR_INEXISTING_ROOM, ERROR_USER_NOT_FOUND } from "../constants/validateErrors";
 import { getRoom, getRooms } from "../core/room";
 import { getUser, getUsers } from "../core/user";
@@ -16,6 +16,7 @@ import {
 } from "./utils";
 
 // types
+import type { EventLeaveRoomError, RoomData } from "@app/shared";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -30,20 +31,28 @@ afterEach(async () => {
 
 describe("invalid leave room", () => {
   it("user not found", async () => {
-    await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(ERROR_USER_NOT_FOUND);
-      expect(success).toBe(false);
-    });
+    await emitAsync<unknown, EventLeaveRoomError>(ctx.test1.client, EVENT_LEAVE_ROOM).then(
+      (response) => {
+        expect(response.success).toBe(false);
+        if (!response.success) {
+          expect(response.error.room).toBe(ERROR_USER_NOT_FOUND);
+        }
+      }
+    );
   });
 
   it("inexisting room", async () => {
     await joinRoom(ctx.test1, "example", "test");
     getRooms().clear();
 
-    await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then(({ success, data }) => {
-      expect((data as { room: string }).room).toBe(ERROR_INEXISTING_ROOM);
-      expect(success).toBe(false);
-    });
+    await emitAsync<unknown, EventLeaveRoomError>(ctx.test1.client, EVENT_LEAVE_ROOM).then(
+      (response) => {
+        expect(response.success).toBe(false);
+        if (!response.success) {
+          expect(response.error.room).toBe(ERROR_INEXISTING_ROOM);
+        }
+      }
+    );
   });
 });
 
@@ -57,10 +66,10 @@ it("valid leave room", async () => {
   expect(userBefore).toBeDefined();
   expect(getUsers().size).toBe(2);
 
-  const listener = onceAsync(test2.client, EVENT_ROOM_UPDATE);
+  const listener = onceAsync<RoomData>(test2.client, EVENT_ROOM_UPDATE);
 
-  await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then(({ success }) => {
-    expect(success).toBe(true);
+  await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then((response) => {
+    expect(response.success).toBe(true);
   });
 
   // check that the action is effective and host updated here

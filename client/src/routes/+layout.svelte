@@ -12,6 +12,9 @@
   import { getSocket } from "$lib/socket/socket.svelte";
   import { ServerOff } from "@lucide/svelte";
 
+  // events
+  import { EVENT_USER_CONNECT, EVENT_USER_CONNECT_ERROR } from "@app/shared";
+
   let { children } = $props();
 
   let isConnected = $state(false);
@@ -22,21 +25,25 @@
     const socket = getSocket();
     isConnected = socket.connected;
 
-    socket.on("connect", () => {
+    const onConnect = () => {
       isConnected = true;
       connectionError = null;
       showError = false;
-    });
+    };
 
-    socket.on("connect_error", () => {
+    socket.on(EVENT_USER_CONNECT, onConnect);
+
+    const onConnectError = () => {
       isConnected = false;
       connectionError = "Failed to connect to server";
       showError = true;
-    });
+    };
+
+    socket.on(EVENT_USER_CONNECT_ERROR, onConnectError);
 
     return () => {
-      socket.off("connect");
-      socket.off("connect_error");
+      socket.off(EVENT_USER_CONNECT, onConnect);
+      socket.off(EVENT_USER_CONNECT_ERROR, onConnectError);
     };
   });
 

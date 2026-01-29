@@ -3,6 +3,7 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
   import { fade } from "svelte/transition";
+  import { resolve } from "$app/paths";
 
   // components
   import Piece from "$lib/components/Piece.svelte";
@@ -32,18 +33,20 @@
     EVENT_LEAVE_ROOM,
     EVENT_KICK,
     EVENT_MESSAGE,
-    EVENT_WARM_UP,
-    EVENT_USER_CONNECT
-  } from "server-events";
+    EVENT_WARM_UP
+  } from "@app/shared";
 
   // types
-  import type { SocketChatData, SocketJoinRoomData, SocketKickData } from "$lib/types/emitData";
   import type {
-    SocketJoinRoomResponse,
-    SocketRoomInfoData,
-    SocketPlayerData,
-    SocketMessageResponse
-  } from "server-types";
+    EventJoinRoomPayload,
+    EventKickData,
+    EventKickPayload,
+    EventMessageData,
+    EventMessagePayload,
+    RoomData,
+    UserColor,
+    UserData
+  } from "@app/shared";
   import type { PieceColor } from "$lib/types/piece";
 
   // constants
@@ -52,8 +55,8 @@
   import { pieceColors } from "$lib/constants/pieceColors";
 
   // url params
-  const room = page.params.room;
-  const username = page.params.player;
+  let room = $state(page.params.room || "");
+  let username = $state(page.params.username || "");
 
   // errors
   let roomError = $state<string>();
@@ -67,55 +70,50 @@
   const socket = getSocket();
 
   // data
-  let roomData = $state<SocketRoomInfoData>();
+  let roomData = $state<RoomData>();
   let userColor = $state<string>();
 
   // join
   let joined = $state(false);
 
   function joinRoom() {
-    if (joined) return;
+    const data: EventJoinRoomPayload = { username: username || "", roomName: room || "" };
+    socket.emit(EVENT_JOIN_ROOM, data, (response) => {
+      if (!response.success) {
+        roomError = response.error.roomName;
+        userError = response.error.username;
+        if (!userError && !roomError) unusualError = "Failed to join room";
 
-    localStorage.setItem("username", username?.substring(0, USERNAME_MAX_LENGTH)!);
-    const data: SocketJoinRoomData = { username: username || "", roomName: room || "" };
-    socket.emit(
-      EVENT_JOIN_ROOM,
-      data,
-      (success: boolean, data: SocketRoomInfoData | SocketJoinRoomResponse) => {
-        if (!success) {
-          const errorData = data as SocketJoinRoomResponse;
-          roomError = errorData.roomName;
-          userError = errorData.username;
-          if (!userError && !roomError) {
-            unusualError = "Failed to join room";
+        const interval = setInterval(() => {
+          countdown--;
+          if (countdown <= 0) {
+            clearInterval(interval);
+            goto(resolve("/"));
           }
-          const interval = setInterval(() => {
-            countdown--;
-            if (countdown <= 0) {
-              clearInterval(interval);
-              goto("/");
-            }
-          }, 1000);
-        } else {
-          roomData = data as SocketRoomInfoData;
-          socket.on(EVENT_ROOM_UPDATE, (data: SocketRoomInfoData) => {
-            roomData = data;
-          });
-          const player = roomData.players.find((p) => p.username === username)!;
-          userColor = pieceColors[player.color].light;
-          joined = true;
-        }
+        }, 1000);
+      } else {
+        roomData = response.data.roomInfo;
+        username = response.data.username;
+        room = roomData.name;
+
+        socket.on(EVENT_ROOM_UPDATE, (roomUpdateData) => {
+          roomData = roomUpdateData;
+        });
+
+        const player = roomData.players.find((p) => p.username === username)!;
+        userColor = pieceColors[player.color].light;
+        joined = true;
       }
-    );
+    });
   }
 
   // leave
   let showLeaveDialog = $state(false);
 
   function leaveRoom() {
-    socket.emit(EVENT_LEAVE_ROOM, (success: boolean) => {
-      if (success) {
-        goto("/");
+    socket.emit(EVENT_LEAVE_ROOM, (response) => {
+      if (response.success) {
+        goto(resolve("/"));
       }
     });
   }
@@ -126,30 +124,30 @@
   let userToKickColor = $state<PieceColor>("empty");
   let userToKickPieceColor = $state<string>("#e6e6e6");
 
-  function handleKickUser(user: SocketPlayerData) {
+  function handleKickUser(user: UserData) {
     userToKick = user.username;
     userToKickColor = user.color;
     userToKickPieceColor = pieceColors[user.color].light;
     showKickDialog = true;
   }
 
-  function kickUser(data: SocketKickData) {
-    socket.emit(EVENT_KICK, data, (success: boolean) => {
-      if (success) showKickDialog = false;
+  function kickUser(data: EventKickPayload) {
+    socket.emit(EVENT_KICK, data, (response) => {
+      if (response.success) {
+        showKickDialog = false;
+      }
     });
   }
 
-  function onKick() {
-    if (room) {
-      setKickedRoom(room);
-      setKickedDialog(true);
-      goto("/");
-    }
+  function onKick(data: EventKickData) {
+    setKickedRoom(data.room);
+    setKickedDialog(true);
+    goto(resolve("/"));
   }
 
   // messages
   let message = $state<string>("");
-  let messages = $state<Array<SocketMessageResponse>>([]);
+  let messages = $state<Array<EventMessageData>>([]);
   let messagesContainer = $state<HTMLDivElement>();
 
   $effect(() => {
@@ -160,16 +158,16 @@
 
   function sendMessage() {
     if (message) {
-      const data: SocketChatData = { message };
-      socket.emit(EVENT_MESSAGE, data, (success: boolean) => {
-        if (success) {
+      const data: EventMessagePayload = { message };
+      socket.emit(EVENT_MESSAGE, data, (response) => {
+        if (response.success) {
           message = "";
         }
       });
     }
   }
 
-  function onMessage(data: SocketMessageResponse) {
+  function onMessage(data: EventMessageData) {
     messages.push({ from: data.from, message: data.message, color: data.color });
   }
 
@@ -177,8 +175,8 @@
   let warmUp = $state<boolean>(false);
   let showWarmUpRestart = $state<boolean>(false);
   function startWarmUp() {
-    socket.emit(EVENT_WARM_UP, (success: boolean) => {
-      if (success) {
+    socket.emit(EVENT_WARM_UP, (response) => {
+      if (response.success) {
         warmUp = true;
         setTimeout(() => {
           showWarmUpRestart = true;
@@ -188,14 +186,16 @@
   }
 
   onMount(() => {
-    if (socket.connected) joinRoom();
-    else socket.on(EVENT_USER_CONNECT, joinRoom);
+    localStorage.setItem("username", username.substring(0, USERNAME_MAX_LENGTH));
+
+    joinRoom();
 
     socket.on(EVENT_KICK, onKick);
     socket.on(EVENT_MESSAGE, onMessage);
 
     return () => {
-      socket.off(EVENT_USER_CONNECT, joinRoom);
+      socket.off(EVENT_KICK, onKick);
+      socket.off(EVENT_MESSAGE, onMessage);
     };
   });
 </script>
@@ -241,7 +241,7 @@
             <li
               class="p-2 text-lg flex items-center gap-2 group/list {username === player.username
                 ? `border-l-2`
-                : ''} {index % 2 === 0 ? 'bg-dark-list-accent' : ''}"
+                : ''} {index % 2 === 0 ? 'bg-dark-accent' : ''}"
               style={username === player.username
                 ? `border-color: ${userColor}; color: ${userColor};`
                 : ""}
@@ -299,7 +299,7 @@
       <!-- message -->
       <div class="bg-dark-secondary border border-border flex flex-col h-[640px] w-96">
         <div bind:this={messagesContainer} class="flex-1 flex flex-col overflow-y-auto py-1 gap-3">
-          {#each messages as m}
+          {#each messages as m, index (index)}
             <div class="space-y-1 flex flex-col">
               <div
                 class="flex items-center gap-2

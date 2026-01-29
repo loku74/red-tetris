@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
+  import { resolve } from "$app/paths";
 
   // assets
   import bgTile from "$lib/assets/empty_piece.jpg";
@@ -18,11 +19,10 @@
   import { getSocket } from "$lib/socket/socket.svelte";
 
   // events
-  import { EVENT_CAN_JOIN_ROOM, EVENT_GET_ROOMS, EVENT_JOIN_ROOM } from "server-events";
+  import { EVENT_CAN_JOIN_ROOM, EVENT_GET_ROOMS } from "@app/shared";
 
   // types
-  import type { SocketJoinRoomData } from "$lib/types/emitData";
-  import type { SocketJoinRoomResponse, SocketGetRoomsResponse } from "server-types";
+  import type { EventJoinRoomPayload, RoomListData } from "@app/shared";
 
   // constants
   import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants/max";
@@ -44,14 +44,19 @@
   function canJoinRoom() {
     emitting = true;
     localStorage.setItem("username", username);
-    const data: SocketJoinRoomData = { username: username || "", roomName: room || "" };
-    socket.emit(EVENT_CAN_JOIN_ROOM, data, (success: boolean, data: SocketJoinRoomResponse) => {
-      if (!success) {
-        usernameError = data.username;
-        roomError = data.roomName;
+    const data: EventJoinRoomPayload = { username: username || "", roomName: room || "" };
+    socket.emit(EVENT_CAN_JOIN_ROOM, data, (response) => {
+      if (!response.success) {
+        usernameError = response.error.username;
+        roomError = response.error.roomName;
         emitting = false;
       } else {
-        goto(`/${data.roomName}/${data.username}`);
+        goto(
+          resolve("/[room]/[username]", {
+            room: data.roomName,
+            username: data.username
+          })
+        );
       }
     });
   }
@@ -63,12 +68,12 @@
   }
 
   // get rooms
-  let rooms = $state<SocketGetRoomsResponse[]>([]);
+  let rooms = $state<RoomListData[]>([]);
   let showRoomsDialog = $state(false);
 
   function getRooms() {
-    socket.emit(EVENT_GET_ROOMS, (success: boolean, data: SocketGetRoomsResponse[]) => {
-      if (success) rooms = data;
+    socket.emit(EVENT_GET_ROOMS, (response) => {
+      if (response.success) rooms = response.data;
     });
   }
 
@@ -193,7 +198,7 @@
       <p class="text-white/50 text-center">No rooms available</p>
     {:else}
       <ul class="space-y-2 px-4 max-h-128 overflow-y-auto w-80">
-        {#each rooms as { name, userCount, max }}
+        {#each rooms as { name, userCount, max } (name)}
           <li>
             <button
               onclick={() => joinSelectedRoom(name)}

@@ -1,6 +1,7 @@
 // socket main events
 export const EVENT_USER_DISCONNECT = "disconnecting";
 export const EVENT_USER_CONNECT = "connect";
+export const EVENT_USER_CONNECT_ERROR = "connect_error";
 
 // join & leave events
 export const EVENT_CAN_JOIN_ROOM = "can_join_room";

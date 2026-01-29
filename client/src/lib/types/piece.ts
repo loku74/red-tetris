@@ -1,15 +1,6 @@
-import type { SocketUserColor } from "server-types";
+import type { UserColor } from "@app/shared";
 
-type PieceColor =
-  | "red"
-  | "blue"
-  | "green"
-  | "yellow"
-  | "purple"
-  | "orange"
-  | "cyan"
-  | "grey"
-  | "empty";
+type PieceColor = UserColor | "empty";
 
 interface Piece {
   size: number;
@@ -17,7 +8,7 @@ interface Piece {
 }
 
 type PieceColorDetail = Record<
-  PieceColor | SocketUserColor,
+  PieceColor,
   {
     main: string;
     dark: string;
