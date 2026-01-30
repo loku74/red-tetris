@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun --hot app.ts",
     "format": "bunx prettier . --write",
-    "lint": "bunx eslint .",
+    "lint": "bunx eslint . && bunx tsc --noEmit",
     "coverage": "bunx vitest run --coverage"
   },
   "devDependencies": {
