@@ -44,7 +44,7 @@
   function canJoinRoom() {
     emitting = true;
     localStorage.setItem("username", username);
-    const data: EventJoinRoomPayload = { username: username || "", roomName: room || "" };
+    const data: EventJoinRoomPayload = { username, roomName: room };
     socket.emit(EVENT_CAN_JOIN_ROOM, data, (response) => {
       if (!response.success) {
         usernameError = response.error.username;
