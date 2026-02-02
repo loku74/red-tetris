@@ -1,5 +1,5 @@
 import { asMatrix } from "../core/piece";
-import type { Matrix2D, PieceType, SocketPieceColor } from "../types/types";
+import type { Matrix2D, PieceType, PieceColor } from "@app/shared";
 
 export class Piece {
   public rotation: number = 0;
@@ -10,7 +10,7 @@ export class Piece {
     public matrix: Matrix2D<number>, // row, column
     public x: number = 0,
     public y: number = 0,
-    public color: SocketPieceColor = "grey"
+    public color: PieceColor = "grey"
   ) {
     const width = matrix[0].length;
     for (const row of matrix) {

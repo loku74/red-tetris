@@ -1,11 +1,11 @@
 import { Room } from "../objects/Room";
 import { User } from "../objects/User";
-import type { SocketRoomInfoData } from "../types/types";
+import type { RoomData } from "@app/shared";
 import type { Socket } from "socket.io";
 
 const rooms: Map<string, Room> = new Map();
 
-export function removeUserFromRoom(user: User, room: Room): SocketRoomInfoData {
+export function removeUserFromRoom(user: User, room: Room): RoomData {
   const info = room.remove(user);
   user.socket.leave(room.name);
 
