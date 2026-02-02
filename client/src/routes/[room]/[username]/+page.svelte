@@ -324,6 +324,7 @@
             bright
           />
           <button
+            onclick={sendMessage}
             class="btn btn-primary w-12 flex items-center justify-center ml-auto"
             style="--btn-depth: 0px;"
           >
