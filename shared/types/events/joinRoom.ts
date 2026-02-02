@@ -1,4 +1,4 @@
-import type { RoomData } from "@app/shared";
+import type { RoomData } from "../room";
 
 export type EventJoinRoomPayload = {
   roomName: string;

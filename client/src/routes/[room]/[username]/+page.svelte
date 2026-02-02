@@ -43,16 +43,15 @@
     EventKickPayload,
     EventMessageData,
     EventMessagePayload,
+    PieceColor,
     RoomData,
-    UserColor,
     UserData
   } from "@app/shared";
-  import type { PieceColor } from "$lib/types/piece";
 
   // constants
   import { USERNAME_MAX_LENGTH, MESSAGE_MAX_LENGTH } from "$lib/constants/max";
   import { REGEX_MESSAGE } from "$lib/constants/regex";
-  import { pieceColors } from "$lib/constants/pieceColors";
+  import { pieceColors } from "@app/shared";
 
   // url params
   let room = $state(page.params.room || "");

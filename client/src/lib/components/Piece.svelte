@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Piece } from "$lib/types/piece";
-  import { pieceColors } from "$lib/constants/pieceColors";
+  import type { Piece } from "@app/shared";
+  import { pieceColors } from "@app/shared";
 
   let { size, color }: Piece = $props();
 

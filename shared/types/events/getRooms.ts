@@ -1,4 +1,4 @@
-import type { RoomListData } from "@app/shared";
+import type { RoomListData } from "../room";
 
 export type EventGetRoomsPayload = void;
 

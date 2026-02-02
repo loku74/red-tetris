@@ -1,4 +1,4 @@
-import type { UserData } from "@app/shared";
+import type { UserData } from "./user";
 
 export type RoomData = {
   name: string;

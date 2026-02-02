@@ -1,4 +1,7 @@
-import type { UserColor } from "@app/shared";
+import type { UserColor } from "../types/user";
+import type { PIECES_TYPES } from "../constants/pieces";
+
+export type PieceType = (typeof PIECES_TYPES)[number];
 
 type PieceColor = UserColor | "empty";
 
@@ -15,4 +18,5 @@ type PieceColorDetail = Record<
     light: string;
   }
 >;
+
 export type { PieceColor, Piece, PieceColorDetail };

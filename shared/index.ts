@@ -15,5 +15,11 @@ export * from "./types/user";
 export * from "./types/room";
 export * from "./types/socket";
 
+// game
+export * from "./types/matrix"
+export * from "./types/piece"
+
 // [ CONSTANTS ]
 export * from "./constants/events";
+export * from "./constants/pieceColors";
+export * from "./constants/pieces";

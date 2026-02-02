@@ -1,4 +1,4 @@
-import * as shared from "@app/shared";
+import * as shared from "../index";
 
 type SuccessResponse<SuccessType> = SuccessType extends void
   ? { success: true }

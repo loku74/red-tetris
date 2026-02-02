@@ -1,4 +1,4 @@
-import type { PieceColorDetail } from "$lib/types/piece";
+import type { PieceColorDetail } from "../types/piece";
 
 const pieceColors: PieceColorDetail = {
   red: {
