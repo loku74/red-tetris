@@ -1,5 +1,4 @@
-import { BOARD_HEIGHT, BOARD_WIDTH } from "../constants/core";
-import type { Matrix2D, NonEmptyArray } from "@app/shared";
+import { BOARD, type Matrix2D, type NonEmptyArray } from "@app/shared";
 import { Piece } from "./Piece";
 
 export class Board {
@@ -9,9 +8,7 @@ export class Board {
 
   constructor() {
     // fill grid with 0;
-    this.matrix = Array.from({ length: BOARD_HEIGHT }, () =>
-      Array.from({ length: BOARD_WIDTH }, () => 0)
-    ) as Matrix2D<number>;
+    this.matrix = structuredClone(BOARD);
   }
 
   private getRow(index: number): NonEmptyArray<number> {
@@ -37,8 +34,8 @@ export class Board {
           if (boardCell === undefined || boardCell === 1) return false;
         }
         return true;
-      })
-    })
+      });
+    });
   }
 
   public place(piece: Piece) {
