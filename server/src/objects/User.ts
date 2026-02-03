@@ -18,13 +18,16 @@ export class User {
   ) {}
 
   public setWarmUp(): void {
+    if (this.warmUp) {
+      this.warmUp.stopped = true;
+    }
+  
     this.warmUp = new Game(new Map([[this.id, { color: this.color, user: this }]]));
     this.lastWarmUp = new Date();
   }
 
   public canWarmUp(): boolean {
     if (!this.lastWarmUp) return true;
-    if (this.warmUp && this.warmUp.started) return false;
 
     const now = new Date();
     const timeSinceLastWarmUp = now.getTime() - this.lastWarmUp.getTime();

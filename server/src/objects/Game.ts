@@ -8,6 +8,7 @@ export class Game {
   public players: Map<string, Player> = new Map();
   public pieces: Array<Piece> = [];
   public started: boolean = false;
+  public stopped: boolean = false;
 
   constructor(users: Map<string, { color: UserColor; user: User }>) {
     const initPiece = this.nextPiece(0);
@@ -29,7 +30,7 @@ export class Game {
   }
 
   public isFinish(): boolean {
-    return this.getDeadPlayers().length === this.players.size;
+    return this.getDeadPlayers().length === this.players.size || this.stopped;
   }
 
   public nextPiece(i: number): Piece {

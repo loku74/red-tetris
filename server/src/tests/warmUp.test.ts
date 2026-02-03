@@ -72,7 +72,7 @@ it(
   (WARMUP_RESTART_DELAY + 2) * 1_000
 );
 
-it.only("warmup loop", async () => {
+it("warmup loop", async () => {
   const handleGravityMock = vi.spyOn(GameModule.helpers, "handleGravity");
   const test1 = ctx.test1;
   await joinRoom(test1, "example1", "user1");

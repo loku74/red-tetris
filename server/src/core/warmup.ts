@@ -16,7 +16,7 @@ export async function warmupLoop(user: User, io: Server) {
 
   const timer = setInterval(() => {
     game.players.forEach((player, id) => {
-      if (player.end) return;
+      if (!player.alive) return;
 
       helpers.handleGravity(game, player);
       if (game.isFinish()) {
