@@ -14,9 +14,9 @@ body {
   --color-red-primary: #d00000;
   --color-red-accent: #eb0000;
   --color-red-secondary: #770000;
-  --color-dark-primary: hsl(0, 0%, 10%);
-  --color-dark-secondary: hsl(0, 0%, 17%);
-  --color-dark-accent: hsl(0, 0%, 28%);
+  --color-dark-primary: hsl(0, 0%, 9%);
+  --color-dark-secondary: hsl(0, 0%, 18%);
+  --color-dark-accent: hsl(0, 0%, 27%);
   --color-dark-hover: hsl(0, 0%, 35%);
   --color-border: hsl(0, 0%, 40%);
 }

@@ -5,6 +5,9 @@
   // components
   import Dialog from "$lib/components/Dialog.svelte";
 
+  // state
+  import { setRoomData } from "$lib/state/room.svelte";
+
   // assets
   import redPiece from "$lib/assets/red_piece.jpg";
 
@@ -13,7 +16,7 @@
   import { ServerOff } from "@lucide/svelte";
 
   // events
-  import { EVENT_USER_CONNECT, EVENT_USER_CONNECT_ERROR } from "@app/shared";
+  import { EVENT_ROOM_UPDATE, EVENT_USER_CONNECT, EVENT_USER_CONNECT_ERROR } from "@app/shared";
 
   let { children } = $props();
 
@@ -40,10 +43,12 @@
     };
 
     socket.on(EVENT_USER_CONNECT_ERROR, onConnectError);
+    socket.on(EVENT_ROOM_UPDATE, setRoomData);
 
     return () => {
       socket.off(EVENT_USER_CONNECT, onConnect);
       socket.off(EVENT_USER_CONNECT_ERROR, onConnectError);
+      socket.off(EVENT_ROOM_UPDATE, setRoomData);
     };
   });
 

@@ -30,12 +30,6 @@ export interface ClientToServerEvents {
     shared.EventJoinRoomSuccess,
     shared.EventJoinRoomError
   >;
-  // to remove asap !
-  [shared.EVENT_CAN_JOIN_ROOM]: SocketEvent<
-    shared.EventJoinRoomPayload,
-    { roomName: string; username: string },
-    shared.EventJoinRoomError
-  >;
   [shared.EVENT_MESSAGE]: SocketEvent<
     shared.EventMessagePayload,
     shared.EventMessageSuccess,

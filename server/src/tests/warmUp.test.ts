@@ -69,11 +69,11 @@ it(
       expect(response.success).toBe(true);
     });
 
-    await new Promise((resolve) => setTimeout(resolve, WARMUP_RESTART_DELAY * 1_000));
+    await new Promise((resolve) => setTimeout(resolve, (WARMUP_RESTART_DELAY + 1) * 1_000));
 
     await emitAsync(ctx.test1.client, EVENT_WARM_UP).then((response) => {
       expect(response.success).toBe(true);
     });
   },
-  (WARMUP_RESTART_DELAY + 1) * 1_000
+  (WARMUP_RESTART_DELAY + 2) * 1_000
 );

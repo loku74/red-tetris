@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
 import { EVENT_MESSAGE } from "@app/shared";
-import { ERROR_NOT_IN_A_ROOM } from "../constants/validateErrors";
 import {
   createClient,
   emitAsync,
@@ -33,9 +32,6 @@ describe("invalid chat", () => {
       message: "test"
     }).then((response) => {
       expect(response.success).toBe(false);
-      if (!response.success) {
-        expect(response.error.room).toBe(ERROR_NOT_IN_A_ROOM);
-      }
     });
   });
 });

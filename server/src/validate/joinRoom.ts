@@ -20,12 +20,12 @@ import type { ValidateError } from "../types/validate";
 
 const schema = z.object({
   username: usernameValidation,
-  roomName: roomValidation
+  room: roomValidation
 });
 
 type ValidateJoinRoomSuccess = {
   status: true;
-  roomName: string;
+  room: string;
   username: string;
 };
 
@@ -43,26 +43,26 @@ export function validateJoinRoom(
   if (socket.rooms.size > 1) {
     return {
       status: false,
-      error: { roomName: ERROR_ALREADY_IN_A_ROOM }
+      error: { room: ERROR_ALREADY_IN_A_ROOM }
     };
   }
 
-  const room = getRoom(result.data.roomName);
+  const room = getRoom(result.data.room);
   if (room && room.users.size >= ROOM_MAX_USERS) {
-    return { status: false, error: { roomName: ERROR_ROOM_IS_FULL } };
+    return { status: false, error: { room: ERROR_ROOM_IS_FULL } };
   }
   if (room && room.get(data.username)) {
     return { status: false, error: { username: ERROR_USERNAME_TAKEN } };
   }
   if (room && room.playing === true) {
-    return { status: false, error: { roomName: ERROR_PLAYING_ROOM } };
+    return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
   if (getRooms().size >= ROOM_MAX) {
     return {
       status: false,
-      error: { roomName: ERROR_MAX_ROOMS }
+      error: { room: ERROR_MAX_ROOMS }
     };
   }
 
-  return { status: true, roomName: result.data.roomName, username: result.data.username };
+  return { status: true, room: result.data.room, username: result.data.username };
 }

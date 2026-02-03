@@ -7,4 +7,12 @@ export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.strict,
   prettier,
+  {
+     languageOptions: {
+       parserOptions: {
+         projectService: true,
+         tsconfigRootDir: import.meta.dirname,
+       },
+     },
+   }
 );

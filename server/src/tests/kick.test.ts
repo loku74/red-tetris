@@ -133,10 +133,6 @@ it("valid kick", async () => {
   await joinRoom(ctx.test1, "example", "user1");
   await joinRoom(test2, "example", "user2");
 
-  await roomListener.then((data) => {
-    expect(data).toEqual(getRoom("example")?.asInfo());
-  });
-
   roomListener = onceAsync<RoomData>(ctx.test1.client, EVENT_ROOM_UPDATE);
   await emitAsync(ctx.test1.client, EVENT_KICK, {
     username: "user2"

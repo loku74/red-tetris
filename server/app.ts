@@ -9,7 +9,6 @@ import { Server as IoServer } from "socket.io";
 import { SERVER_PORT } from "./src/constants/core";
 
 // handlers
-import { registerHandlers as canJoinRoomHandler } from "./src/events/canJoinRoom";
 import { registerHandlers as disconnectingHandler } from "./src/events/disconnecting";
 import { registerHandlers as getRoomsHandler } from "./src/events/getRooms";
 import { registerHandlers as joinRoomHandler } from "./src/events/joinRoom";
@@ -40,11 +39,10 @@ function configureSocket(io: AppServer) {
   io.on("connection", (socket: ServerSocket) => {
     console.log("New client connected");
 
-    canJoinRoomHandler(socket);
     messageHandler(io, socket);
     disconnectingHandler(io, socket);
     getRoomsHandler(socket);
-    joinRoomHandler(socket);
+    joinRoomHandler(io, socket);
     kickHandler(io, socket);
     startHandler(io, socket);
     leaveRoomHandler(io, socket);

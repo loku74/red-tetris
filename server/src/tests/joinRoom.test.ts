@@ -11,7 +11,7 @@ import {
   ERROR_ROOM_IS_FULL,
   ERROR_USERNAME_TAKEN
 } from "../constants/validateErrors";
-import { getRoom, getRooms, setRoom } from "../core/room";
+import { getRoom, setRoom } from "../core/room";
 import { Room } from "../objects/Room";
 import {
   createClient,
@@ -54,11 +54,11 @@ describe("invalid join", () => {
 
     await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
-      roomName: "example"
+      room: "example"
     }).then((response) => {
       expect(response.success).toBe(false);
       if (!response.success) {
-        expect(response.error.roomName).toBe(ERROR_ROOM_IS_FULL);
+        expect(response.error.room).toBe(ERROR_ROOM_IS_FULL);
       }
     });
   });
@@ -69,11 +69,11 @@ describe("invalid join", () => {
     }
     await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
-      roomName: "example"
+      room: "example"
     }).then((response) => {
       expect(response.success).toBe(false);
       if (!response.success) {
-        expect(response.error.roomName).toBe(ERROR_MAX_ROOMS);
+        expect(response.error.room).toBe(ERROR_MAX_ROOMS);
       }
     });
   });
@@ -83,7 +83,7 @@ describe("invalid join", () => {
 
     await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "name",
-      roomName: "example"
+      room: "example"
     }).then((response) => {
       expect(response.success).toBe(false);
       if (!response.success) {
@@ -95,15 +95,15 @@ describe("invalid join", () => {
   it("already in a room", async () => {
     await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
-      roomName: "example"
+      room: "example"
     });
     await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
-      roomName: "example2"
+      room: "example2"
     }).then((response) => {
       expect(response.success).toBe(false);
       if (!response.success) {
-        expect(response.error.roomName).toBe(ERROR_ALREADY_IN_A_ROOM);
+        expect(response.error.room).toBe(ERROR_ALREADY_IN_A_ROOM);
       }
     });
   });
@@ -114,11 +114,11 @@ describe("invalid join", () => {
 
     await emitAsync<unknown, EventJoinRoomError>(ctx.test1.client, EVENT_JOIN_ROOM, {
       username: "user1",
-      roomName: "example"
+      room: "example"
     }).then((response) => {
       expect(response.success).toBe(false);
       if (!response.success) {
-        expect(response.error.roomName).toBe(ERROR_PLAYING_ROOM);
+        expect(response.error.room).toBe(ERROR_PLAYING_ROOM);
       }
     });
   });
@@ -127,26 +127,14 @@ describe("invalid join", () => {
 it("valid join", async () => {
   const payload = {
     username: "example",
-    roomName: "example"
+    room: "example"
   };
   await emitAsync<EventJoinRoomSuccess>(ctx.test1.client, EVENT_JOIN_ROOM, payload).then(
     (response) => {
       expect(response.success).toBe(true);
       if (response.success) {
-        expect(response.data.roomInfo).toEqual({
-          host: "example",
-          max: ROOM_MAX_USERS,
-          name: "example",
-          players: [
-            {
-              color: "cyan",
-              username: "example"
-            }
-          ],
-          userCount: 1,
-          playing: false,
-          warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
-        } as RoomData);
+        expect(response.data.room).toBe("example");
+        expect(response.data.username).toBe("example");
       }
     }
   );
@@ -154,32 +142,42 @@ it("valid join", async () => {
 
 it("host changed", async () => {
   const test2 = await createClient(ctx.address, ctx.io);
+  const test3 = await createClient(ctx.address, ctx.io);
   const roomListener = onceAsync<RoomData>(ctx.test1.client, EVENT_ROOM_UPDATE);
-  const roomListener2 = onceAsync<RoomData>(test2.client, EVENT_ROOM_UPDATE);
 
   await emitAsync(ctx.test1.client, EVENT_JOIN_ROOM, {
     username: "user1",
-    roomName: "example"
+    room: "example"
   });
   await emitAsync(test2.client, EVENT_JOIN_ROOM, {
     username: "user2",
-    roomName: "example"
+    room: "example"
+  });
+  await emitAsync(test3.client, EVENT_JOIN_ROOM, {
+    username: "user3",
+    room: "example"
   });
 
   const data1 = await roomListener;
-  expect(getRoom("example")?.asInfo()).toEqual(data1);
+  expect(data1.host).toBe("user1");
 
   ctx.test1.client.close();
 
-  // a new host has been setted
-  const data2 = await roomListener2;
-  expect(getRoom("example")?.asInfo()).toEqual(data2);
-  expect(data2.host).toEqual("user2");
+  await new Promise((resolve) => setTimeout(resolve, 42));
+
+  expect(getRoom("example")?.asInfo()).toEqual({
+    name: "example",
+    players: [
+      { username: "user2", color: "red" },
+      { username: "user3", color: "green" }
+    ],
+    userCount: 2,
+    max: ROOM_MAX_USERS,
+    host: "user2",
+    playing: false,
+    warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
+  });
 
   test2.client.close();
-
-  // wait for disconnect to complete
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  expect(getRooms().size).toEqual(0);
+  test3.client.close();
 });
