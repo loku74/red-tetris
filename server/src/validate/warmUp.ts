@@ -8,9 +8,9 @@ import { getRoomBySocket } from "../core/room";
 import { getUser } from "../core/user";
 
 // types
-import type { Socket } from "socket.io";
 import type { User } from "../objects/User";
 import type { ValidateError } from "../types/validate";
+import type { ServerSocket } from "../types/socket";
 
 type ValidateWarmUpSuccess = {
   status: true;
@@ -19,7 +19,7 @@ type ValidateWarmUpSuccess = {
 
 type ValidateWarmUpResult = ValidateWarmUpSuccess | ValidateError;
 
-export function validateWarmUp(socket: Socket): ValidateWarmUpResult {
+export function validateWarmUp(socket: ServerSocket): ValidateWarmUpResult {
   const current = getUser(socket.id);
   const room = getRoomBySocket(socket);
 

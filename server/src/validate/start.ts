@@ -9,8 +9,8 @@ import { getUser } from "../core/user";
 import { Room } from "../objects/Room";
 
 // types
-import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/validate";
+import type { ServerSocket } from "../types/socket";
 
 type ValidateStartSuccess = {
   status: true;
@@ -19,7 +19,7 @@ type ValidateStartSuccess = {
 
 type ValideStartResult = ValidateStartSuccess | ValidateError;
 
-export function validateStart(socket: Socket): ValideStartResult {
+export function validateStart(socket: ServerSocket): ValideStartResult {
   const current = getUser(socket.id);
   const room = getRoomBySocket(socket);
 

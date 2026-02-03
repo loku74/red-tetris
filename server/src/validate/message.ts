@@ -10,9 +10,9 @@ import { formatSchemeError, messageValidation } from "./validation";
 
 // types
 import type { EventMessagePayload } from "@app/shared";
-import type { Socket } from "socket.io";
 import type { User } from "../objects/User";
 import type { ValidateError } from "../types/validate";
+import type { ServerSocket } from "../types/socket";
 
 const schema = z.object({
   message: messageValidation
@@ -27,7 +27,10 @@ type ValidateChatSuccess = {
 
 type ValidateChatResult = ValidateChatSuccess | ValidateError;
 
-export function validateMessage(socket: Socket, data: EventMessagePayload): ValidateChatResult {
+export function validateMessage(
+  socket: ServerSocket,
+  data: EventMessagePayload
+): ValidateChatResult {
   const result = schema.safeParse(data);
   if (!result.success) {
     return { status: false, error: formatSchemeError(result.error) };

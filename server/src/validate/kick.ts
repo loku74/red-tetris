@@ -15,10 +15,10 @@ import { formatSchemeError, usernameValidation } from "./validation";
 
 // types
 import type { EventKickPayload } from "@app/shared";
-import type { Socket } from "socket.io";
 import type { Room } from "../objects/Room";
 import type { User } from "../objects/User";
 import type { ValidateError } from "../types/validate";
+import type { ServerSocket } from "../types/socket";
 
 const schema = z.object({
   username: usernameValidation
@@ -33,7 +33,7 @@ type ValidateKickSuccess = {
 
 export type ValidateKickResult = ValidateKickSuccess | ValidateError;
 
-export function validateKick(socket: Socket, data: EventKickPayload): ValidateKickResult {
+export function validateKick(socket: ServerSocket, data: EventKickPayload): ValidateKickResult {
   const result = schema.safeParse(data);
   if (!result.success) {
     return { status: false, error: formatSchemeError(result.error) };

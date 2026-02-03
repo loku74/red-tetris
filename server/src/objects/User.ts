@@ -1,6 +1,6 @@
 import { WARMUP_RESTART_DELAY } from "../constants/core";
-import type { Socket } from "socket.io";
 import type { UserColor } from "@app/shared";
+import type { ServerSocket } from "../types/socket";
 
 export class User {
   public color: UserColor = "cyan";
@@ -10,7 +10,7 @@ export class User {
   constructor(
     public id: string,
     public name: string,
-    public socket: Socket
+    public socket: ServerSocket
   ) {}
 
   public setWarmUp(): void {

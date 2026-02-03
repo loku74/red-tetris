@@ -15,8 +15,8 @@ import { formatSchemeError, roomValidation, usernameValidation } from "./validat
 
 // types
 import type { EventJoinRoomPayload } from "@app/shared";
-import type { Socket } from "socket.io";
 import type { ValidateError } from "../types/validate";
+import type { ServerSocket } from "../types/socket";
 
 const schema = z.object({
   username: usernameValidation,
@@ -32,7 +32,7 @@ type ValidateJoinRoomSuccess = {
 type ValidateJoinRoomResult = ValidateJoinRoomSuccess | ValidateError;
 
 export function validateJoinRoom(
-  socket: Socket,
+  socket: ServerSocket,
   data: EventJoinRoomPayload
 ): ValidateJoinRoomResult {
   const result = schema.safeParse(data);

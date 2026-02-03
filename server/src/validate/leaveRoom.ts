@@ -4,10 +4,10 @@ import { getRoomBySocket } from "../core/room";
 import { getUser } from "../core/user";
 
 // types
-import type { Socket } from "socket.io";
 import type { Room } from "../objects/Room";
 import type { User } from "../objects/User";
 import type { ValidateError } from "../types/validate";
+import type { ServerSocket } from "../types/socket";
 
 type ValidateLeaveRoomSuccess = {
   status: true;
@@ -17,7 +17,7 @@ type ValidateLeaveRoomSuccess = {
 
 type ValidateLeaveRoomResult = ValidateLeaveRoomSuccess | ValidateError;
 
-export function validateLeaveRoom(socket: Socket): ValidateLeaveRoomResult {
+export function validateLeaveRoom(socket: ServerSocket): ValidateLeaveRoomResult {
   const current = getUser(socket.id);
 
   if (current === undefined) {
