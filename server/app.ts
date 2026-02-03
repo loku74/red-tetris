@@ -17,6 +17,7 @@ import { registerHandlers as leaveRoomHandler } from "./src/events/leaveRoom";
 import { registerHandlers as startHandler } from "./src/events/start";
 import { registerHandlers as messageHandler } from "./src/events/message";
 import { registerHandlers as warmUpHandler } from "./src/events/warmUp";
+import { registerHandlers as warmUpActionHandler } from "./src/events/warmUpAction";
 
 // types
 import type { Express } from "express";
@@ -47,6 +48,7 @@ function configureSocket(io: AppServer) {
     startHandler(io, socket);
     leaveRoomHandler(io, socket);
     warmUpHandler(io, socket);
+    warmUpActionHandler(socket);
   });
 }
 
