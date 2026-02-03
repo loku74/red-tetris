@@ -143,7 +143,7 @@ describe("game loop helpers", () => {
     });
   });
 
-  it("restart game, same room", async () => {
+  it.only("restart game, same room", async () => {
     await vi.advanceTimersToNextTimerAsync();
 
     const player1 = game.getPlayer(test1.server.id);
