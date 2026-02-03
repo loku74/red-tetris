@@ -6,13 +6,12 @@ export type GameData = {
   nextPieces: PieceData[];
   actualPiece: PieceData;
   score: number;
-  end: boolean;
-  deadPlayers: Array<string>;
+  alive: boolean;
 }
 
 export type GameSpectrum = {
   matrix: Matrix2D<number>;
   score: number;
-  end: boolean;
   username: string;
+  alive: boolean;
 }
