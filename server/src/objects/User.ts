@@ -21,7 +21,7 @@ export class User {
     if (this.warmUp) {
       this.warmUp.stopped = true;
     }
-  
+
     this.warmUp = new Game(new Map([[this.id, { color: this.color, user: this }]]));
     this.lastWarmUp = new Date();
   }
