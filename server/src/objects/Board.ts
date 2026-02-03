@@ -1,5 +1,6 @@
-import { BOARD, type Matrix2D, type NonEmptyArray } from "@app/shared";
+import { type Matrix2D, type NonEmptyArray } from "@app/shared";
 import { Piece } from "./Piece";
+import { BOARD } from "../constants/board";
 
 export class Board {
   public matrix: Matrix2D<number>; // row, column
