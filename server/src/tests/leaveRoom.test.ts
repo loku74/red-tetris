@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
 import { EVENT_LEAVE_ROOM, EVENT_ROOM_UPDATE } from "@app/shared";
-import { ERROR_INEXISTING_ROOM, ERROR_USER_NOT_FOUND } from "../constants/validateErrors";
 import { getRoom, getRooms } from "../core/room";
 import { getUser, getUsers } from "../core/user";
 import {

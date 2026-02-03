@@ -4,11 +4,6 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 // intern
 import { WARMUP_RESTART_DELAY } from "../constants/core";
 import { EVENT_WARM_UP } from "@app/shared";
-import {
-  ERROR_NOT_IN_A_ROOM,
-  ERROR_PLAYING_ROOM,
-  ERROR_WARM_UP_TIMEOUT
-} from "../constants/validateErrors";
 import { emitAsync, joinRoom, setupTestServer, shutdownTestServer } from "./utils";
 
 // types

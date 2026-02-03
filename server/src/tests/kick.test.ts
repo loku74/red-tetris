@@ -3,13 +3,6 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
 import { EVENT_KICK, EVENT_ROOM_UPDATE } from "@app/shared";
-import {
-  ERROR_USER_NOT_FOUND,
-  ERROR_KICK_PLAYING,
-  ERROR_KICK_SELF,
-  ERROR_NOT_HOST,
-  ERROR_NOT_IN_A_ROOM
-} from "../constants/validateErrors";
 import { getRoom } from "../core/room";
 import { setUser } from "../core/user";
 import {

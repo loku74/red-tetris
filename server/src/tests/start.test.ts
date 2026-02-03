@@ -3,11 +3,6 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
 import { EVENT_GAME_START } from "@app/shared";
-import {
-  ERROR_NOT_HOST,
-  ERROR_NOT_IN_A_ROOM,
-  ERROR_PLAYING_ROOM
-} from "../constants/validateErrors";
 import { getRoom } from "../core/room";
 import {
   createClient,
