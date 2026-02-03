@@ -30,6 +30,7 @@ export class User {
 
   public canWarmUp(): boolean {
     if (!this.lastWarmUp) return true;
+    if (this.warmUp && this.warmUp.started) return false;
 
     const now = new Date();
     const timeSinceLastWarmUp = now.getTime() - this.lastWarmUp.getTime();

@@ -6,11 +6,11 @@ import { WARMUP_RESTART_DELAY } from "../constants/core";
 import { EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
 import { emitAsync, joinRoom, onceAsync, setupTestServer, shutdownTestServer } from "./utils";
 import * as GameModule from "../core/game";
-import { getUser } from "../core/user";
 
 // types
 import type { EventWarmUpError } from "@app/shared";
 import type { TestServerData } from "./types";
+import { getUser } from "../core/user";
 
 let ctx: TestServerData;
 
