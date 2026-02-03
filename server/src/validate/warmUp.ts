@@ -2,7 +2,7 @@
 import {
   ERROR_NOT_IN_A_ROOM,
   ERROR_PLAYING_ROOM,
-  ERROR_WARM_UP_TIMEOUT
+  ERROR_WARMUP_TIMEOUT
 } from "../constants/validateErrors";
 import { getRoomBySocket } from "../core/room";
 import { getUser } from "../core/user";
@@ -30,7 +30,7 @@ export function validateWarmUp(socket: ServerSocket): ValidateWarmUpResult {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
   if (current.canWarmUp() == false) {
-    return { status: false, error: { room: ERROR_WARM_UP_TIMEOUT } };
+    return { status: false, error: { room: ERROR_WARMUP_TIMEOUT } };
   }
 
   return { status: true, current: current };

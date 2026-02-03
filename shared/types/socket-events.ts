@@ -55,6 +55,11 @@ export interface ClientToServerEvents {
     shared.EventWarmUpSuccess,
     shared.EventWarmUpError
   >;
+  [shared.EVENT_WARMUP_ACTION]: SocketEvent<
+    shared.EventWarmupActionPayload,
+    shared.EventWarmupActionSuccess,
+    shared.EventWarmupActionError
+  >;
 }
 
 export interface ServerToClientEvents {

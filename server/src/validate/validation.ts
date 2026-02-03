@@ -1,5 +1,7 @@
 import z, { ZodError } from "zod";
 
+import { ACTIONS } from "@app/shared";
+
 import {
   CHAT_MAX_LENGTH,
   REGEX_MESSAGE,
@@ -38,3 +40,5 @@ export const messageValidation = z
   .regex(REGEX_MESSAGE, ZodSchemaErrors.Z_ERROR_REGEX_MESSAGE)
   .min(1, ZodSchemaErrors.Z_ERROR_MESSAGE_EMPTY)
   .max(CHAT_MAX_LENGTH, ZodSchemaErrors.Z_ERROR_MESSAGE_MAX);
+
+export const actionValidation = z.enum(ACTIONS);
