@@ -1,7 +1,7 @@
 import type { Piece } from "./Piece";
 import type { User } from "./User";
 import { createPiece } from "../core/piece";
-import type { GameData, GameSpectrum, Matrix2D, UserColor } from "@app/shared";
+import type { GameData, UserColor } from "@app/shared";
 import { Player } from "./Player";
 
 export class Game {
@@ -61,28 +61,11 @@ export class Game {
     };
   }
 
-  public getGameSpectrum(id: string): GameSpectrum {
-    const player = this.getPlayer(id);
+  public getGameSpectrum(id: string) {
+    const currentPlayer = this.getPlayer(id);
 
-    // simplified matrix as in the subject
-    const columnsToChange = new Set<number>();
-    const simplifiedMatrix = player.board.matrix.map((row) => {
-      return row.map((cell, i) => {
-        if (cell === 1 && !columnsToChange.has(i)) {
-          columnsToChange.add(i);
-        }
-        if (cell === 0 && columnsToChange.has(i)) {
-          return 1;
-        }
-        return cell;
-      });
-    }) as Matrix2D<number>;
+    const players = this.players.values().filter((p) => currentPlayer !== p);
 
-    return {
-      matrix: simplifiedMatrix,
-      score: player.score,
-      username: player.user.name,
-      alive: player.alive
-    };
+    return players.map((p) => p.getInfo());
   }
 }

@@ -1,4 +1,4 @@
-import type { UserColor } from "@app/shared";
+import type { PlayerInfo, UserColor } from "@app/shared";
 import { Board } from "./Board";
 import type { Piece } from "./Piece";
 import type { User } from "./User";
@@ -21,5 +21,14 @@ export class Player {
     // the new generated piece does not have valid position = lose
     const piece = this.actualPiece;
     return !piece.alreadyMoved && !this.board.isValidPiece(piece);
+  }
+
+  public getInfo(): PlayerInfo {
+    return {
+      board: this.board.matrix,
+      score: this.score,
+      alive: this.alive,
+      color: this.color
+    };
   }
 }

@@ -1,5 +1,6 @@
-import type { Matrix2D } from "./matrix"
+import type { Matrix2D } from "./matrix";
 import type { PieceData } from "./piece";
+import type { UserColor } from "./user";
 
 export type GameData = {
   matrix: Matrix2D<number>;
@@ -7,11 +8,11 @@ export type GameData = {
   actualPiece: PieceData;
   score: number;
   alive: boolean;
-}
+};
 
-export type GameSpectrum = {
-  matrix: Matrix2D<number>;
+export type PlayerInfo = {
+  board: Matrix2D<number>;
   score: number;
-  username: string;
   alive: boolean;
-}
+  color: UserColor;
+};
