@@ -1,7 +1,10 @@
-import type { PlayerInfo, UserColor } from "@app/shared";
-import { Board } from "./Board";
+// type
+import type { PlayerInfo, Colors } from "@app/shared";
 import type { Piece } from "./Piece";
 import type { User } from "./User";
+
+// intern
+import { Board } from "./Board";
 
 export class Player {
   public board = new Board();
@@ -11,7 +14,7 @@ export class Player {
 
   constructor(
     public user: User,
-    public color: UserColor,
+    public color: Colors,
     public initPiece: Piece
   ) {
     this.actualPiece = initPiece.clone();

@@ -1,6 +1,9 @@
+// intern
+import { Colors } from "../enums/colors";
+
+// type
 import type { Matrix2D } from "./matrix";
 import type { PieceData } from "./piece";
-import type { UserColor } from "./user";
 
 export type GameData = {
   matrix: Matrix2D<number>;
@@ -14,5 +17,5 @@ export type PlayerInfo = {
   matrix: Matrix2D<number>;
   score: number;
   alive: boolean;
-  color: UserColor;
+  color: Colors;
 };

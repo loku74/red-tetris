@@ -1,8 +1,12 @@
+// intern
+import { Colors } from "../enums/colors";
+
+// type
 import type { Matrix2D } from "../types/matrix";
-import type { PieceColor, PieceType } from "../types/piece";
+import type { PieceType } from "../types/piece";
 
 export const PIECES_TYPES = ["I", "J", "L", "O", "S", "T", "Z"] as const;
-export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceColor }> = {
+export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: Colors }> = {
   I: {
     matrix: [
       [0, 0, 0, 0],
@@ -10,7 +14,7 @@ export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceC
       [0, 0, 0, 0],
       [0, 0, 0, 0]
     ],
-    color: "cyan"
+    color: Colors.CYAN
   },
   J: {
     matrix: [
@@ -18,7 +22,7 @@ export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceC
       [1, 1, 1],
       [0, 0, 0]
     ],
-    color: "blue"
+    color: Colors.BLUE
   },
   L: {
     matrix: [
@@ -26,7 +30,7 @@ export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceC
       [1, 1, 1],
       [0, 0, 0]
     ],
-    color: "orange"
+    color: Colors.ORANGE
   },
   O: {
     matrix: [
@@ -34,7 +38,7 @@ export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceC
       [0, 1, 1, 0],
       [0, 0, 0, 0]
     ],
-    color: "yellow"
+    color: Colors.YELLOW
   },
   S: {
     matrix: [
@@ -42,7 +46,7 @@ export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceC
       [1, 1, 0],
       [0, 0, 0]
     ],
-    color: "green"
+    color: Colors.GREEN
   },
   T: {
     matrix: [
@@ -50,7 +54,7 @@ export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceC
       [1, 1, 1],
       [0, 0, 0]
     ],
-    color: "purple"
+    color: Colors.PURPLE
   },
   Z: {
     matrix: [
@@ -58,6 +62,6 @@ export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: PieceC
       [0, 1, 1],
       [0, 0, 0]
     ],
-    color: "red"
+    color: Colors.RED
   }
 };

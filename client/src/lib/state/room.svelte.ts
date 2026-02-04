@@ -1,7 +1,8 @@
-import type { RoomData, UserColor } from "@app/shared";
+import type { RoomData } from "@app/shared";
+import { Colors } from "@app/shared";
 
-export const roomState = $state(<{ data: RoomData | null; joined: boolean; color: UserColor }>{
-  color: "grey",
+export const roomState = $state(<{ data: RoomData | null; joined: boolean; color: Colors }>{
+  color: Colors.GREY,
   joined: false,
   data: null
 });

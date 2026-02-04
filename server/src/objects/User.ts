@@ -1,15 +1,15 @@
 // types
-import type { UserColor } from "@app/shared";
 import type { ServerSocket } from "../types/socket";
 
 // intern
 import { Game } from "./Game";
+import { Colors } from "@app/shared";
 
 // const
 import { WARMUP_RESTART_DELAY } from "../constants/core";
 
 export class User {
-  public color: UserColor = "cyan";
+  public color: Colors = Colors.CYAN;
   public warmUp: Game | null = null;
   public lastWarmUp: Date | null = null;
 

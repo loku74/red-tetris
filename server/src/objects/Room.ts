@@ -1,23 +1,24 @@
 import { ROOM_MAX_USERS, WARMUP_RESTART_DELAY } from "../constants/core";
 import { getRooms } from "../core/room";
 import { deleteUser } from "../core/user";
-
-import type { RoomData, UserColor } from "@app/shared";
 import { Game } from "./Game";
+import { Colors } from "@app/shared";
+
+import type { RoomData } from "@app/shared";
 import type { User } from "./User";
 
 export class Room {
   public playing: boolean = false;
-  public users: Map<string, { color: UserColor; user: User }> = new Map();
-  public colors: Array<UserColor> = [
-    "cyan",
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "orange",
-    "purple",
-    "grey"
+  public users: Map<string, { color: Colors; user: User }> = new Map();
+  public colors: Array<Colors> = [
+    Colors.RED,
+    Colors.BLUE,
+    Colors.GREEN,
+    Colors.YELLOW,
+    Colors.PURPLE,
+    Colors.ORANGE,
+    Colors.CYAN,
+    Colors.GREY
   ];
   public game: Game | null = null;
 
@@ -33,11 +34,11 @@ export class Room {
     return this.users.has(user.id);
   }
 
-  private getColor() {
+  private getColor(): Colors {
     const color = this.colors.shift();
 
     // should never be empty because max player is checked
-    if (!color) throw new Error("No more colors available");
+    if (color === undefined) throw new Error("No more colors available");
 
     return color;
   }

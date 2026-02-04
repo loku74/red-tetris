@@ -1,7 +1,11 @@
+// types
 import type { Piece } from "./Piece";
 import type { User } from "./User";
+import type { GameData } from "@app/shared";
+import type { Colors } from "@app/shared";
+
+// intern
 import { createPiece } from "../core/piece";
-import type { GameData, UserColor } from "@app/shared";
 import { Player } from "./Player";
 
 export class Game {
@@ -9,7 +13,7 @@ export class Game {
   public pieces: Array<Piece> = [];
   public ongoing: boolean = false;
 
-  constructor(users: Map<string, { color: UserColor; user: User }>) {
+  constructor(users: Map<string, { color: Colors; user: User }>) {
     const initPiece = this.nextPiece(0);
 
     users.forEach((data, id) => {

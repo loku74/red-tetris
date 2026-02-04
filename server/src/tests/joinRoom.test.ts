@@ -1,5 +1,5 @@
 // global
-import { EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE } from "@app/shared";
+import { Colors, EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE } from "@app/shared";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
@@ -168,8 +168,8 @@ it("host changed", async () => {
   expect(getRoom("example")?.asInfo()).toEqual({
     name: "example",
     players: [
-      { username: "user2", color: "red" },
-      { username: "user3", color: "green" }
+      { username: "user2", color: Colors.BLUE },
+      { username: "user3", color: Colors.GREEN }
     ],
     userCount: 2,
     max: ROOM_MAX_USERS,

@@ -1,6 +1,6 @@
-export type UserColor = "cyan" | "red" | "green" | "blue" | "yellow" | "orange" | "purple" | "grey";
+import { Colors } from "../enums/colors";
 
 export type UserData = {
-  color: UserColor;
+  color: Colors;
   username: string;
 };

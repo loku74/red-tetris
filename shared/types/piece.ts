@@ -1,30 +1,28 @@
-import type { UserColor } from "../types/user";
+// intern
+import { Colors } from "../enums/colors";
+
+// types
 import type { PIECES_TYPES } from "../constants/pieces";
 import type { Matrix2D } from "./matrix";
 
 export type PieceType = (typeof PIECES_TYPES)[number];
 
-type PieceColor = UserColor | "empty";
-
 interface Piece {
   size: number;
-  color: PieceColor;
+  color: Colors;
 }
 
-type PieceColorDetail = Record<
-  PieceColor,
-  {
+type PieceColorDetail = {
     main: string;
     dark: string;
     light: string;
-  }
->;
+}
 
 type PieceData = {
   matrix: Matrix2D<number>;
   x: number;
   y: number;
-  color: PieceColor;
+  color: Colors;
 }
 
-export type { PieceData, PieceColor, Piece, PieceColorDetail };
+export type { PieceData, Piece, PieceColorDetail };
