@@ -27,24 +27,31 @@
   // socket
   import { getSocket } from "$lib/socket/socket.svelte";
 
-  // events
+  // shared
   import {
+    Colors,
+    GameActions,
     EVENT_JOIN_ROOM,
     EVENT_LEAVE_ROOM,
     EVENT_KICK,
     EVENT_MESSAGE,
-    EVENT_WARMUP_START
+    EVENT_WARMUP_START,
+    EVENT_WARMUP_ACTION,
+    EVENT_WARMUP_INFO
   } from "@app/shared";
 
   // types
-  import {
-    Colors,
-    type EventJoinRoomPayload,
-    type EventKickData,
-    type EventKickPayload,
-    type EventMessageData,
-    type EventMessagePayload,
-    type UserData
+  import type {
+    EventJoinRoomPayload,
+    EventKickData,
+    EventKickPayload,
+    EventMessageData,
+    EventMessagePayload,
+    GameData,
+    Matrix2D,
+    NonEmptyArray,
+    PieceData,
+    UserData
   } from "@app/shared";
 
   // constants
@@ -69,6 +76,9 @@
 
   // color
   let userColor = $state<string>(getColor(roomState.color));
+
+  // matrix
+  let matrix = $state<Matrix2D<number>>();
 
   function getColor(color: Colors) {
     return pieceColors[color].light;
@@ -177,6 +187,74 @@
     });
   }
 
+  function getRow(index: number): NonEmptyArray<number> {
+    const result = matrix?.[index];
+    if (!result) throw new Error("Invalid row index!");
+    return result;
+  }
+
+  function place(piece: PieceData) {
+    piece.matrix?.forEach((pieceRow, i) => {
+      // we skip empty piece lines
+      if (!pieceRow.find((v) => v != 0)) return;
+      const boardRow = getRow(piece.x + i);
+
+      pieceRow.forEach((cell, j) => {
+        // skip zeros
+        if (!cell) return;
+        boardRow[piece.y + j] = cell;
+      });
+    });
+  }
+
+  function onWarmUpKeydown(event: KeyboardEvent) {
+    console.log(event.key);
+    if (["ARROWUP", "Z", "W"].includes(event.key.toUpperCase())) {
+      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.UP }, (response) => {
+        if (response.success) {
+          matrix = response.data.matrix;
+          place(response.data.actualPiece);
+        }
+      });
+    }
+    if (["ARROWDOWN", "S"].includes(event.key.toUpperCase())) {
+      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.DOWN }, (response) => {
+        if (response.success) {
+          matrix = response.data.matrix;
+          place(response.data.actualPiece);
+        }
+      });
+    }
+    if (["ARROWLEFT", "A", "Q"].includes(event.key.toUpperCase())) {
+      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.LEFT }, (response) => {
+        if (response.success) {
+          matrix = response.data.matrix;
+          place(response.data.actualPiece);
+        }
+      });
+    }
+    if (["ARROWRIGHT", "D"].includes(event.key.toUpperCase())) {
+      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.RIGHT }, (response) => {
+        if (response.success) {
+          matrix = response.data.matrix;
+          place(response.data.actualPiece);
+        }
+      });
+    }
+    if ([" "].includes(event.key)) {
+      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.SPACE }, (response) => {
+        if (response.success) {
+          matrix = response.data.matrix;
+          place(response.data.actualPiece);
+        }
+      });
+    }
+  }
+  function onWarmUpInfo(game: GameData) {
+    matrix = game.matrix;
+    place(game.actualPiece);
+  }
+
   onMount(() => {
     localStorage.setItem("username", username.substring(0, USERNAME_MAX_LENGTH));
 
@@ -184,13 +262,17 @@
 
     socket.on(EVENT_KICK, onKick);
     socket.on(EVENT_MESSAGE, onMessage);
+    socket.on(EVENT_WARMUP_INFO, onWarmUpInfo);
 
     return () => {
       socket.off(EVENT_KICK, onKick);
       socket.off(EVENT_MESSAGE, onMessage);
+      socket.off(EVENT_WARMUP_INFO, onWarmUpInfo);
     };
   });
 </script>
+
+<svelte:window on:keydown={onWarmUpKeydown} />
 
 <div class="flex h-screen items-center justify-center bg-dark-primary gap-32">
   <!-- error & redirect -->
@@ -337,14 +419,16 @@
     </div>
 
     <!-- warm-up -->
-    <div class="relative border-4 border-red-secondary">
-      {#each { length: 20 }}
-        <div class="flex">
-          {#each { length: 10 }}
-            <Piece color={Colors.EMPTY} size={32} />
-          {/each}
-        </div>
-      {/each}
+    <div class="relative border-4 border-red-secondary h-[640px] w-[320px] box-content">
+      <div class="absolute top-0 left-0">
+        {#each matrix as row, index_row (index_row)}
+          <div class="flex">
+            {#each row as cell, index_cell (index_cell)}
+              <Piece color={cell} size={32} />
+            {/each}
+          </div>
+        {/each}
+      </div>
 
       {#if warmUp == false}
         <button
@@ -367,6 +451,8 @@
     </div>
   {/if}
 </div>
+
+<!-- [ DIALOGS ] -->
 
 <!--confirm kick dialog -->
 {#if showKickDialog}
