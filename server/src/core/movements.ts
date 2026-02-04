@@ -1,13 +1,14 @@
+import type { GameActions } from "@app/shared";
 import type { Game } from "../objects/Game";
 import type { Player } from "../objects/Player";
 import type { ActionData } from "../types/server";
 
-export const actions = {
-  Rotate: (data: ActionData) => data.piece.rotate90(),
-  Left: (data: ActionData) => data.piece.moveLeft(),
-  Right: (data: ActionData) => data.piece.moveRight(),
-  Down: (data: ActionData) => data.piece.moveDown(),
-  DropDown: (data: ActionData) => {
+const actions: Record<GameActions, (data: ActionData) => void> = {
+  UP: (data: ActionData) => data.piece.rotate90(),
+  LEFT: (data: ActionData) => data.piece.moveLeft(),
+  RIGHT: (data: ActionData) => data.piece.moveRight(),
+  DOWN: (data: ActionData) => data.piece.moveDown(),
+  SPACE: (data: ActionData) => {
     while (data.board.isValidPiece(data.piece.clone().moveDown())) {
       data.piece.moveDown();
     }

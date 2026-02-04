@@ -24,3 +24,4 @@ export const EVENT_GAME_FINISH = "game_finish";
 export const EVENT_WARMUP_START = "warmup_start";
 export const EVENT_WARMUP_INFO = "warmup_info";
 export const EVENT_WARMUP_FINISH = "warmup_finish";
+export const EVENT_WARMUP_ACTION = "warmup_action";

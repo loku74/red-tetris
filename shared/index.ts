@@ -10,6 +10,7 @@ export * from "./types/events/leaveRoom";
 export * from "./types/events/getRooms";
 export * from "./types/events/start";
 export * from "./types/events/warmUp";
+export * from "./types/events/warmUpAction";
 
 export * from "./types/user";
 export * from "./types/room";
@@ -24,3 +25,6 @@ export * from "./types/game"
 export * from "./constants/events";
 export * from "./constants/pieceColors";
 export * from "./constants/pieces";
+
+// [ ENUMS ]
+export * from "./enums/actions";

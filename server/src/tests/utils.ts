@@ -31,10 +31,10 @@ export function createClient(address: string, io: AppServer): Promise<TestSocket
   });
 }
 
-export function emitAsync<S = unknown, E = unknown>(
+export function emitAsync<S = unknown, E = unknown, P = unknown>(
   socket: ClientSocket,
   event: string,
-  data?: unknown
+  data?: P
 ): Promise<SocketResponse<S, E>> {
   return new Promise((resolve) => {
     if (data) {
