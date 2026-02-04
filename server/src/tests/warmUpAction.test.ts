@@ -50,7 +50,7 @@ it("warm up perform action", async () => {
 
   // make on fall tick
   await vi.advanceTimersToNextTimerAsync();
-  expect(game.started).toBe(true);
+  expect(game.ongoing).toBe(true);
 
   const pieceBeforeY = player.actualPiece.y;
 

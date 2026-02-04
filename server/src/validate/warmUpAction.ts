@@ -44,7 +44,7 @@ export function validateWarmUpAction(
     return { status: false, error: { room: ERROR_NOT_IN_A_ROOM } };
   }
 
-  if (!current.warmUp || current.warmUp.stopped) {
+  if (!current.warmUp || !current.warmUp.ongoing) {
     return { status: false, error: { user: ERROR_WARMUP_NOT_IN } };
   }
 

@@ -21,7 +21,8 @@ export class User {
 
   public setWarmUp(): void {
     if (this.warmUp) {
-      this.warmUp.ongoing = true;
+      // stop the "current" warmup
+      this.warmUp.ongoing = false;
     }
 
     this.warmUp = new Game(new Map([[this.id, { color: this.color, user: this }]]));
