@@ -1,3 +1,5 @@
+import { WARMUP_RESTART_DELAY } from "./core";
+
 // commons
 export const ERROR_NOT_IN_A_ROOM = "You do not belong to a room";
 export const ERROR_PLAYING_ROOM = "This room is already playing";
@@ -14,8 +16,6 @@ export const ERROR_ALREADY_IN_A_ROOM = "You are already in a room";
 // kick
 export const ERROR_KICK_SELF = "You can't kick yourself";
 export const ERROR_KICK_PLAYING = "You can't kick while the game is in progress";
-
-import { WARMUP_RESTART_DELAY } from "./core";
 
 // warm-up
 export const ERROR_WARM_UP_TIMEOUT = `You cannot restart your warm-up, please wait at least ${WARMUP_RESTART_DELAY} second${WARMUP_RESTART_DELAY > 1 ? "s" : ""}`;

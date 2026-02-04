@@ -64,7 +64,7 @@ export async function gameLoop(room: Room, io: Server) {
 
   // delay start of game to synchronize all clients
   await new Promise((resolve) => setTimeout(resolve, GAME_START_DELAY));
-  game.started = true;
+  game.ongoing = true;
 
   // the game runner
   const timer = setInterval(() => {

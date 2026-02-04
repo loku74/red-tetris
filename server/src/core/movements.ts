@@ -16,7 +16,7 @@ export const actions = {
 
 export function applyMovement(game: Game, player: Player, key: keyof typeof actions): boolean {
   if (!player.alive) return false;
-  if (!game.started) return false;
+  if (!game.ongoing) return false;
 
   const next = player.actualPiece.clone();
 

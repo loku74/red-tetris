@@ -50,7 +50,7 @@ export interface ClientToServerEvents {
     shared.EventStartSuccess,
     shared.EventStartError
   >;
-  [shared.EVENT_WARM_UP]: SocketEvent<
+  [shared.EVENT_WARMUP_START]: SocketEvent<
     shared.EventWarmUpPayload,
     shared.EventWarmUpSuccess,
     shared.EventWarmUpError

@@ -46,7 +46,7 @@ function configureSocket(io: AppServer) {
     kickHandler(io, socket);
     startHandler(io, socket);
     leaveRoomHandler(io, socket);
-    warmUpHandler(socket);
+    warmUpHandler(io, socket);
   });
 }
 

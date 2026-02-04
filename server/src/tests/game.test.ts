@@ -92,7 +92,7 @@ describe("game loop helpers", () => {
 
   it("check fall of a piece", async () => {
     await vi.advanceTimersToNextTimerAsync();
-    expect(game.started).toBe(true);
+    expect(game.ongoing).toBe(true);
 
     // check that gravity is called for each player
     await vi.advanceTimersToNextTimerAsync();
@@ -111,7 +111,7 @@ describe("game loop helpers", () => {
 
   it("check penality generation", async () => {
     await vi.advanceTimersToNextTimerAsync();
-    expect(game.started).toBe(true);
+    expect(game.ongoing).toBe(true);
 
     const player1 = game.getPlayer(test1.server.id);
     const player2 = game.getPlayer(test2.server.id);

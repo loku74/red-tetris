@@ -33,7 +33,7 @@
     EVENT_LEAVE_ROOM,
     EVENT_KICK,
     EVENT_MESSAGE,
-    EVENT_WARM_UP
+    EVENT_WARMUP_START
   } from "@app/shared";
 
   // types
@@ -168,7 +168,7 @@
   let warmUp = $state<boolean>(false);
   let showWarmUpRestart = $state<boolean>(false);
   function startWarmUp() {
-    socket.emit(EVENT_WARM_UP, (response) => {
+    socket.emit(EVENT_WARMUP_START, (response) => {
       if (response.success) {
         warmUp = true;
         setTimeout(() => {

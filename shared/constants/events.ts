@@ -12,7 +12,6 @@ export const EVENT_GET_ROOMS = "get_rooms";
 export const EVENT_ROOM_UPDATE = "room_update";
 export const EVENT_MESSAGE = "message";
 export const EVENT_KICK = "kick";
-export const EVENT_WARM_UP = "warm_up";
 
 // game
 export const EVENT_GAME_START = "game_start";
@@ -20,3 +19,8 @@ export const EVENT_GAME_INFO = "game_info";
 export const EVENT_GAME_SPECTRUM = "game_spectrum";
 export const EVENT_GAME_PENALITY = "game_penality";
 export const EVENT_GAME_FINISH = "game_finish";
+
+// warm up
+export const EVENT_WARMUP_START = "warmup_start";
+export const EVENT_WARMUP_INFO = "warmup_info";
+export const EVENT_WARMUP_FINISH = "warmup_finish";
