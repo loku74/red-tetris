@@ -8,7 +8,6 @@ import type { PieceData } from "./piece";
 export type GameData = {
   matrix: Matrix2D<number>;
   nextPieces: PieceData[];
-  actualPiece: PieceData;
   score: number;
   alive: boolean;
 };

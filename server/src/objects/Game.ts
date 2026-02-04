@@ -7,6 +7,7 @@ import type { Colors } from "@app/shared";
 // intern
 import { createPiece } from "../core/piece";
 import { Player } from "./Player";
+import { placePieceOnMatrix } from "../core/matrix";
 
 export class Game {
   public players: Map<string, Player> = new Map();
@@ -56,10 +57,12 @@ export class Game {
       this.nextPiece(i + 1 + player.board.placedPieces).asData()
     );
 
+    const copy = structuredClone(player.board.matrix);
+    placePieceOnMatrix(player.actualPiece, copy);
+
     return {
-      matrix: player.board.matrix,
+      matrix: copy,
       nextPieces: nextPieces,
-      actualPiece: player.actualPiece,
       score: player.score,
       alive: player.alive
     };
