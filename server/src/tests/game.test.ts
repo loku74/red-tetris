@@ -6,7 +6,13 @@ import {
   EVENT_GAME_FINISH,
   EVENT_GAME_INFO,
   EVENT_GAME_PENALITY,
-  EVENT_GAME_START
+  EVENT_GAME_START,
+  type EventStartError,
+  type EventStartPayload,
+  type EventStartSuccess,
+  type EventGameFinishData,
+  type EventGameInfoData,
+  type EventGamePenalityData
 } from "@app/shared";
 import { PIECES } from "@app/shared";
 import { BOARD_WIDTH } from "../constants/core";
@@ -63,13 +69,16 @@ describe("game loop helpers", () => {
     expect(retrieveRoom).toBeDefined();
     if (retrieveRoom) room = retrieveRoom;
 
-    const listener1 = onceAsync(test1.client, EVENT_GAME_INFO);
-    const listener2 = onceAsync(test2.client, EVENT_GAME_INFO);
+    const listener1 = onceAsync<EventGameInfoData>(test1.client, EVENT_GAME_INFO);
+    const listener2 = onceAsync<EventGameInfoData>(test2.client, EVENT_GAME_INFO);
 
     vi.useFakeTimers();
 
     // start room
-    await emitAsync(test1.client, EVENT_GAME_START).then(({ success }) => {
+    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+      test1.client,
+      EVENT_GAME_START
+    ).then(({ success }) => {
       expect(success).toBe(true);
     });
     const retrievedGame = room.game;
@@ -121,7 +130,7 @@ describe("game loop helpers", () => {
     // fake a line to be cleared
     player1.board.matrix[3] = [1, ...Array(BOARD_WIDTH - 1).fill(1)];
 
-    const listener1 = onceAsync(test2.client, EVENT_GAME_PENALITY);
+    const listener1 = onceAsync<EventGamePenalityData>(test2.client, EVENT_GAME_PENALITY);
 
     // there is 2 round because of the "last time" movement delay
     await vi.advanceTimersToNextTimerAsync();
@@ -156,8 +165,8 @@ describe("game loop helpers", () => {
     player1.board.matrix[1] = [0, ...Array(BOARD_WIDTH - 1).fill(1)];
     player2.board.matrix[1] = [0, ...Array(BOARD_WIDTH - 1).fill(1)];
 
-    const listener1 = onceAsync(test1.client, EVENT_GAME_FINISH);
-    const listener2 = onceAsync(test2.client, EVENT_GAME_FINISH);
+    const listener1 = onceAsync<EventGameFinishData>(test1.client, EVENT_GAME_FINISH);
+    const listener2 = onceAsync<EventGameFinishData>(test2.client, EVENT_GAME_FINISH);
 
     // instant death
     await vi.advanceTimersToNextTimerAsync();
@@ -170,10 +179,13 @@ describe("game loop helpers", () => {
     await listener2;
 
     // the game should be restartable
-    const listener5 = onceAsync(test1.client, EVENT_GAME_INFO);
-    const listener6 = onceAsync(test2.client, EVENT_GAME_INFO);
+    const listener5 = onceAsync<EventGameInfoData>(test1.client, EVENT_GAME_INFO);
+    const listener6 = onceAsync<EventGameInfoData>(test2.client, EVENT_GAME_INFO);
 
-    await emitAsync(test1.client, EVENT_GAME_START).then(({ success }) => {
+    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+      test1.client,
+      EVENT_GAME_START
+    ).then(({ success }) => {
       expect(success).toBe(true);
     });
     const retrievedGame = room.game;

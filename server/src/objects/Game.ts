@@ -81,6 +81,6 @@ export class Game {
 
     const players = this.players.values().filter((p) => currentPlayer !== p);
 
-    return players.map((p) => p.getInfo());
+    return players.map((p) => p.getInfo()).toArray();
   }
 }
