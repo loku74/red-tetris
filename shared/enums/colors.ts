@@ -7,5 +7,5 @@ export enum Colors {
   PURPLE,
   ORANGE,
   CYAN,
-  GREY,
+  GREY
 }
