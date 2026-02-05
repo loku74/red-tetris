@@ -11,11 +11,7 @@ export * from "./types/events/getRooms";
 export * from "./types/events/start";
 export * from "./types/events/warmUp";
 export * from "./types/events/warmUpAction";
-export * from "./types/events/warmUpInfo";
-export * from "./types/events/gameInfo";
 export * from "./types/events/gamePenality";
-export * from "./types/events/gameFinish";
-export * from "./types/events/gameSpectrum";
 
 export * from "./types/user";
 export * from "./types/room";

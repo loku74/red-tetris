@@ -11,9 +11,9 @@ import { getUser } from "../core/user";
 // types
 import type {
   EventWarmUpError,
-  EventWarmUpInfoData,
   EventWarmUpPayload,
-  EventWarmUpSuccess
+  EventWarmUpSuccess,
+  GameData
 } from "@app/shared";
 import type { TestServerData } from "./types";
 
@@ -98,7 +98,7 @@ it("warmup loop", async () => {
   expect(user).toBeDefined();
   if (!user) return;
 
-  const listener1 = onceAsync<EventWarmUpInfoData>(test1.client, EVENT_WARMUP_INFO);
+  const listener1 = onceAsync<GameData>(test1.client, EVENT_WARMUP_INFO);
 
   vi.useFakeTimers();
 
