@@ -40,7 +40,7 @@ describe("invalid join", () => {
   const user = fakeUser("id", "name");
 
   it("invalid scheme", async () => {
-    await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, unknown>(
+    await emitAsync<unknown, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.test1.client,
       EVENT_JOIN_ROOM,
       {
@@ -58,7 +58,7 @@ describe("invalid join", () => {
     }
     setRoom("example", room);
 
-    await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+    await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.test1.client,
       EVENT_JOIN_ROOM,
       {
@@ -77,7 +77,7 @@ describe("invalid join", () => {
     for (let i = 0; i < ROOM_MAX; i++) {
       setRoom(i.toString(), new Room(`test${i}`, user));
     }
-    await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+    await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.test1.client,
       EVENT_JOIN_ROOM,
       {
@@ -95,7 +95,7 @@ describe("invalid join", () => {
   it("username already taken", async () => {
     setRoom("example", new Room("example", user));
 
-    await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+    await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.test1.client,
       EVENT_JOIN_ROOM,
       {
@@ -111,7 +111,7 @@ describe("invalid join", () => {
   });
 
   it("already in a room", async () => {
-    await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+    await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.test1.client,
       EVENT_JOIN_ROOM,
       {
@@ -119,7 +119,7 @@ describe("invalid join", () => {
         room: "example"
       }
     );
-    await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+    await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.test1.client,
       EVENT_JOIN_ROOM,
       {
@@ -138,7 +138,7 @@ describe("invalid join", () => {
     setRoom("example", new Room("example", user));
     getRoom("example")?.start();
 
-    await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+    await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.test1.client,
       EVENT_JOIN_ROOM,
       {
@@ -159,7 +159,7 @@ it("valid join", async () => {
     username: "example",
     room: "example"
   };
-  await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+  await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
     ctx.test1.client,
     EVENT_JOIN_ROOM,
     payload
@@ -177,7 +177,7 @@ it("host changed", async () => {
   const test3 = await createClient(ctx.address, ctx.io);
   const roomListener = onceAsync<RoomData>(ctx.test1.client, EVENT_ROOM_UPDATE);
 
-  await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+  await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
     ctx.test1.client,
     EVENT_JOIN_ROOM,
     {
@@ -185,7 +185,7 @@ it("host changed", async () => {
       room: "example"
     }
   );
-  await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+  await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
     test2.client,
     EVENT_JOIN_ROOM,
     {
@@ -193,7 +193,7 @@ it("host changed", async () => {
       room: "example"
     }
   );
-  await emitAsync<EventJoinRoomSuccess, EventJoinRoomError, EventJoinRoomPayload>(
+  await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
     test3.client,
     EVENT_JOIN_ROOM,
     {

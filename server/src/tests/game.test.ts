@@ -74,7 +74,7 @@ describe("game loop helpers", () => {
     vi.useFakeTimers();
 
     // start room
-    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+    await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       test1.client,
       EVENT_GAME_START
     ).then((response) => {
@@ -181,7 +181,7 @@ describe("game loop helpers", () => {
     const listener5 = onceAsync<GameData>(test1.client, EVENT_GAME_INFO);
     const listener6 = onceAsync<GameData>(test2.client, EVENT_GAME_INFO);
 
-    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+    await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       test1.client,
       EVENT_GAME_START
     ).then((response) => {

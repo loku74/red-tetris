@@ -33,7 +33,7 @@ afterEach(async () => {
 
 describe("invalid chat", () => {
   it("not in a room", async () => {
-    await emitAsync<EventMessageSuccess, EventMessageError, EventMessagePayload>(
+    await emitAsync<EventMessagePayload, EventMessageError, EventMessageSuccess>(
       ctx.test1.client,
       EVENT_MESSAGE,
       {
@@ -54,7 +54,7 @@ describe("invalid chat", () => {
     await joinRoom(test2, "example", "user2");
 
     // users talks
-    await emitAsync<EventMessageSuccess, EventMessageError, EventMessagePayload>(
+    await emitAsync<EventMessagePayload, EventMessageError, EventMessageSuccess>(
       ctx.test1.client,
       EVENT_MESSAGE,
       {

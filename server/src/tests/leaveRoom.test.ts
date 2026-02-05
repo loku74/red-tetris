@@ -35,7 +35,7 @@ afterEach(async () => {
 
 describe("invalid leave room", () => {
   it("user not found", async () => {
-    await emitAsync<EventLeaveRoomSuccess, EventLeaveRoomError, EventLeaveRoomPayload>(
+    await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
       ctx.test1.client,
       EVENT_LEAVE_ROOM
     ).then((response) => {
@@ -47,7 +47,7 @@ describe("invalid leave room", () => {
     await joinRoom(ctx.test1, "example", "test");
     getRooms().clear();
 
-    await emitAsync<EventLeaveRoomSuccess, EventLeaveRoomError, EventLeaveRoomPayload>(
+    await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
       ctx.test1.client,
       EVENT_LEAVE_ROOM
     ).then((response) => {
@@ -68,7 +68,7 @@ it("valid leave room", async () => {
 
   const listener = onceAsync<RoomData>(test2.client, EVENT_ROOM_UPDATE);
 
-  await emitAsync<EventLeaveRoomSuccess, EventLeaveRoomError, EventLeaveRoomPayload>(
+  await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
     ctx.test1.client,
     EVENT_LEAVE_ROOM
   ).then((response) => {

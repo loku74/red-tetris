@@ -39,7 +39,7 @@ it("warm up perform action", async () => {
 
   vi.useFakeTimers();
 
-  await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+  await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
     test1.client,
     EVENT_WARMUP_START
   ).then(({ success }) => {
@@ -61,7 +61,7 @@ it("warm up perform action", async () => {
   const pieceBeforeY = player.actualPiece.y;
 
   // perform simple action
-  await emitAsync<EventWarmUpActionSuccess, EventWarmUpActionError, EventWarmUpActionPayload>(
+  await emitAsync<EventWarmUpActionPayload, EventWarmUpActionSuccess, EventWarmUpActionError>(
     test1.client,
     EVENT_WARMUP_ACTION,
     { action: GameActions.RIGHT }

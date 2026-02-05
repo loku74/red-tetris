@@ -13,7 +13,12 @@ import { User } from "../objects/User";
 // types
 import type { AddressInfo } from "net";
 import type { Socket as ClientSocket } from "socket.io-client";
-import type { SocketResponse } from "@app/shared";
+import type {
+  EventJoinRoomError,
+  EventJoinRoomPayload,
+  EventJoinRoomSuccess,
+  SocketResponse
+} from "@app/shared";
 import type { AppServer, ServerSocket } from "../types/socket";
 import type { TestServerData, TestSocket } from "./types";
 
@@ -31,7 +36,7 @@ export function createClient(address: string, io: AppServer): Promise<TestSocket
   });
 }
 
-export function emitAsync<S = unknown, E = unknown, P = unknown>(
+export function emitAsync<P = unknown, S = unknown, E = unknown>(
   socket: ClientSocket,
   event: string,
   data?: P
@@ -86,10 +91,14 @@ export async function joinRoom(
   roomName: string,
   username: string
 ): Promise<Room> {
-  await emitAsync(test.client, EVENT_JOIN_ROOM, {
-    username: username,
-    room: roomName
-  });
+  await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
+    test.client,
+    EVENT_JOIN_ROOM,
+    {
+      username: username,
+      room: roomName
+    }
+  );
 
   const room = getRoom(roomName);
 

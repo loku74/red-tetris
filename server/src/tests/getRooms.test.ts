@@ -9,7 +9,7 @@ import { Room } from "../objects/Room";
 import { emitAsync, fakeUser, setupTestServer, shutdownTestServer } from "./utils";
 
 // types
-import type { EventGetRoomsSuccess } from "@app/shared";
+import type { EventGetRoomsError, EventGetRoomsPayload, EventGetRoomsSuccess } from "@app/shared";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -26,7 +26,10 @@ describe(EVENT_GET_ROOMS, () => {
   it("simple", async () => {
     setRoom("example", new Room("example", fakeUser("id", "example")));
 
-    await emitAsync<EventGetRoomsSuccess>(ctx.test1.client, EVENT_GET_ROOMS).then((response) => {
+    await emitAsync<EventGetRoomsPayload, EventGetRoomsSuccess, EventGetRoomsError>(
+      ctx.test1.client,
+      EVENT_GET_ROOMS
+    ).then((response) => {
       expect(response.success).toBe(true);
       if (response.success) {
         expect(response.data).toEqual([
@@ -45,7 +48,10 @@ describe(EVENT_GET_ROOMS, () => {
     setRoom("example2", new Room("example2", fakeUser("id2", "example2")));
     getRoom("example2")?.start();
 
-    await emitAsync<EventGetRoomsSuccess>(ctx.test1.client, EVENT_GET_ROOMS).then((response) => {
+    await emitAsync<EventGetRoomsPayload, EventGetRoomsSuccess, EventGetRoomsError>(
+      ctx.test1.client,
+      EVENT_GET_ROOMS
+    ).then((response) => {
       expect(response.success).toBe(true);
       if (response.success) {
         expect(response.data).toEqual([
