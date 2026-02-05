@@ -37,7 +37,8 @@
     EVENT_MESSAGE,
     EVENT_WARMUP_START,
     EVENT_WARMUP_ACTION,
-    EVENT_WARMUP_INFO
+    EVENT_WARMUP_INFO,
+    EVENT_WARMUP_FINISH
   } from "@app/shared";
 
   // types
@@ -48,7 +49,6 @@
     EventMessageData,
     EventMessagePayload,
     GameData,
-    Matrix2D,
     UserData
   } from "@app/shared";
 
@@ -76,7 +76,7 @@
   let userColor = $state<string>(getColor(roomState.color));
 
   // matrix
-  let matrix = $state<Matrix2D<number>>();
+  let gameData = $state<GameData>();
 
   function getColor(color: Colors) {
     return pieceColors[color].light;
@@ -174,6 +174,7 @@
   // warm-up
   let warmUp = $state<boolean>(false);
   let showWarmUpRestart = $state<boolean>(false);
+
   function startWarmUp() {
     socket.emit(EVENT_WARMUP_START, (response) => {
       if (response.success) {
@@ -185,46 +186,40 @@
     });
   }
 
+  const keyToActionMap: Record<string, GameActions> = {
+    ARROWUP: GameActions.UP,
+    Z: GameActions.UP,
+    W: GameActions.UP,
+    ARROWDOWN: GameActions.DOWN,
+    S: GameActions.DOWN,
+    ARROWLEFT: GameActions.LEFT,
+    A: GameActions.LEFT,
+    Q: GameActions.LEFT,
+    ARROWRIGHT: GameActions.RIGHT,
+    D: GameActions.RIGHT,
+    " ": GameActions.SPACE
+  };
+
   function onWarmUpKeydown(event: KeyboardEvent) {
-    console.log(event.key);
-    if (["ARROWUP", "Z", "W"].includes(event.key.toUpperCase())) {
-      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.UP }, (response) => {
-        if (response.success) {
-          matrix = response.data.matrix;
-        }
-      });
-    }
-    if (["ARROWDOWN", "S"].includes(event.key.toUpperCase())) {
-      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.DOWN }, (response) => {
-        if (response.success) {
-          matrix = response.data.matrix;
-        }
-      });
-    }
-    if (["ARROWLEFT", "A", "Q"].includes(event.key.toUpperCase())) {
-      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.LEFT }, (response) => {
-        if (response.success) {
-          matrix = response.data.matrix;
-        }
-      });
-    }
-    if (["ARROWRIGHT", "D"].includes(event.key.toUpperCase())) {
-      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.RIGHT }, (response) => {
-        if (response.success) {
-          matrix = response.data.matrix;
-        }
-      });
-    }
-    if ([" "].includes(event.key)) {
-      socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.SPACE }, (response) => {
-        if (response.success) {
-          matrix = response.data.matrix;
-        }
-      });
-    }
+    if (warmUp === false) return;
+    const action = keyToActionMap[event.key.toLocaleUpperCase()];
+
+    if (action === undefined) return;
+
+    socket.emit(EVENT_WARMUP_ACTION, { action }, (response) => {
+      if (response.success) {
+        gameData = response.data;
+      }
+    });
   }
-  function onWarmUpInfo(game: GameData) {
-    matrix = game.matrix;
+
+  function onWarmUpInfo(data: GameData) {
+    gameData = data;
+  }
+
+  function onWarmUpFinish() {
+    warmUp = false;
+    gameData = undefined;
   }
 
   onMount(() => {
@@ -235,11 +230,13 @@
     socket.on(EVENT_KICK, onKick);
     socket.on(EVENT_MESSAGE, onMessage);
     socket.on(EVENT_WARMUP_INFO, onWarmUpInfo);
+    socket.on(EVENT_WARMUP_FINISH, onWarmUpFinish);
 
     return () => {
       socket.off(EVENT_KICK, onKick);
       socket.off(EVENT_MESSAGE, onMessage);
       socket.off(EVENT_WARMUP_INFO, onWarmUpInfo);
+      socket.off(EVENT_WARMUP_FINISH, onWarmUpFinish);
     };
   });
 </script>
@@ -392,13 +389,29 @@
 
     <!-- warm-up -->
     <div class="relative border-4 border-red-secondary h-[640px] w-[320px] box-content">
-      {#each matrix as row, index_row (index_row)}
-        <div class="flex">
-          {#each row as cell, index_cell (index_cell)}
-            <Piece color={cell} size={32} />
-          {/each}
+      {#if gameData}
+        <!-- BOARD -->
+        {#each gameData?.matrix as row, index_row (index_row)}
+          <div class="flex">
+            {#each row as cell, index_cell (index_cell)}
+              <Piece color={cell} size={32} />
+            {/each}
+          </div>
+        {/each}
+
+        <!-- SCORE -->
+        <div class="absolute -top-12 right-1/2 translate-x-1/2 text-xl">
+          Score: {gameData.score}
         </div>
-      {/each}
+      {:else}
+        {#each { length: 20 }, index_row (index_row)}
+          <div class="flex">
+            {#each { length: 10 }, index_cell (index_cell)}
+              <Piece color={Colors.EMPTY} size={32} />
+            {/each}
+          </div>
+        {/each}
+      {/if}
 
       {#if warmUp == false}
         <button
@@ -412,6 +425,7 @@
       {:else if showWarmUpRestart}
         <button
           in:fade={{ duration: 200 }}
+          onclick={startWarmUp}
           class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
         >
           <RotateCcw />
