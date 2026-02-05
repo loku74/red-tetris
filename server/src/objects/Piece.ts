@@ -1,9 +1,9 @@
 // intern
-import { asMatrix } from "../core/piece";
 import { Colors } from "@app/shared";
 
 // types
 import type { Matrix2D, PieceType, PieceData } from "@app/shared";
+import { asMatrix } from "../core/matrix";
 
 export class Piece {
   public rotation: number = 0;
@@ -24,10 +24,6 @@ export class Piece {
 
   private addRotation() {
     this.rotation = (this.rotation + 1) % 4;
-  }
-
-  private setMoved() {
-    if (!this.alreadyMoved) this.alreadyMoved = true;
   }
 
   public rotate90(nb: number = 1): Piece {

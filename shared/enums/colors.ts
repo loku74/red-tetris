@@ -1,4 +1,5 @@
 export enum Colors {
+  EMPTY,
   RED,
   BLUE,
   GREEN,
@@ -7,5 +8,4 @@ export enum Colors {
   ORANGE,
   CYAN,
   GREY,
-  EMPTY
 }

@@ -1,6 +1,7 @@
 import { Colors, type Matrix2D, type NonEmptyArray } from "@app/shared";
 import { Piece } from "./Piece";
 import { BOARD } from "../constants/board";
+import { placePieceOnMatrix } from "../core/matrix";
 
 export class Board {
   public matrix: Matrix2D<number>; // row, column
@@ -44,17 +45,7 @@ export class Board {
       throw new Error("Invalid placement");
     }
 
-    piece.matrix.forEach((pieceRow, i) => {
-      // we skip empty piece lines
-      if (!pieceRow.find((v) => v != 0)) return;
-      const boardRow = this.getRow(piece.x + i);
-
-      pieceRow.forEach((cell, j) => {
-        // skip zeros
-        if (!cell) return;
-        boardRow[piece.y + j] = piece.color;
-      });
-    });
+    placePieceOnMatrix(piece, this.matrix);
     this.placedPieces++;
   }
 

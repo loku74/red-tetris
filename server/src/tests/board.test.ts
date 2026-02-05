@@ -99,8 +99,8 @@ it("valid placement", () => {
   expect(board.isValidPiece(piece)).toBe(true);
   board.place(piece);
 
-  expect(board.matrix[18]?.slice(4, 7)).toEqual([0, 7, 0]);
-  expect(board.matrix[19]?.slice(4, 7)).toEqual([7, 7, 7]);
+  expect(board.matrix[18]?.slice(4, 7)).toEqual([Colors.EMPTY, Colors.GREY, Colors.EMPTY]);
+  expect(board.matrix[19]?.slice(4, 7)).toEqual([Colors.GREY, Colors.GREY, Colors.GREY]);
 });
 
 it("clear lines", () => {
