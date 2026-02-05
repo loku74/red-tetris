@@ -67,4 +67,6 @@ export interface ServerToClientEvents {
   [shared.EVENT_KICK]: (data: shared.EventKickData) => void;
   [shared.EVENT_MESSAGE]: (data: shared.EventMessageData) => void;
   [shared.EVENT_GAME_START]: (data: shared.EventStartData) => void;
+  [shared.EVENT_WARMUP_INFO]: (data: shared.GameData) => void;
+  [shared.EVENT_WARMUP_FINISH]: (data: {}) => void;
 }

@@ -2,7 +2,7 @@ import type { Server } from "socket.io";
 import type { Game } from "../objects/Game";
 import type { Room } from "../objects/Room";
 import type { Player } from "../objects/Player";
-import { GAME_FALL_SLEEP, GAME_START_DELAY } from "../constants/core";
+import { GAME_TICK_DEFAULT, GAME_START_DELAY } from "../constants/core";
 import {
   EVENT_GAME_FINISH,
   EVENT_GAME_INFO,
@@ -94,5 +94,5 @@ export async function gameLoop(room: Room, io: Server) {
 
       io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
     });
-  }, GAME_FALL_SLEEP);
+  }, GAME_TICK_DEFAULT);
 }

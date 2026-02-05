@@ -27,24 +27,29 @@
   // socket
   import { getSocket } from "$lib/socket/socket.svelte";
 
-  // events
+  // shared
   import {
+    Colors,
+    GameActions,
     EVENT_JOIN_ROOM,
     EVENT_LEAVE_ROOM,
     EVENT_KICK,
     EVENT_MESSAGE,
-    EVENT_WARMUP_START
+    EVENT_WARMUP_START,
+    EVENT_WARMUP_ACTION,
+    EVENT_WARMUP_INFO,
+    EVENT_WARMUP_FINISH
   } from "@app/shared";
 
   // types
-  import {
-    Colors,
-    type EventJoinRoomPayload,
-    type EventKickData,
-    type EventKickPayload,
-    type EventMessageData,
-    type EventMessagePayload,
-    type UserData
+  import type {
+    EventJoinRoomPayload,
+    EventKickData,
+    EventKickPayload,
+    EventMessageData,
+    EventMessagePayload,
+    GameData,
+    UserData
   } from "@app/shared";
 
   // constants
@@ -69,6 +74,9 @@
 
   // color
   let userColor = $state<string>(getColor(roomState.color));
+
+  // matrix
+  let gameData = $state<GameData>();
 
   function getColor(color: Colors) {
     return pieceColors[color].light;
@@ -166,6 +174,7 @@
   // warm-up
   let warmUp = $state<boolean>(false);
   let showWarmUpRestart = $state<boolean>(false);
+
   function startWarmUp() {
     socket.emit(EVENT_WARMUP_START, (response) => {
       if (response.success) {
@@ -177,6 +186,42 @@
     });
   }
 
+  const keyToActionMap: Record<string, GameActions> = {
+    ARROWUP: GameActions.UP,
+    Z: GameActions.UP,
+    W: GameActions.UP,
+    ARROWDOWN: GameActions.DOWN,
+    S: GameActions.DOWN,
+    ARROWLEFT: GameActions.LEFT,
+    A: GameActions.LEFT,
+    Q: GameActions.LEFT,
+    ARROWRIGHT: GameActions.RIGHT,
+    D: GameActions.RIGHT,
+    " ": GameActions.SPACE
+  };
+
+  function onWarmUpKeydown(event: KeyboardEvent) {
+    if (warmUp === false) return;
+    const action = keyToActionMap[event.key.toLocaleUpperCase()];
+
+    if (action === undefined) return;
+
+    socket.emit(EVENT_WARMUP_ACTION, { action }, (response) => {
+      if (response.success) {
+        gameData = response.data;
+      }
+    });
+  }
+
+  function onWarmUpInfo(data: GameData) {
+    gameData = data;
+  }
+
+  function onWarmUpFinish() {
+    warmUp = false;
+    gameData = undefined;
+  }
+
   onMount(() => {
     localStorage.setItem("username", username.substring(0, USERNAME_MAX_LENGTH));
 
@@ -184,13 +229,19 @@
 
     socket.on(EVENT_KICK, onKick);
     socket.on(EVENT_MESSAGE, onMessage);
+    socket.on(EVENT_WARMUP_INFO, onWarmUpInfo);
+    socket.on(EVENT_WARMUP_FINISH, onWarmUpFinish);
 
     return () => {
       socket.off(EVENT_KICK, onKick);
       socket.off(EVENT_MESSAGE, onMessage);
+      socket.off(EVENT_WARMUP_INFO, onWarmUpInfo);
+      socket.off(EVENT_WARMUP_FINISH, onWarmUpFinish);
     };
   });
 </script>
+
+<svelte:window on:keydown={onWarmUpKeydown} />
 
 <div class="flex h-screen items-center justify-center bg-dark-primary gap-32">
   <!-- error & redirect -->
@@ -337,19 +388,60 @@
     </div>
 
     <!-- warm-up -->
-    <div class="relative border-4 border-red-secondary">
-      {#each { length: 20 }}
-        <div class="flex">
-          {#each { length: 10 }}
-            <Piece color={Colors.EMPTY} size={32} />
-          {/each}
+    <div class="relative border-4 border-red-secondary h-[640px] w-[320px] box-content">
+      {#if gameData}
+        <!-- BOARD -->
+        {#each gameData.matrix as row, index_row (index_row)}
+          <div class="flex">
+            {#each row as cell, index_cell (index_cell)}
+              <Piece color={cell} size={32} />
+            {/each}
+          </div>
+        {/each}
+
+        <!-- SCORE -->
+        <div class="absolute -top-12 right-1/2 translate-x-1/2 text-xl">
+          Score: {gameData.score}
         </div>
-      {/each}
+
+        <!-- NEXT PIECES -->
+        <div class="absolute top-0 -right-48 text-xl flex flex-col gap-2 items-center">
+          <span>Next</span>
+
+          <div class="border-2 border-border flex flex-col w-40 py-8 items-center gap-8">
+            {#each gameData.nextPieces as piece, index (index)}
+              <div>
+                {#each piece.matrix as row, index_cell (index_cell)}
+                  <div class="flex">
+                    {#each row as cell, index_cell (index_cell)}
+                      {#if !row.some((cell) => cell)}
+                        <!-- do nothing -->
+                      {:else if cell !== Colors.EMPTY}
+                        <Piece color={piece.color} size={32} />
+                      {:else}
+                        <div class="h-[32px] w-[32px]"></div>
+                      {/if}
+                    {/each}
+                  </div>
+                {/each}
+              </div>
+            {/each}
+          </div>
+        </div>
+      {:else}
+        {#each { length: 20 }, index_row (index_row)}
+          <div class="flex">
+            {#each { length: 10 }, index_cell (index_cell)}
+              <Piece color={Colors.EMPTY} size={32} />
+            {/each}
+          </div>
+        {/each}
+      {/if}
 
       {#if warmUp == false}
         <button
           out:fade={{ duration: 200 }}
-          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-16 flex items-center gap-2"
+          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
           onclick={startWarmUp}
         >
           <GamepadDirectional />
@@ -358,7 +450,8 @@
       {:else if showWarmUpRestart}
         <button
           in:fade={{ duration: 200 }}
-          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-16 flex items-center gap-2"
+          onclick={startWarmUp}
+          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
         >
           <RotateCcw />
           restart
@@ -367,6 +460,8 @@
     </div>
   {/if}
 </div>
+
+<!-- [ DIALOGS ] -->
 
 <!--confirm kick dialog -->
 {#if showKickDialog}

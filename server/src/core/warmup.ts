@@ -4,7 +4,7 @@ import type { User } from "../objects/User";
 
 // others
 import { EVENT_WARMUP_FINISH, EVENT_WARMUP_INFO } from "@app/shared";
-import { GAME_FALL_SLEEP } from "../constants/core";
+import { GAME_TICK_DEFAULT } from "../constants/core";
 import { helpers } from "./game";
 
 export async function warmupLoop(user: User, io: Server) {
@@ -28,5 +28,5 @@ export async function warmupLoop(user: User, io: Server) {
 
       io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
     });
-  }, GAME_FALL_SLEEP);
+  }, GAME_TICK_DEFAULT);
 }
