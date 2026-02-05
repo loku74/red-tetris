@@ -49,8 +49,6 @@
     EventMessagePayload,
     GameData,
     Matrix2D,
-    NonEmptyArray,
-    PieceData,
     UserData
   } from "@app/shared";
 
@@ -187,33 +185,12 @@
     });
   }
 
-  function getRow(index: number): NonEmptyArray<number> {
-    const result = matrix?.[index];
-    if (!result) throw new Error("Invalid row index!");
-    return result;
-  }
-
-  function place(piece: PieceData) {
-    piece.matrix?.forEach((pieceRow, i) => {
-      // we skip empty piece lines
-      if (!pieceRow.find((v) => v != 0)) return;
-      const boardRow = getRow(piece.x + i);
-
-      pieceRow.forEach((cell, j) => {
-        // skip zeros
-        if (!cell) return;
-        boardRow[piece.y + j] = cell;
-      });
-    });
-  }
-
   function onWarmUpKeydown(event: KeyboardEvent) {
     console.log(event.key);
     if (["ARROWUP", "Z", "W"].includes(event.key.toUpperCase())) {
       socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.UP }, (response) => {
         if (response.success) {
           matrix = response.data.matrix;
-          place(response.data.actualPiece);
         }
       });
     }
@@ -221,7 +198,6 @@
       socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.DOWN }, (response) => {
         if (response.success) {
           matrix = response.data.matrix;
-          place(response.data.actualPiece);
         }
       });
     }
@@ -229,7 +205,6 @@
       socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.LEFT }, (response) => {
         if (response.success) {
           matrix = response.data.matrix;
-          place(response.data.actualPiece);
         }
       });
     }
@@ -237,7 +212,6 @@
       socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.RIGHT }, (response) => {
         if (response.success) {
           matrix = response.data.matrix;
-          place(response.data.actualPiece);
         }
       });
     }
@@ -245,14 +219,12 @@
       socket.emit(EVENT_WARMUP_ACTION, { action: GameActions.SPACE }, (response) => {
         if (response.success) {
           matrix = response.data.matrix;
-          place(response.data.actualPiece);
         }
       });
     }
   }
   function onWarmUpInfo(game: GameData) {
     matrix = game.matrix;
-    place(game.actualPiece);
   }
 
   onMount(() => {
