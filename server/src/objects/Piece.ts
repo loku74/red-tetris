@@ -1,5 +1,5 @@
 // intern
-import { Colors } from "@app/shared";
+import { Colors, PIECES } from "@app/shared";
 
 // types
 import type { Matrix2D, PieceType, PieceData } from "@app/shared";
@@ -8,18 +8,15 @@ import { asMatrix } from "../core/matrix";
 export class Piece {
   public rotation: number = 0;
   public alreadyMoved: boolean = false;
+  public matrix: Matrix2D<number>; // row, column
+  public color: Colors;
 
   constructor(
     public type: PieceType,
-    public matrix: Matrix2D<number>, // row, column
     public x: number = 0,
-    public y: number = 0,
-    public color: Colors = Colors.GREY
+    public y: number = 0
   ) {
-    const width = matrix[0].length;
-    for (const row of matrix) {
-      if (row.length != width) throw new Error("Matrix must be rectangular!");
-    }
+    ({ matrix: this.matrix, color: this.color } = PIECES[type]);
   }
 
   private addRotation() {
@@ -70,8 +67,10 @@ export class Piece {
   }
 
   public clone(): Piece {
-    const { type, matrix, x, y, color, rotation, alreadyMoved } = structuredClone(this);
-    const copy = new Piece(type, matrix, x, y, color);
+    const { type, matrix, x, y, rotation, alreadyMoved } = structuredClone(this);
+    const copy = new Piece(type, x, y);
+
+    copy.matrix = matrix;
     copy.rotation = rotation;
     copy.alreadyMoved = alreadyMoved;
     return copy;

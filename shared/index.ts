@@ -30,3 +30,4 @@ export * from "./constants/pieces";
 // [ ENUMS ]
 export * from "./enums/actions";
 export * from "./enums/colors";
+export * from "./enums/pieceType";

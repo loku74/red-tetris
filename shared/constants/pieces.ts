@@ -3,9 +3,8 @@ import { Colors } from "../enums/colors";
 
 // type
 import type { Matrix2D } from "../types/matrix";
-import type { PieceType } from "../types/piece";
+import type { PieceType } from "../enums/pieceType";
 
-export const PIECES_TYPES = ["I", "J", "L", "O", "S", "T", "Z"] as const;
 export const PIECES: Record<PieceType, { matrix: Matrix2D<number>; color: Colors }> = {
   I: {
     matrix: [

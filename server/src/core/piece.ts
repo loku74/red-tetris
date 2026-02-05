@@ -1,4 +1,4 @@
-import { PIECES, PIECES_TYPES } from "@app/shared";
+import { PieceType } from "@app/shared";
 import { Piece } from "../objects/Piece";
 
 function randint(max: number) {
@@ -7,15 +7,15 @@ function randint(max: number) {
 }
 
 export function createPiece() {
-  const randomType = PIECES_TYPES[randint(PIECES_TYPES.length)];
+  const values = Object.values(PieceType);
+  const randomType = values[randint(values.length)];
 
-  if (!randomType) throw new Error("Key generation failed!");
-  const data = PIECES[randomType];
+  if (!randomType) throw new Error("Piece generation failed!");
 
   // position spawn based on rules
   // see: https://tetris.wiki/Super_Rotation_System#Spawn_Orientation_and_Location
   let offsetX = 0;
   if (randomType === "I") offsetX--;
 
-  return new Piece(randomType, data.matrix, offsetX, 3, data.color);
+  return new Piece(randomType, offsetX, 3);
 }

@@ -2,10 +2,7 @@
 import { Colors } from "../enums/colors";
 
 // types
-import type { PIECES_TYPES } from "../constants/pieces";
 import type { Matrix2D } from "./matrix";
-
-export type PieceType = (typeof PIECES_TYPES)[number];
 
 interface Piece {
   size: number;
