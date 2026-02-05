@@ -1,3 +1,3 @@
 export type EventGamePenalityData = {
-  from: string
-}
+  from: string;
+};

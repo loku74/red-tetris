@@ -9,7 +9,12 @@ import * as GameModule from "../core/game";
 import { getUser } from "../core/user";
 
 // types
-import type { EventWarmUpError, EventWarmUpInfoData, EventWarmUpPayload, EventWarmUpSuccess } from "@app/shared";
+import type {
+  EventWarmUpError,
+  EventWarmUpInfoData,
+  EventWarmUpPayload,
+  EventWarmUpSuccess
+} from "@app/shared";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -24,33 +29,39 @@ afterEach(async () => {
 
 describe("invalid warm-up", () => {
   it("not in a room", async () => {
-    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(ctx.test1.client, EVENT_WARMUP_START).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
-    );
+    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+      ctx.test1.client,
+      EVENT_WARMUP_START
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 
   it("user room is playing", async () => {
     const room = await joinRoom(ctx.test1, "example", "user1");
     room.start();
 
-    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(ctx.test1.client, EVENT_WARMUP_START).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
-    );
+    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+      ctx.test1.client,
+      EVENT_WARMUP_START
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 
   it("tries to restart too early", async () => {
     await joinRoom(ctx.test1, "example", "user1");
 
-    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(ctx.test1.client, EVENT_WARMUP_START);
-    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(ctx.test1.client, EVENT_WARMUP_START).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
+    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+      ctx.test1.client,
+      EVENT_WARMUP_START
     );
+    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+      ctx.test1.client,
+      EVENT_WARMUP_START
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 });
 
@@ -59,13 +70,19 @@ it(
   async () => {
     await joinRoom(ctx.test1, "example", "user1");
 
-    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(ctx.test1.client, EVENT_WARMUP_START).then((response) => {
+    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+      ctx.test1.client,
+      EVENT_WARMUP_START
+    ).then((response) => {
       expect(response.success).toBe(true);
     });
 
     await new Promise((resolve) => setTimeout(resolve, (WARMUP_RESTART_DELAY + 1) * 1_000));
 
-    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(ctx.test1.client, EVENT_WARMUP_START).then((response) => {
+    await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+      ctx.test1.client,
+      EVENT_WARMUP_START
+    ).then((response) => {
       expect(response.success).toBe(true);
     });
   },
@@ -86,7 +103,10 @@ it("warmup loop", async () => {
   vi.useFakeTimers();
 
   // start warmup
-  await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(test1.client, EVENT_WARMUP_START).then((response) => {
+  await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+    test1.client,
+    EVENT_WARMUP_START
+  ).then((response) => {
     expect(response.success).toBe(true);
   });
 

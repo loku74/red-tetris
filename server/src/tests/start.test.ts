@@ -30,33 +30,36 @@ afterEach(async () => {
 
 describe("invalid start", () => {
   it("not in a room", async () => {
-    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(ctx.test1.client, EVENT_GAME_START).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
-    );
+    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+      ctx.test1.client,
+      EVENT_GAME_START
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 
   it("not host", async () => {
     const room = await joinRoom(ctx.test1, "example", "user1");
 
     room.host = fakeUser("dumb", "someone");
-    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(ctx.test1.client, EVENT_GAME_START).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
-    );
+    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+      ctx.test1.client,
+      EVENT_GAME_START
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 
   it("already started", async () => {
     const room = await joinRoom(ctx.test1, "example", "user1");
     room.start();
 
-    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(ctx.test1.client, EVENT_GAME_START).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
-    );
+    await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+      ctx.test1.client,
+      EVENT_GAME_START
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 });
 
@@ -69,7 +72,10 @@ it("valid start", async () => {
   const listener1 = onceAsync<RoomData>(ctx.test1.client, EVENT_GAME_START);
   const listener2 = onceAsync<RoomData>(test2.client, EVENT_GAME_START);
 
-  await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(ctx.test1.client, EVENT_GAME_START).then((response) => {
+  await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
+    ctx.test1.client,
+    EVENT_GAME_START
+  ).then((response) => {
     expect(response.success).toBe(true);
   });
 

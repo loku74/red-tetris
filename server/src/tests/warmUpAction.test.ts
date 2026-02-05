@@ -13,7 +13,9 @@ import type {
   EventWarmUpActionError,
   EventWarmUpActionSuccess,
   EventWarmUpActionPayload,
-  EventWarmUpError, EventWarmUpPayload, EventWarmUpSuccess
+  EventWarmUpError,
+  EventWarmUpPayload,
+  EventWarmUpSuccess
 } from "@app/shared";
 
 let ctx: TestServerData;
@@ -37,7 +39,10 @@ it("warm up perform action", async () => {
 
   vi.useFakeTimers();
 
-  await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(test1.client, EVENT_WARMUP_START).then(({ success }) => {
+  await emitAsync<EventWarmUpSuccess, EventWarmUpError, EventWarmUpPayload>(
+    test1.client,
+    EVENT_WARMUP_START
+  ).then(({ success }) => {
     expect(success).toBe(true);
   });
 

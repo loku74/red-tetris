@@ -78,8 +78,8 @@ describe("game loop helpers", () => {
     await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
       test1.client,
       EVENT_GAME_START
-    ).then(({ success }) => {
-      expect(success).toBe(true);
+    ).then((response) => {
+      expect(response.success).toBe(true);
     });
     const retrievedGame = room.game;
     expect(retrievedGame).toBeDefined();
@@ -185,8 +185,8 @@ describe("game loop helpers", () => {
     await emitAsync<EventStartSuccess, EventStartError, EventStartPayload>(
       test1.client,
       EVENT_GAME_START
-    ).then(({ success }) => {
-      expect(success).toBe(true);
+    ).then((response) => {
+      expect(response.success).toBe(true);
     });
     const retrievedGame = room.game;
     expect(retrievedGame).toBeDefined();

@@ -1,3 +1,3 @@
-import type { GameData } from "../game"
+import type { GameData } from "../game";
 
 export type EventWarmUpInfoData = GameData;
