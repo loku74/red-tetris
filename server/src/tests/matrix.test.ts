@@ -9,7 +9,7 @@ describe("matrix rotations", () => {
     expect(() => new Piece(PieceType.I).rotate90(4)).toThrowError();
   });
 
-  it("I", () => {
+  it(PieceType.I, () => {
     const rotationA = new Piece(PieceType.I).rotate90(1);
     const rotationB = new Piece(PieceType.I).rotate90(2);
     const rotationC = new Piece(PieceType.I).rotate90(3);
@@ -33,7 +33,7 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("J", () => {
+  it(PieceType.J, () => {
     const rotationA = new Piece(PieceType.J).rotate90(1);
     const rotationB = new Piece(PieceType.J).rotate90(2);
     const rotationC = new Piece(PieceType.J).rotate90(3);
@@ -54,7 +54,7 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("L", () => {
+  it(PieceType.L, () => {
     const rotationA = new Piece(PieceType.L).rotate90(1);
     const rotationB = new Piece(PieceType.L).rotate90(2);
     const rotationC = new Piece(PieceType.L).rotate90(3);
@@ -75,7 +75,7 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("O", () => {
+  it(PieceType.O, () => {
     const rotationA = new Piece(PieceType.O).rotate90(1);
     const rotationB = new Piece(PieceType.O).rotate90(2);
     const rotationC = new Piece(PieceType.O).rotate90(3);
@@ -84,7 +84,7 @@ describe("matrix rotations", () => {
     expect(rotationC.matrix).toEqual(PIECES.O.matrix);
   });
 
-  it("S", () => {
+  it(PieceType.S, () => {
     const rotationA = new Piece(PieceType.S).rotate90(1);
     const rotationB = new Piece(PieceType.S).rotate90(2);
     const rotationC = new Piece(PieceType.S).rotate90(3);
@@ -105,7 +105,7 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("T", () => {
+  it(PieceType.T, () => {
     const rotationA = new Piece(PieceType.T).rotate90(1);
     const rotationB = new Piece(PieceType.T).rotate90(2);
     const rotationC = new Piece(PieceType.T).rotate90(3);
@@ -126,7 +126,7 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("Z", () => {
+  it(PieceType.Z, () => {
     const rotationA = new Piece(PieceType.Z).rotate90(1);
     const rotationB = new Piece(PieceType.Z).rotate90(2);
     const rotationC = new Piece(PieceType.Z).rotate90(3);
