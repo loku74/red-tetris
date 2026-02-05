@@ -431,7 +431,7 @@
       {#if warmUp == false}
         <button
           out:fade={{ duration: 200 }}
-          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-16 flex items-center gap-2"
+          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
           onclick={startWarmUp}
         >
           <GamepadDirectional />
@@ -440,7 +440,7 @@
       {:else if showWarmUpRestart}
         <button
           in:fade={{ duration: 200 }}
-          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-16 flex items-center gap-2"
+          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
         >
           <RotateCcw />
           restart
