@@ -13,7 +13,7 @@ import {
 } from "./utils";
 
 // types
-import type { EventMessageData, EventMessageError } from "@app/shared";
+import type { EventMessageData, EventMessageError, EventMessagePayload, EventMessageSuccess } from "@app/shared";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -28,7 +28,7 @@ afterEach(async () => {
 
 describe("invalid chat", () => {
   it("not in a room", async () => {
-    await emitAsync<unknown, EventMessageError>(ctx.test1.client, EVENT_MESSAGE, {
+    await emitAsync<EventMessageSuccess, EventMessageError, EventMessagePayload>(ctx.test1.client, EVENT_MESSAGE, {
       message: "test"
     }).then((response) => {
       expect(response.success).toBe(false);
@@ -45,7 +45,7 @@ describe("invalid chat", () => {
     await joinRoom(test2, "example", "user2");
 
     // users talks
-    await emitAsync(ctx.test1.client, EVENT_MESSAGE, {
+    await emitAsync<EventMessageSuccess, EventMessageError, EventMessagePayload>(ctx.test1.client, EVENT_MESSAGE, {
       message: message
     }).then((response) => {
       expect(response.success).toBe(true);
