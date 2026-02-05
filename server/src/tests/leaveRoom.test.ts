@@ -15,7 +15,12 @@ import {
 } from "./utils";
 
 // types
-import type { EventLeaveRoomError, RoomData } from "@app/shared";
+import type {
+  EventLeaveRoomError,
+  EventLeaveRoomPayload,
+  EventLeaveRoomSuccess,
+  RoomData
+} from "@app/shared";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -30,22 +35,24 @@ afterEach(async () => {
 
 describe("invalid leave room", () => {
   it("user not found", async () => {
-    await emitAsync<unknown, EventLeaveRoomError>(ctx.test1.client, EVENT_LEAVE_ROOM).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
-    );
+    await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
+      ctx.test1.client,
+      EVENT_LEAVE_ROOM
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 
   it("inexisting room", async () => {
     await joinRoom(ctx.test1, "example", "test");
     getRooms().clear();
 
-    await emitAsync<unknown, EventLeaveRoomError>(ctx.test1.client, EVENT_LEAVE_ROOM).then(
-      (response) => {
-        expect(response.success).toBe(false);
-      }
-    );
+    await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
+      ctx.test1.client,
+      EVENT_LEAVE_ROOM
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
   });
 });
 
@@ -61,7 +68,10 @@ it("valid leave room", async () => {
 
   const listener = onceAsync<RoomData>(test2.client, EVENT_ROOM_UPDATE);
 
-  await emitAsync(ctx.test1.client, EVENT_LEAVE_ROOM).then((response) => {
+  await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
+    ctx.test1.client,
+    EVENT_LEAVE_ROOM
+  ).then((response) => {
     expect(response.success).toBe(true);
   });
 

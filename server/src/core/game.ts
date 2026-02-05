@@ -1,4 +1,3 @@
-import type { Server } from "socket.io";
 import type { Game } from "../objects/Game";
 import type { Room } from "../objects/Room";
 import type { Player } from "../objects/Player";
@@ -9,6 +8,7 @@ import {
   EVENT_GAME_PENALITY,
   EVENT_GAME_SPECTRUM
 } from "@app/shared";
+import type { AppServer } from "../types/socket";
 
 export const helpers = {
   applyPenality(game: Game, from: Player) {
@@ -54,7 +54,7 @@ export const helpers = {
   }
 };
 
-export async function gameLoop(room: Room, io: Server) {
+export async function gameLoop(room: Room, io: AppServer) {
   const game = room.game;
   if (!game) throw new Error("Game not prepared!");
 

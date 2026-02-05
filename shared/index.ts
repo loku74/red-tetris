@@ -11,6 +11,7 @@ export * from "./types/events/getRooms";
 export * from "./types/events/start";
 export * from "./types/events/warmUp";
 export * from "./types/events/warmUpAction";
+export * from "./types/events/gamePenality";
 
 export * from "./types/user";
 export * from "./types/room";
@@ -28,4 +29,4 @@ export * from "./constants/pieces";
 
 // [ ENUMS ]
 export * from "./enums/actions";
-export * from "./enums/colors"
+export * from "./enums/colors";

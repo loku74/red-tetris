@@ -12,7 +12,10 @@ import type { TestServerData } from "./types";
 import type {
   EventWarmUpActionError,
   EventWarmUpActionSuccess,
-  EventWarmUpActionPayload
+  EventWarmUpActionPayload,
+  EventWarmUpError,
+  EventWarmUpPayload,
+  EventWarmUpSuccess
 } from "@app/shared";
 
 let ctx: TestServerData;
@@ -36,7 +39,10 @@ it("warm up perform action", async () => {
 
   vi.useFakeTimers();
 
-  await emitAsync(test1.client, EVENT_WARMUP_START).then(({ success }) => {
+  await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
+    test1.client,
+    EVENT_WARMUP_START
+  ).then(({ success }) => {
     expect(success).toBe(true);
   });
 
@@ -55,7 +61,7 @@ it("warm up perform action", async () => {
   const pieceBeforeY = player.actualPiece.y;
 
   // perform simple action
-  await emitAsync<EventWarmUpActionSuccess, EventWarmUpActionError, EventWarmUpActionPayload>(
+  await emitAsync<EventWarmUpActionPayload, EventWarmUpActionSuccess, EventWarmUpActionError>(
     test1.client,
     EVENT_WARMUP_ACTION,
     { action: GameActions.RIGHT }
