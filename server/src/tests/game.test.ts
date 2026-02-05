@@ -7,13 +7,8 @@ import {
   EVENT_GAME_INFO,
   EVENT_GAME_PENALITY,
   EVENT_GAME_START,
-  type EventStartError,
-  type EventStartPayload,
-  type EventStartSuccess,
-  type EventGamePenalityData,
-  type GameData
+  PieceType
 } from "@app/shared";
-import { PIECES } from "@app/shared";
 import { BOARD_WIDTH } from "../constants/core";
 import { getRoomBySocket } from "../core/room";
 import {
@@ -31,6 +26,13 @@ import * as GameModule from "../core/game";
 import type { TestServerData, TestSocket } from "./types";
 import type { Room } from "../objects/Room";
 import type { Game } from "../objects/Game";
+import type {
+  EventStartError,
+  EventStartPayload,
+  EventStartSuccess,
+  EventGamePenalityData,
+  GameData
+} from "@app/shared";
 
 let ctx: TestServerData;
 
@@ -50,8 +52,8 @@ describe("game loop helpers", () => {
   let handleGravityMock: Mock;
   let attachActualPieceMock: Mock;
   let applyPenalityMock: Mock;
-  const pieceI = new Piece("I", PIECES.I.matrix, -1, 3, PIECES.I.color);
-  const pieceO = new Piece("O", PIECES.O.matrix, 0, 3, PIECES.O.color);
+  const pieceI = new Piece(PieceType.I, -1, 3);
+  const pieceO = new Piece(PieceType.O, 0, 3);
 
   beforeEach(async () => {
     handleGravityMock = vi.spyOn(GameModule.helpers, "handleGravity");

@@ -1,27 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { Piece } from "../objects/Piece";
-import { PIECES, type Matrix2D } from "@app/shared";
-
-it("non rectangular matrix", () => {
-  const matrix: Matrix2D<number> = [
-    [1, 0, 1],
-    [1, 0]
-  ];
-
-  expect(() => new Piece("I", matrix).rotate90(1)).toThrowError();
-});
+import { PIECES, PieceType } from "@app/shared";
 
 describe("matrix rotations", () => {
   it("invalid rotations", () => {
-    expect(() => new Piece("I", PIECES.I.matrix).rotate90(0)).toThrowError();
-    expect(() => new Piece("I", PIECES.I.matrix).rotate90(-1)).toThrowError();
-    expect(() => new Piece("I", PIECES.I.matrix).rotate90(4)).toThrowError();
+    expect(() => new Piece(PieceType.I).rotate90(0)).toThrowError();
+    expect(() => new Piece(PieceType.I).rotate90(-1)).toThrowError();
+    expect(() => new Piece(PieceType.I).rotate90(4)).toThrowError();
   });
 
-  it("I", () => {
-    const rotationA = new Piece("I", PIECES.I.matrix).rotate90(1);
-    const rotationB = new Piece("I", PIECES.I.matrix).rotate90(2);
-    const rotationC = new Piece("I", PIECES.I.matrix).rotate90(3);
+  it(PieceType.I, () => {
+    const rotationA = new Piece(PieceType.I).rotate90(1);
+    const rotationB = new Piece(PieceType.I).rotate90(2);
+    const rotationC = new Piece(PieceType.I).rotate90(3);
     expect(rotationA.matrix).toEqual([
       [0, 0, 1, 0],
       [0, 0, 1, 0],
@@ -42,10 +33,10 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("J", () => {
-    const rotationA = new Piece("J", PIECES.J.matrix).rotate90(1);
-    const rotationB = new Piece("J", PIECES.J.matrix).rotate90(2);
-    const rotationC = new Piece("J", PIECES.J.matrix).rotate90(3);
+  it(PieceType.J, () => {
+    const rotationA = new Piece(PieceType.J).rotate90(1);
+    const rotationB = new Piece(PieceType.J).rotate90(2);
+    const rotationC = new Piece(PieceType.J).rotate90(3);
     expect(rotationA.matrix).toEqual([
       [0, 1, 1],
       [0, 1, 0],
@@ -63,10 +54,10 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("L", () => {
-    const rotationA = new Piece("L", PIECES.L.matrix).rotate90(1);
-    const rotationB = new Piece("L", PIECES.L.matrix).rotate90(2);
-    const rotationC = new Piece("L", PIECES.L.matrix).rotate90(3);
+  it(PieceType.L, () => {
+    const rotationA = new Piece(PieceType.L).rotate90(1);
+    const rotationB = new Piece(PieceType.L).rotate90(2);
+    const rotationC = new Piece(PieceType.L).rotate90(3);
     expect(rotationA.matrix).toEqual([
       [0, 1, 0],
       [0, 1, 0],
@@ -84,19 +75,19 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("O", () => {
-    const rotationA = new Piece("O", PIECES.O.matrix).rotate90(1);
-    const rotationB = new Piece("O", PIECES.O.matrix).rotate90(2);
-    const rotationC = new Piece("O", PIECES.O.matrix).rotate90(3);
+  it(PieceType.O, () => {
+    const rotationA = new Piece(PieceType.O).rotate90(1);
+    const rotationB = new Piece(PieceType.O).rotate90(2);
+    const rotationC = new Piece(PieceType.O).rotate90(3);
     expect(rotationA.matrix).toEqual(PIECES.O.matrix);
     expect(rotationB.matrix).toEqual(PIECES.O.matrix);
     expect(rotationC.matrix).toEqual(PIECES.O.matrix);
   });
 
-  it("S", () => {
-    const rotationA = new Piece("S", PIECES.S.matrix).rotate90(1);
-    const rotationB = new Piece("S", PIECES.S.matrix).rotate90(2);
-    const rotationC = new Piece("S", PIECES.S.matrix).rotate90(3);
+  it(PieceType.S, () => {
+    const rotationA = new Piece(PieceType.S).rotate90(1);
+    const rotationB = new Piece(PieceType.S).rotate90(2);
+    const rotationC = new Piece(PieceType.S).rotate90(3);
     expect(rotationA.matrix).toEqual([
       [0, 1, 0],
       [0, 1, 1],
@@ -114,10 +105,10 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("T", () => {
-    const rotationA = new Piece("T", PIECES.T.matrix).rotate90(1);
-    const rotationB = new Piece("T", PIECES.T.matrix).rotate90(2);
-    const rotationC = new Piece("T", PIECES.T.matrix).rotate90(3);
+  it(PieceType.T, () => {
+    const rotationA = new Piece(PieceType.T).rotate90(1);
+    const rotationB = new Piece(PieceType.T).rotate90(2);
+    const rotationC = new Piece(PieceType.T).rotate90(3);
     expect(rotationA.matrix).toEqual([
       [0, 1, 0],
       [0, 1, 1],
@@ -135,10 +126,10 @@ describe("matrix rotations", () => {
     ]);
   });
 
-  it("Z", () => {
-    const rotationA = new Piece("Z", PIECES.Z.matrix).rotate90(1);
-    const rotationB = new Piece("Z", PIECES.Z.matrix).rotate90(2);
-    const rotationC = new Piece("Z", PIECES.Z.matrix).rotate90(3);
+  it(PieceType.Z, () => {
+    const rotationA = new Piece(PieceType.Z).rotate90(1);
+    const rotationB = new Piece(PieceType.Z).rotate90(2);
+    const rotationC = new Piece(PieceType.Z).rotate90(3);
     expect(rotationA.matrix).toEqual([
       [0, 0, 1],
       [0, 1, 1],
