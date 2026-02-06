@@ -6,7 +6,7 @@ import { validateStart } from "../validate/start";
 
 // types
 import type { AppServer, ServerSocket } from "../types/socket";
-import { gameLoop } from "../core/game";
+import { gameLoop } from "../core/runners";
 
 export function registerHandlers(io: AppServer, socket: ServerSocket) {
   socket.on(EVENT_GAME_START, (callback) => {

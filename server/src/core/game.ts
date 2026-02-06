@@ -1,15 +1,5 @@
 import type { Game } from "../objects/Game";
-import type { Room } from "../objects/Room";
 import type { Player } from "../objects/Player";
-import { GAME_TICK_DEFAULT, GAME_START_DELAY } from "../constants/core";
-import { sleep } from "../utils/sleep";
-import {
-  EVENT_GAME_FINISH,
-  EVENT_GAME_INFO,
-  EVENT_GAME_PENALITY,
-  EVENT_GAME_SPECTRUM
-} from "@app/shared";
-import type { AppServer } from "../types/socket";
 
 export const helpers = {
   applyPenality(game: Game, from: Player) {
@@ -45,7 +35,7 @@ export const helpers = {
     let penality = false;
 
     if (!player.board.isValidPiece(next)) {
-      penality = this.goToNextPiece(game, player);
+      penality = helpers.goToNextPiece(game, player);
     } else {
       // apply gravity
       player.actualPiece.moveDown();
@@ -53,42 +43,3 @@ export const helpers = {
     return penality;
   }
 };
-
-export async function gameLoop(room: Room, io: AppServer) {
-  const game = room.game;
-  if (!game) throw new Error("Game not prepared!");
-
-  game.players.keys().forEach((id) => {
-    io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
-  });
-
-  // delay start of game to synchronize all clients
-  await sleep(GAME_START_DELAY);
-  game.ongoing = true;
-
-  // the game runner
-  const timer = setInterval(() => {
-    game.players.forEach((player, id) => {
-      if (!player.alive) return;
-
-      const penality = helpers.handleGravity(game, player);
-      if (game.isFinished()) {
-        clearInterval(timer);
-        io.to(room.name).emit(EVENT_GAME_FINISH, {});
-        room.finish();
-        return;
-      }
-
-      if (penality) {
-        helpers.applyPenality(game, player);
-
-        io.to(room.name).emit(EVENT_GAME_PENALITY, {
-          from: player.user.name
-        });
-      }
-
-      io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums(id));
-      io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
-    });
-  }, GAME_TICK_DEFAULT);
-}

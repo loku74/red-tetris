@@ -1,8 +1,11 @@
-import { GameActions } from "@app/shared";
+// types
 import type { Game } from "../objects/Game";
 import type { Player } from "../objects/Player";
 import type { ActionData } from "../types/server";
+
+// intern
 import { helpers } from "./game";
+import { GameActions } from "@app/shared";
 
 const actions: Record<GameActions, (data: ActionData) => void> = {
   UP: (data: ActionData) => data.piece.rotate90(),

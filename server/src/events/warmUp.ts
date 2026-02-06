@@ -3,7 +3,7 @@ import { EVENT_WARMUP_START } from "@app/shared";
 
 // intern
 import { validateWarmUp } from "../validate/warmUp";
-import { warmupLoop } from "../core/warmup";
+import { warmUpLoop } from "../core/runners";
 
 // types
 import type { AppServer, ServerSocket } from "../types/socket";
@@ -18,7 +18,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
 
     console.log(`user ${result.current.name} started warm-up`);
     await result.current.setWarmUp();
-    warmupLoop(result.current, io);
+    warmUpLoop(result.current, io);
 
     callback({ success: true });
   });
