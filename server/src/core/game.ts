@@ -40,19 +40,17 @@ export const helpers = {
     return penality;
   },
 
-  handleGravity(game: Game, player: Player): { penality: boolean; attached: boolean } {
+  handleGravity(game: Game, player: Player): boolean {
     const next = player.actualPiece.clone().moveDown();
-    let penality = false,
-      attached = false;
+    let penality = false;
 
     if (!player.board.isValidPiece(next)) {
-      attached = true;
       penality = this.goToNextPiece(game, player);
     } else {
       // apply gravity
       player.actualPiece.moveDown();
     }
-    return { penality: penality, attached: attached };
+    return penality;
   }
 };
 
@@ -73,7 +71,7 @@ export async function gameLoop(room: Room, io: AppServer) {
     game.players.forEach((player, id) => {
       if (!player.alive) return;
 
-      const { penality, attached } = helpers.handleGravity(game, player);
+      const penality = helpers.handleGravity(game, player);
       if (game.isFinished()) {
         clearInterval(timer);
         io.to(room.name).emit(EVENT_GAME_FINISH, {});
@@ -89,11 +87,7 @@ export async function gameLoop(room: Room, io: AppServer) {
         });
       }
 
-      if (attached || !player.alive) {
-        // warm only lose/attach new piece
-        io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrum(id));
-      }
-
+      io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums(id));
       io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
     });
   }, GAME_TICK_DEFAULT);

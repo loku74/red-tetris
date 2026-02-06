@@ -1,7 +1,7 @@
 // types
 import type { Piece } from "./Piece";
 import type { User } from "./User";
-import type { GameData } from "@app/shared";
+import type { GameData, PlayerInfo } from "@app/shared";
 import type { Colors } from "@app/shared";
 
 // intern
@@ -78,7 +78,7 @@ export class Game {
     };
   }
 
-  public getGameSpectrum(id: string) {
+  public getGameSpectrums(id: string): PlayerInfo[] {
     const currentPlayer = this.getPlayer(id);
 
     const players = this.players.values().filter((p) => currentPlayer !== p);
