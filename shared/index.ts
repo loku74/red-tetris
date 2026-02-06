@@ -26,6 +26,8 @@ export * from "./types/game";
 export * from "./constants/events";
 export * from "./constants/pieceColors";
 export * from "./constants/pieces";
+export * from "./constants/regex";
+export * from "./constants/limits";
 
 // [ ENUMS ]
 export * from "./enums/actions";

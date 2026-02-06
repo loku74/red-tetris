@@ -7,12 +7,11 @@ import { Colors } from "@app/shared";
 import { sleep } from "../utils/sleep";
 
 // const
-import { WARMUP_CHECK_DELAY, WARMUP_RESTART_DELAY } from "../constants/core";
+import { WARMUP_CHECK_DELAY } from "../constants/core";
 
 export class User {
   public color: Colors = Colors.CYAN;
   public warmUp: Game | null = null;
-  public lastWarmUp: Date | null = null;
 
   constructor(
     public id: string,
@@ -30,14 +29,5 @@ export class User {
     }
 
     this.warmUp = new Game(new Map([[this.id, { color: this.color, user: this }]]));
-    this.lastWarmUp = new Date();
-  }
-
-  public canWarmUp(): boolean {
-    if (!this.lastWarmUp) return true;
-
-    const now = new Date();
-    const timeSinceLastWarmUp = now.getTime() - this.lastWarmUp.getTime();
-    return timeSinceLastWarmUp > WARMUP_RESTART_DELAY * 1_000;
   }
 }

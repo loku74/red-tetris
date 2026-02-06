@@ -26,8 +26,7 @@
   import type { EventJoinRoomPayload, RoomListData } from "@app/shared";
 
   // constants
-  import { USERNAME_MAX_LENGTH, ROOM_NAME_MAX_LENGTH } from "$lib/constants/max";
-  import { REGEX_USER_AND_ROOM } from "$lib/constants/regex";
+  import { REGEX_ROOM_AND_USER_SANITIZE, USERNAME_MAX_LENGTH, ROOM_MAX_LENGTH } from "@app/shared";
 
   // error
   let usernameError = $state<string>();
@@ -119,18 +118,18 @@
           onEnter={() => {
             roomInput?.focus();
           }}
-          regex={REGEX_USER_AND_ROOM}
+          regex={REGEX_ROOM_AND_USER_SANITIZE}
         />
         <TextInput
           bind:value={room}
           bind:input={roomInput}
-          maxlength={ROOM_NAME_MAX_LENGTH}
+          maxlength={ROOM_MAX_LENGTH}
           placeholder="Room Name"
           error={roomError}
           onEnter={() => {
             canJoinRoom();
           }}
-          regex={REGEX_USER_AND_ROOM}
+          regex={REGEX_ROOM_AND_USER_SANITIZE}
         />
       </div>
       <div class="pt-8 flex flex-col space-y-4 w-xs">

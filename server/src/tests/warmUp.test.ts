@@ -2,10 +2,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // intern
-import { WARMUP_RESTART_DELAY } from "../constants/core";
 import { EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
 import { emitAsync, joinRoom, onceAsync, setupTestServer, shutdownTestServer } from "./utils";
-import { sleep } from "../utils/sleep";
 import * as GameModule from "../core/game";
 import { getUser } from "../core/user";
 
@@ -49,46 +47,18 @@ describe("invalid warm-up", () => {
       expect(response.success).toBe(false);
     });
   });
-
-  it("tries to restart too early", async () => {
-    await joinRoom(ctx.test1, "example", "user1");
-
-    await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-      ctx.test1.client,
-      EVENT_WARMUP_START
-    );
-    await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-      ctx.test1.client,
-      EVENT_WARMUP_START
-    ).then((response) => {
-      expect(response.success).toBe(false);
-    });
-  });
 });
 
-it(
-  "valid warm-up",
-  async () => {
-    await joinRoom(ctx.test1, "example", "user1");
+it("valid warm-up", async () => {
+  await joinRoom(ctx.test1, "example", "user1");
 
-    await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-      ctx.test1.client,
-      EVENT_WARMUP_START
-    ).then((response) => {
-      expect(response.success).toBe(true);
-    });
-
-    await sleep((WARMUP_RESTART_DELAY + 1) * 1_000);
-
-    await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-      ctx.test1.client,
-      EVENT_WARMUP_START
-    ).then((response) => {
-      expect(response.success).toBe(true);
-    });
-  },
-  (WARMUP_RESTART_DELAY + 2) * 1_000
-);
+  await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
+    ctx.test1.client,
+    EVENT_WARMUP_START
+  ).then((response) => {
+    expect(response.success).toBe(true);
+  });
+});
 
 it("warmup loop", async () => {
   const handleGravityMock = vi.spyOn(GameModule.helpers, "handleGravity");

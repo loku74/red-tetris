@@ -7,7 +7,6 @@ export type RoomData = {
   max: number;
   host: string;
   playing: boolean;
-  warmUpRestartDelay: number;
 };
 
 export type RoomListData = {

@@ -3,7 +3,7 @@ import { Colors, EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE, type EventJoinRoomPayload }
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 // intern
-import { ROOM_MAX, ROOM_MAX_USERS, WARMUP_RESTART_DELAY } from "../constants/core";
+import { ROOM_MAX, ROOM_MAX_USERS } from "../constants/core";
 import { sleep } from "../utils/sleep";
 import {
   ERROR_ALREADY_IN_A_ROOM,
@@ -219,8 +219,7 @@ it("host changed", async () => {
     userCount: 2,
     max: ROOM_MAX_USERS,
     host: "user2",
-    playing: false,
-    warmUpRestartDelay: WARMUP_RESTART_DELAY * 1_000
+    playing: false
   });
 
   test2.client.close();

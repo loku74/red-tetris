@@ -53,9 +53,12 @@
   } from "@app/shared";
 
   // constants
-  import { USERNAME_MAX_LENGTH, MESSAGE_MAX_LENGTH } from "$lib/constants/max";
-  import { REGEX_MESSAGE } from "$lib/constants/regex";
-  import { pieceColors } from "@app/shared";
+  import {
+    pieceColors,
+    REGEX_MESSAGE_SANITIZE,
+    USERNAME_MAX_LENGTH,
+    MESSAGE_MAX_LENGTH
+  } from "@app/shared";
 
   // url params
   let room = $state(page.params.room || "");
@@ -185,15 +188,11 @@
 
   // warm-up
   let warmUp = $state<boolean>(false);
-  let showWarmUpRestart = $state<boolean>(false);
 
   function startWarmUp() {
     socket.emit(EVENT_WARMUP_START, (response) => {
       if (response.success) {
         warmUp = true;
-        setTimeout(() => {
-          showWarmUpRestart = true;
-        }, roomState.data?.warmUpRestartDelay || 5000);
       }
     });
   }
@@ -386,7 +385,7 @@
             fill={true}
             outline={false}
             onEnter={sendMessage}
-            regex={REGEX_MESSAGE}
+            regex={REGEX_MESSAGE_SANITIZE}
             bright
           />
           <button
@@ -464,25 +463,22 @@
         {/each}
       {/if}
 
-      {#if warmUp == false}
-        <button
-          out:fade={{ duration: 200 }}
-          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
-          onclick={startWarmUp}
-        >
-          <GamepadDirectional />
-          warm-up
-        </button>
-      {:else if showWarmUpRestart}
-        <button
-          in:fade={{ duration: 200 }}
-          onclick={startWarmUp}
-          class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
-        >
+      <button
+        in:fade={{ duration: 200 }}
+        onclick={(e) => {
+          e.currentTarget.blur();
+          startWarmUp();
+        }}
+        class="btn btn-primary px-4 py-2 text-xl absolute right-1/2 translate-x-1/2 -bottom-20 flex items-center gap-2"
+      >
+        {#if warmUp}
           <RotateCcw />
           restart
-        </button>
-      {/if}
+        {:else}
+          <GamepadDirectional />
+          warmup
+        {/if}
+      </button>
     </div>
   {/if}
 </div>
