@@ -16,16 +16,15 @@ export async function warmupLoop(user: User, io: Server) {
 
   const timer = setInterval(() => {
     game.players.forEach((player, id) => {
-      if (!player.alive) return;
-
-      helpers.handleGravity(game, player);
       if (game.isFinished()) {
-        clearInterval(timer);
-        io.to(user.id).emit(EVENT_WARMUP_FINISH, {});
         user.warmUp = null;
-      } else {
-        io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
+        io.to(user.id).emit(EVENT_WARMUP_FINISH, {});
+        clearInterval(timer);
+        return;
       }
+      helpers.handleGravity(game, player);
+
+      io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
     });
   }, GAME_TICK_DEFAULT);
 }

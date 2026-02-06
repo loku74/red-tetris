@@ -58,7 +58,9 @@ export class Game {
     );
 
     const copy = structuredClone(player.board.matrix);
-    placePieceOnMatrix(player.actualPiece, copy);
+    if (player.alive) {
+      placePieceOnMatrix(player.actualPiece, copy);
+    }
 
     const pieceCopy = player.actualPiece.clone();
     while (player.board.isValidPiece(pieceCopy)) {

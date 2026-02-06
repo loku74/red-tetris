@@ -20,14 +20,24 @@ export const helpers = {
   },
 
   attachActualPiece(game: Game, player: Player): number {
-    // fix the actual piece
     player.board.place(player.actualPiece);
-
-    // generate a new valid piece
     player.actualPiece = game.nextPiece(player.board.placedPieces);
 
-    // clear the lines
     return player.board.cleanLines();
+  },
+
+  goToNextPiece(game: Game, player: Player): boolean {
+    let penality = false;
+
+    if (helpers.attachActualPiece(game, player) > 0) {
+      penality = true;
+    }
+    if (player.hasLost()) {
+      player.alive = false;
+    } else {
+      player.score++;
+    }
+    return penality;
   },
 
   handleGravity(game: Game, player: Player): { penality: boolean; attached: boolean } {
@@ -36,17 +46,8 @@ export const helpers = {
       attached = false;
 
     if (!player.board.isValidPiece(next)) {
-      // piece reach bottom
       attached = true;
-      if (helpers.attachActualPiece(game, player) > 0) {
-        penality = true;
-      }
-
-      if (player.hasLost()) {
-        player.alive = false;
-      } else {
-        player.score++;
-      }
+      penality = this.goToNextPiece(game, player);
     } else {
       // apply gravity
       player.actualPiece.moveDown();
