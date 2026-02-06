@@ -40,7 +40,7 @@ export const helpers = {
     return penality;
   },
 
-  handleGravity(game: Game, player: Player): { penality: boolean } {
+  handleGravity(game: Game, player: Player): boolean {
     const next = player.actualPiece.clone().moveDown();
     let penality = false;
 
@@ -50,7 +50,7 @@ export const helpers = {
       // apply gravity
       player.actualPiece.moveDown();
     }
-    return { penality };
+    return penality;
   }
 };
 
@@ -71,7 +71,7 @@ export async function gameLoop(room: Room, io: AppServer) {
     game.players.forEach((player, id) => {
       if (!player.alive) return;
 
-      const { penality } = helpers.handleGravity(game, player);
+      const penality = helpers.handleGravity(game, player);
       if (game.isFinished()) {
         clearInterval(timer);
         io.to(room.name).emit(EVENT_GAME_FINISH, {});
