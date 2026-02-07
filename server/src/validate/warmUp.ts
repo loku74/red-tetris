@@ -22,7 +22,7 @@ export function validateWarmUp(socket: ServerSocket): ValidateWarmUpResult {
   if (current === undefined || room === undefined) {
     return { status: false, error: { room: ERROR_NOT_IN_A_ROOM } };
   }
-  if (room.playing) {
+  if (room.game) {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
 

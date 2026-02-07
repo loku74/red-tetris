@@ -26,34 +26,32 @@ export async function gameLoop(room: Room, io: AppServer) {
     io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
   });
 
-  // delay start of game to synchronize all clients
   await sleep(GAME_START_DELAY);
   game.ongoing = true;
 
-  // the game runner
   const timer = setInterval(() => {
-    game.players.forEach((player, id) => {
-      if (!player.alive) return;
+    if (game.isFinished()) {
+      room.game = null;
+      io.to(room.name).emit(EVENT_GAME_FINISH, {});
+      clearInterval(timer);
+    } else {
+      game.players.forEach((player, id) => {
+        if (!player.alive) return;
+        if (helpers.isNextPositionValid(player)) {
+          player.actualPiece.moveDown();
+        } else {
+          helpers.attachCurrentPiece(game, player, io);
 
-      const penality = helpers.handleGravity(game, player);
-      if (game.isFinished()) {
-        clearInterval(timer);
-        io.to(room.name).emit(EVENT_GAME_FINISH, {});
-        room.finish();
-        return;
-      }
+          if (player.board.cleanLines() > 0) {
+            helpers.applyPenality(game, player);
+            io.to(room.name).emit(EVENT_GAME_PENALITY, { from: player.user.name });
+          }
+        }
 
-      if (penality) {
-        helpers.applyPenality(game, player);
-
-        io.to(room.name).emit(EVENT_GAME_PENALITY, {
-          from: player.user.name
-        });
-      }
-
-      io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums(id));
-      io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
-    });
+        io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums(id));
+        io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
+      });
+    }
   }, GAME_TICK_DEFAULT);
 }
 
@@ -65,16 +63,20 @@ export async function warmUpLoop(user: User, io: AppServer) {
   io.to(user.id).emit(EVENT_WARMUP_INFO, game.getGameInfo(user.id));
 
   const timer = setInterval(() => {
-    game.players.forEach((player, id) => {
-      if (game.isFinished()) {
-        user.warmUp = null;
-        io.to(user.id).emit(EVENT_WARMUP_FINISH, {});
-        clearInterval(timer);
-        return;
-      }
-      helpers.handleGravity(game, player);
+    if (game.isFinished()) {
+      user.warmUp = null;
+      io.to(user.id).emit(EVENT_WARMUP_FINISH, {});
+      clearInterval(timer);
+    } else {
+      game.players.forEach((player, id) => {
+        if (helpers.isNextPositionValid(player)) {
+          player.actualPiece.moveDown();
+        } else {
+          helpers.attachCurrentPiece(game, player, io);
+        }
 
-      io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
-    });
+        io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
+      });
+    }
   }, GAME_TICK_DEFAULT);
 }

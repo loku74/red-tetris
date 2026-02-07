@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // intern
 import { EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
 import { emitAsync, joinRoom, onceAsync, setupTestServer, shutdownTestServer } from "./utils";
-import * as GameModule from "../core/game";
 import { getUser } from "../core/user";
 
 // types
@@ -61,7 +60,6 @@ it("valid warm-up", async () => {
 });
 
 it("warmup loop", async () => {
-  const handleGravityMock = vi.spyOn(GameModule.helpers, "handleGravity");
   const test1 = ctx.test1;
   await joinRoom(test1, "example1", "user1");
 
@@ -99,6 +97,5 @@ it("warmup loop", async () => {
   expect(game.ongoing).toBe(true);
 
   // check gravity fall
-  expect(handleGravityMock).toBeCalledWith(game, player);
   expect(player.actualPiece.alreadyMoved).toBe(true);
 });

@@ -29,7 +29,7 @@ export function validateStart(socket: ServerSocket): ValideStartResult {
   if (room.host != current) {
     return { status: false, error: { room: ERROR_NOT_HOST } };
   }
-  if (room.playing === true) {
+  if (room.game) {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
 

@@ -73,5 +73,5 @@ it("warm up perform action", async () => {
   });
   expect(player.actualPiece.y).toBeGreaterThan(pieceBeforeY);
   expect(applyMovement).toBeCalledTimes(1);
-  expect(applyMovement).toBeCalledWith(game, player, "RIGHT");
+  expect(applyMovement).toBeCalledWith(ctx.io, game, player, "RIGHT");
 });

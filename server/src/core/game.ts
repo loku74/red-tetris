@@ -1,5 +1,10 @@
+// intern
+import { EVENT_GAME_INFO } from "@app/shared";
+
+// types
 import type { Game } from "../objects/Game";
 import type { Player } from "../objects/Player";
+import type { AppServer } from "../types/socket";
 
 export const helpers = {
   applyPenality(game: Game, from: Player) {
@@ -9,37 +14,23 @@ export const helpers = {
     });
   },
 
-  attachActualPiece(game: Game, player: Player): number {
+  attachCurrentPiece(game: Game, player: Player, io: AppServer) {
+    const id = player.user.id;
+
     player.board.place(player.actualPiece);
     player.actualPiece = game.nextPiece(player.board.placedPieces);
 
-    return player.board.cleanLines();
-  },
-
-  goToNextPiece(game: Game, player: Player): boolean {
-    let penality = false;
-
-    if (helpers.attachActualPiece(game, player) > 0) {
-      penality = true;
-    }
     if (player.hasLost()) {
       player.alive = false;
+      io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
     } else {
       player.score++;
     }
-    return penality;
   },
 
-  handleGravity(game: Game, player: Player): boolean {
+  isNextPositionValid(player: Player): boolean {
     const next = player.actualPiece.clone().moveDown();
-    let penality = false;
 
-    if (!player.board.isValidPiece(next)) {
-      penality = helpers.goToNextPiece(game, player);
-    } else {
-      // apply gravity
-      player.actualPiece.moveDown();
-    }
-    return penality;
+    return player.board.isValidPiece(next);
   }
 };
