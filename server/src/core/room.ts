@@ -9,6 +9,10 @@ export function removeUserFromRoom(user: User, room: Room): RoomData {
   const info = room.remove(user);
   user.socket.leave(room.name);
 
+  if (user.warmUp) {
+    user.warmUp.ongoing = false;
+  }
+
   return info;
 }
 
