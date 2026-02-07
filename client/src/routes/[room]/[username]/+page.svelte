@@ -503,7 +503,6 @@
           {userToKick}
         </span>
       </span>
-
       from the room?
     </p>
   </Dialog>
