@@ -9,8 +9,8 @@ import type { AppServer, ServerSocket } from "../types/socket";
 import { gameLoop } from "../core/runners";
 
 export function registerHandlers(io: AppServer, socket: ServerSocket) {
-  socket.on(EVENT_GAME_START, (callback) => {
-    const result = validateStart(socket);
+  socket.on(EVENT_GAME_START, (payload, callback) => {
+    const result = validateStart(socket, payload);
     if (!result.status) {
       callback({ success: false });
       return;
@@ -20,7 +20,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
     room.start();
 
     io.to(result.room.name).emit(EVENT_GAME_START, room.asInfo());
-    gameLoop(room, io);
+    gameLoop(io, room, result.settings);
     callback({ success: true });
   });
 }

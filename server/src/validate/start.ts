@@ -7,19 +7,32 @@ import {
 import { getRoomBySocket } from "../core/room";
 import { getUser } from "../core/user";
 import { Room } from "../objects/Room";
+import z from "zod";
+import { formatSchemeError, tickValidation } from "./validation";
 
 // types
 import type { ValidateError } from "../types/validate";
 import type { ServerSocket } from "../types/socket";
+import type { EventStartPayload, Settings } from "@app/shared";
+
+const schema = z.object({
+  tick: tickValidation
+});
 
 type ValidateStartSuccess = {
   status: true;
   room: Room;
+  settings: Settings;
 };
 
 type ValideStartResult = ValidateStartSuccess | ValidateError;
 
-export function validateStart(socket: ServerSocket): ValideStartResult {
+export function validateStart(socket: ServerSocket, payload: EventStartPayload): ValideStartResult {
+  const result = schema.safeParse(payload);
+
+  if (!result.success) {
+    return { status: false, error: formatSchemeError(result.error) };
+  }
   const current = getUser(socket.id);
   const room = getRoomBySocket(socket);
 
@@ -33,5 +46,9 @@ export function validateStart(socket: ServerSocket): ValideStartResult {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
 
-  return { status: true, room };
+  const settings: Settings = {
+    tick: result.data.tick
+  };
+
+  return { status: true, room, settings: settings };
 }

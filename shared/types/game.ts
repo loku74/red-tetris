@@ -19,3 +19,7 @@ export type PlayerInfo = {
   alive: boolean;
   color: Colors;
 };
+
+export type Settings = {
+  tick: number;
+};

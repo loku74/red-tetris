@@ -15,7 +15,13 @@ import {
 } from "./utils";
 
 // types
-import type { EventStartError, EventStartPayload, EventStartSuccess, RoomData } from "@app/shared";
+import type {
+  EventStartError,
+  EventStartPayload,
+  EventStartSuccess,
+  RoomData,
+  Settings
+} from "@app/shared";
 import type { TestServerData } from "./types";
 
 let ctx: TestServerData;
@@ -28,11 +34,16 @@ afterEach(async () => {
   await shutdownTestServer(ctx);
 });
 
+const settings: Settings = {
+  tick: 300
+};
+
 describe("invalid start", () => {
   it("not in a room", async () => {
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.test1.client,
-      EVENT_GAME_START
+      EVENT_GAME_START,
+      settings
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -44,7 +55,8 @@ describe("invalid start", () => {
     room.host = fakeUser("dumb", "someone");
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.test1.client,
-      EVENT_GAME_START
+      EVENT_GAME_START,
+      settings
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -56,7 +68,8 @@ describe("invalid start", () => {
 
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.test1.client,
-      EVENT_GAME_START
+      EVENT_GAME_START,
+      settings
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -74,7 +87,8 @@ it("valid start", async () => {
 
   await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
     ctx.test1.client,
-    EVENT_GAME_START
+    EVENT_GAME_START,
+    settings
   ).then((response) => {
     expect(response.success).toBe(true);
   });
