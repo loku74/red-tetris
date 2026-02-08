@@ -34,4 +34,10 @@ export class Player {
       color: this.color
     };
   }
+
+  public isNextPositionValid(): boolean {
+    const next = this.actualPiece.clone().moveDown();
+
+    return this.board.isValidPiece(next);
+  }
 }

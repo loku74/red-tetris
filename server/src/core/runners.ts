@@ -38,7 +38,7 @@ export async function gameLoop(io: AppServer, room: Room, GameSettings: GameSett
     } else {
       game.players.forEach((player, id) => {
         if (!player.alive) return;
-        if (helpers.isNextPositionValid(player)) {
+        if (player.isNextPositionValid()) {
           player.actualPiece.moveDown();
         } else {
           helpers.attachCurrentPiece(game, player, io);
@@ -70,7 +70,7 @@ export async function warmUpLoop(io: AppServer, user: User, GameSettings: GameSe
       clearInterval(timer);
     } else {
       game.players.forEach((player, id) => {
-        if (helpers.isNextPositionValid(player)) {
+        if (player.isNextPositionValid()) {
           player.actualPiece.moveDown();
         } else {
           helpers.attachCurrentPiece(game, player, io);

@@ -26,11 +26,5 @@ export const helpers = {
     } else {
       player.score++;
     }
-  },
-
-  isNextPositionValid(player: Player): boolean {
-    const next = player.actualPiece.clone().moveDown();
-
-    return player.board.isValidPiece(next);
   }
 };
