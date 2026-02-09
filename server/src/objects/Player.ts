@@ -5,6 +5,7 @@ import type { User } from "./User";
 
 // intern
 import { Board } from "./Board";
+import type { Game } from "./Game";
 
 export class Player {
   public board = new Board();
@@ -39,5 +40,22 @@ export class Player {
     const next = this.actualPiece.clone().moveDown();
 
     return this.board.isValidPiece(next);
+  }
+
+  public applyPenality() {
+    if (this.alive) {
+      this.board.addRestrictedLine();
+    }
+  }
+
+  public attachCurrentPiece(game: Game) {
+    this.board.place(this.actualPiece);
+    this.actualPiece = game.nextPiece(this.board.placedPieces);
+
+    if (this.hasLost()) {
+      this.alive = false;
+    } else {
+      this.score++;
+    }
   }
 }

@@ -12,7 +12,6 @@ import { GAME_START_DELAY } from "../constants/core";
 
 // intern
 import { sleep } from "../utils/sleep";
-import { helpers } from "./game";
 
 // types
 import type { Room } from "../objects/Room";
@@ -41,10 +40,12 @@ export async function gameLoop(io: AppServer, room: Room, GameSettings: GameSett
         if (player.isNextPositionValid()) {
           player.actualPiece.moveDown();
         } else {
-          helpers.attachCurrentPiece(game, player, io);
+          player.attachCurrentPiece(game);
 
           if (player.board.cleanLines() > 0) {
-            helpers.applyPenality(game, player);
+            game.players.forEach((p) => {
+              if (p != player) p.applyPenality();
+            });
             io.to(room.name).emit(EVENT_GAME_PENALITY, { from: player.user.name });
           }
         }
@@ -73,7 +74,7 @@ export async function warmUpLoop(io: AppServer, user: User, GameSettings: GameSe
         if (player.isNextPositionValid()) {
           player.actualPiece.moveDown();
         } else {
-          helpers.attachCurrentPiece(game, player, io);
+          player.attachCurrentPiece(game);
         }
 
         io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));

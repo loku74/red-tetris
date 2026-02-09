@@ -6,9 +6,9 @@ import { validateWarmUpAction } from "../validate/warmUpAction";
 import { applyMovement } from "../core/movements";
 
 // types
-import type { AppServer, ServerSocket } from "../types/socket";
+import type { ServerSocket } from "../types/socket";
 
-export function registerHandlers(io: AppServer, socket: ServerSocket) {
+export function registerHandlers(socket: ServerSocket) {
   socket.on(EVENT_WARMUP_ACTION, (payload, callback) => {
     const result = validateWarmUpAction(socket, payload);
 
@@ -17,7 +17,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
       return;
     }
 
-    applyMovement(io, result.game, result.player, result.action);
+    applyMovement(result.game, result.player, result.action);
 
     callback({ success: true, data: result.game.getGameInfo(socket.id) });
   });

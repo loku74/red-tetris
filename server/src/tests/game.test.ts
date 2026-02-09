@@ -20,7 +20,6 @@ import {
   shutdownTestServer
 } from "./utils";
 import { Piece } from "../objects/Piece";
-import * as GameModule from "../core/game";
 
 // types
 import type { TestServerData, TestSocket } from "./types";
@@ -34,6 +33,7 @@ import type {
   GameData,
   GameSettings
 } from "@app/shared";
+import { Player } from "../objects/Player";
 
 let ctx: TestServerData;
 
@@ -59,8 +59,8 @@ describe("game loop helpers", () => {
   };
 
   beforeEach(async () => {
-    attachCurrentPieceMock = vi.spyOn(GameModule.helpers, "attachCurrentPiece");
-    applyPenalityMock = vi.spyOn(GameModule.helpers, "applyPenality");
+    attachCurrentPieceMock = vi.spyOn(Player.prototype, "attachCurrentPiece");
+    applyPenalityMock = vi.spyOn(Player.prototype, "applyPenality");
 
     test1 = ctx.test1;
     test2 = await createClient(ctx.address, ctx.io);
@@ -138,9 +138,7 @@ describe("game loop helpers", () => {
     // piece should stop reach the line and generate a penality
     // expect(handleGravityMock).toBeCalledTimes(4);
     expect(attachCurrentPieceMock).toBeCalledTimes(1);
-    expect(attachCurrentPieceMock).toBeCalledWith(game, player1, ctx.io);
     expect(applyPenalityMock).toBeCalledTimes(1);
-    expect(applyPenalityMock).toBeCalledWith(game, player1);
     expect(player2.board.restrictedLines).toBe(1);
 
     // check socket

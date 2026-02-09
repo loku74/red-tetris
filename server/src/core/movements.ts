@@ -2,10 +2,8 @@
 import type { Game } from "../objects/Game";
 import type { Player } from "../objects/Player";
 import type { ActionData } from "../types/server";
-import type { AppServer } from "../types/socket";
 
 // intern
-import { helpers } from "./game";
 import { GameActions } from "@app/shared";
 
 const actions: Record<GameActions, (data: ActionData) => void> = {
@@ -20,12 +18,7 @@ const actions: Record<GameActions, (data: ActionData) => void> = {
   }
 };
 
-export function applyMovement(
-  io: AppServer,
-  game: Game,
-  player: Player,
-  key: keyof typeof actions
-) {
+export function applyMovement(game: Game, player: Player, key: keyof typeof actions) {
   if (!player.alive) return;
   if (!game.ongoing) return;
 
@@ -39,7 +32,7 @@ export function applyMovement(
 
     // hard drop
     if (key === GameActions.SPACE) {
-      helpers.attachCurrentPiece(game, player, io);
+      player.attachCurrentPiece(game);
     }
   }
 }
