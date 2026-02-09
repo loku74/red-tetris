@@ -41,13 +41,12 @@ export async function gameLoop(io: AppServer, room: Room, GameSettings: GameSett
           player.actualPiece.moveDown();
         } else {
           player.attachCurrentPiece(game);
-
-          if (player.board.cleanLines() > 0) {
-            game.players.forEach((p) => {
-              if (p != player) p.applyPenality();
-            });
-            io.to(room.name).emit(EVENT_GAME_PENALITY, { from: player.user.name });
-          }
+        }
+        if (player.board.cleanLines() > 0) {
+          game.players.forEach((p) => {
+            if (p != player) p.applyPenality();
+          });
+          io.to(room.name).emit(EVENT_GAME_PENALITY, { from: player.user.name });
         }
 
         io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums(id));
@@ -76,6 +75,7 @@ export async function warmUpLoop(io: AppServer, user: User, GameSettings: GameSe
         } else {
           player.attachCurrentPiece(game);
         }
+        player.board.cleanLines();
 
         io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
       });

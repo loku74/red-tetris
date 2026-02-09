@@ -7,6 +7,7 @@ export class Board {
   public matrix: Matrix2D<number>; // row, column
   public restrictedLines: number = 0;
   public placedPieces: number = 0;
+  public filledRows: Set<number> = new Set();
 
   constructor() {
     // fill grid with 0;
@@ -47,34 +48,28 @@ export class Board {
 
     placePieceOnMatrix(piece, this.matrix);
     this.placedPieces++;
+
+    // check lines to clear
+    const start = piece.x;
+    for (let i = start; i < start + piece.matrix.length; i++) {
+      const row = this.matrix[i];
+
+      if (!row) continue;
+      if (row.every((cell) => cell != Colors.EMPTY)) {
+        this.filledRows.add(i);
+      }
+    }
   }
 
   public cleanLines(): number {
-    const start = this.matrix.length - this.restrictedLines - 1;
-    let cleared = 0;
+    const size = this.filledRows.size;
 
-    // iterate from bottom to top
-    for (let rowIndex = start; rowIndex >= 0; rowIndex--) {
-      const row = this.getRow(rowIndex);
-
-      const toClear = row.every((v) => v != 0);
-      if (toClear) {
-        cleared++;
-        // push down every lines upper to the line cleared
-        for (let k = rowIndex; k >= 1; k--) {
-          const rowBefore = this.getRow(k - 1);
-          const rowActual = this.getRow(k);
-
-          rowActual.forEach((_, j) => {
-            if (rowBefore[j] === undefined) throw new Error("Invalid column index!");
-            rowActual[j] = rowBefore[j];
-          });
-        }
-        this.matrix[0].fill(0);
-        rowIndex++;
-      }
-    }
-    return cleared;
+    this.filledRows.forEach((row_i) => {
+      this.matrix.splice(row_i, 1);
+      this.matrix.unshift(structuredClone(BOARD[0]));
+    });
+    this.filledRows.clear();
+    return size;
   }
 
   public addRestrictedLine() {
