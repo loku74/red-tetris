@@ -51,7 +51,7 @@ export function validateKick(socket: ServerSocket, data: EventKickPayload): Vali
   if (room.host != current) {
     return { status: false, error: { username: ERROR_NOT_HOST } };
   }
-  if (room.playing === true) {
+  if (room.game) {
     return { status: false, error: { username: ERROR_KICK_PLAYING } };
   }
 

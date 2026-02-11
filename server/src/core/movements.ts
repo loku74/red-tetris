@@ -1,8 +1,10 @@
-import { GameActions } from "@app/shared";
+// types
 import type { Game } from "../objects/Game";
 import type { Player } from "../objects/Player";
 import type { ActionData } from "../types/server";
-import { helpers } from "./game";
+
+// intern
+import { GameActions } from "@app/shared";
 
 const actions: Record<GameActions, (data: ActionData) => void> = {
   UP: (data: ActionData) => data.piece.rotate90(),
@@ -30,7 +32,7 @@ export function applyMovement(game: Game, player: Player, key: keyof typeof acti
 
     // hard drop
     if (key === GameActions.SPACE) {
-      helpers.goToNextPiece(game, player);
+      player.attachCurrentPiece(game);
     }
   }
 }

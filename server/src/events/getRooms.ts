@@ -14,14 +14,13 @@ export function registerHandlers(socket: ServerSocket) {
     const result: RoomListData[] = [];
 
     getRooms().forEach((room) => {
-      if (room.playing) {
-        return;
+      if (!room.game) {
+        result.push({
+          name: room.name,
+          userCount: room.users.size,
+          max: ROOM_MAX_USERS
+        });
       }
-      result.push({
-        name: room.name,
-        userCount: room.users.size,
-        max: ROOM_MAX_USERS
-      });
     });
 
     callback({ success: true, data: result });

@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // intern
 import { EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
 import { emitAsync, joinRoom, onceAsync, setupTestServer, shutdownTestServer } from "./utils";
-import * as GameModule from "../core/game";
 import { getUser } from "../core/user";
 
 // types
@@ -12,7 +11,8 @@ import type {
   EventWarmUpError,
   EventWarmUpPayload,
   EventWarmUpSuccess,
-  GameData
+  GameData,
+  GameSettings
 } from "@app/shared";
 import type { TestServerData } from "./types";
 
@@ -26,11 +26,16 @@ afterEach(async () => {
   await shutdownTestServer(ctx);
 });
 
+const GameSettings: GameSettings = {
+  tick: 300
+};
+
 describe("invalid warm-up", () => {
   it("not in a room", async () => {
     await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
       ctx.test1.client,
-      EVENT_WARMUP_START
+      EVENT_WARMUP_START,
+      GameSettings
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -42,7 +47,8 @@ describe("invalid warm-up", () => {
 
     await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
       ctx.test1.client,
-      EVENT_WARMUP_START
+      EVENT_WARMUP_START,
+      GameSettings
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -54,14 +60,14 @@ it("valid warm-up", async () => {
 
   await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
     ctx.test1.client,
-    EVENT_WARMUP_START
+    EVENT_WARMUP_START,
+    GameSettings
   ).then((response) => {
     expect(response.success).toBe(true);
   });
 });
 
 it("warmup loop", async () => {
-  const handleGravityMock = vi.spyOn(GameModule.helpers, "handleGravity");
   const test1 = ctx.test1;
   await joinRoom(test1, "example1", "user1");
 
@@ -76,7 +82,8 @@ it("warmup loop", async () => {
   // start warmup
   await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
     test1.client,
-    EVENT_WARMUP_START
+    EVENT_WARMUP_START,
+    GameSettings
   ).then((response) => {
     expect(response.success).toBe(true);
   });
@@ -99,6 +106,5 @@ it("warmup loop", async () => {
   expect(game.ongoing).toBe(true);
 
   // check gravity fall
-  expect(handleGravityMock).toBeCalledWith(game, player);
   expect(player.actualPiece.alreadyMoved).toBe(true);
 });

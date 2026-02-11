@@ -20,7 +20,6 @@ import {
   shutdownTestServer
 } from "./utils";
 import { Piece } from "../objects/Piece";
-import * as GameModule from "../core/game";
 
 // types
 import type { TestServerData, TestSocket } from "./types";
@@ -31,8 +30,10 @@ import type {
   EventStartPayload,
   EventStartSuccess,
   EventGamePenalityData,
-  GameData
+  GameData,
+  GameSettings
 } from "@app/shared";
+import { Player } from "../objects/Player";
 
 let ctx: TestServerData;
 
@@ -49,16 +50,17 @@ describe("game loop helpers", () => {
   let test2: TestSocket;
   let room: Room;
   let game: Game;
-  let handleGravityMock: Mock;
-  let attachActualPieceMock: Mock;
+  let attachCurrentPieceMock: Mock;
   let applyPenalityMock: Mock;
   const pieceI = new Piece(PieceType.I, -1, 3);
   const pieceO = new Piece(PieceType.O, 0, 3);
+  const GameSettings: GameSettings = {
+    tick: 300
+  };
 
   beforeEach(async () => {
-    handleGravityMock = vi.spyOn(GameModule.helpers, "handleGravity");
-    attachActualPieceMock = vi.spyOn(GameModule.helpers, "attachActualPiece");
-    applyPenalityMock = vi.spyOn(GameModule.helpers, "applyPenality");
+    attachCurrentPieceMock = vi.spyOn(Player.prototype, "attachCurrentPiece");
+    applyPenalityMock = vi.spyOn(Player.prototype, "applyPenality");
 
     test1 = ctx.test1;
     test2 = await createClient(ctx.address, ctx.io);
@@ -78,7 +80,8 @@ describe("game loop helpers", () => {
     // start room
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       test1.client,
-      EVENT_GAME_START
+      EVENT_GAME_START,
+      GameSettings
     ).then((response) => {
       expect(response.success).toBe(true);
     });
@@ -109,11 +112,6 @@ describe("game loop helpers", () => {
     const player1 = game.getPlayer(test1.server.id);
     const player2 = game.getPlayer(test2.server.id);
 
-    // handleGravity function should have been called
-    expect(handleGravityMock).toBeCalledTimes(2);
-    expect(handleGravityMock).toBeCalledWith(game, player1);
-    expect(handleGravityMock).toBeCalledWith(game, player2);
-
     // piece should have moved
     expect(player1.actualPiece.alreadyMoved).toBe(true);
     expect(player2.actualPiece.alreadyMoved).toBe(true);
@@ -138,11 +136,9 @@ describe("game loop helpers", () => {
     await vi.advanceTimersToNextTimerAsync();
 
     // piece should stop reach the line and generate a penality
-    expect(handleGravityMock).toBeCalledTimes(4);
-    expect(attachActualPieceMock).toBeCalledTimes(1);
-    expect(attachActualPieceMock).toBeCalledWith(game, player1);
+    // expect(handleGravityMock).toBeCalledTimes(4);
+    expect(attachCurrentPieceMock).toBeCalledTimes(1);
     expect(applyPenalityMock).toBeCalledTimes(1);
-    expect(applyPenalityMock).toBeCalledWith(game, player1);
     expect(player2.board.restrictedLines).toBe(1);
 
     // check socket
@@ -174,7 +170,9 @@ describe("game loop helpers", () => {
 
     expect(player1.alive).toBe(false);
     expect(player2.alive).toBe(false);
-    expect(game.isFinished()).toBe(true);
+    expect(game.ongoing).toBe(false);
+
+    await vi.advanceTimersToNextTimerAsync();
 
     await listener1;
     await listener2;
@@ -185,7 +183,8 @@ describe("game loop helpers", () => {
 
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       test1.client,
-      EVENT_GAME_START
+      EVENT_GAME_START,
+      GameSettings
     ).then((response) => {
       expect(response.success).toBe(true);
     });

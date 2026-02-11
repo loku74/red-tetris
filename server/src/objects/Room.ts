@@ -8,7 +8,6 @@ import type { RoomData } from "@app/shared";
 import type { User } from "./User";
 
 export class Room {
-  public playing: boolean = false;
   public users: Map<string, { color: Colors; user: User }> = new Map();
   public colors: Array<Colors> = [
     Colors.RED,
@@ -99,17 +98,11 @@ export class Room {
       userCount: this.users.size,
       max: ROOM_MAX_USERS,
       host: this.host.name,
-      playing: this.playing
+      playing: this.game ? true : false
     };
   }
 
   public start() {
-    this.playing = true;
     this.game = new Game(this.users);
-  }
-
-  public finish() {
-    this.playing = false;
-    this.game = null;
   }
 }

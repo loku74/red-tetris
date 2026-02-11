@@ -10,6 +10,7 @@ import {
 } from "@app/shared";
 
 import * as ZodSchemaErrors from "../constants/zodSchemaErrors";
+import { GAME_TICK_MAX, GAME_TICK_MIN } from "../constants/core";
 
 export function formatSchemeError(error: ZodError) {
   return error.issues.reduce(
@@ -41,3 +42,5 @@ export const messageValidation = z
   .max(MESSAGE_MAX_LENGTH, ZodSchemaErrors.Z_ERROR_MESSAGE_MAX);
 
 export const actionValidation = z.enum(GameActions);
+
+export const tickValidation = z.int().min(GAME_TICK_MIN).max(GAME_TICK_MAX);

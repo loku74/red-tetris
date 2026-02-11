@@ -54,7 +54,7 @@ export function validateJoinRoom(
   if (room && room.get(data.username)) {
     return { status: false, error: { username: ERROR_USERNAME_TAKEN } };
   }
-  if (room && room.playing === true) {
+  if (room && room.game) {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
   if (getRooms().size >= ROOM_MAX) {

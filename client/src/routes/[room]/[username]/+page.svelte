@@ -49,6 +49,7 @@
     EventMessageData,
     EventMessagePayload,
     GameData,
+    GameSettings,
     UserData
   } from "@app/shared";
 
@@ -190,7 +191,10 @@
   let warmUp = $state<boolean>(false);
 
   function startWarmUp() {
-    socket.emit(EVENT_WARMUP_START, (response) => {
+    const data: GameSettings = {
+      tick: 500 // TO CHANGE
+    }
+    socket.emit(EVENT_WARMUP_START, data, (response) => {
       if (response.success) {
         warmUp = true;
       }
