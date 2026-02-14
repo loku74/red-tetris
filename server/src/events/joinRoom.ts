@@ -6,6 +6,7 @@ import { joinOrCreateRoom } from "../core/room";
 import { setUser } from "../core/user";
 import { User } from "../objects/User";
 import { validateJoinRoom } from "../validate/joinRoom";
+import { logger } from "../utils/log";
 
 // types
 import type { AppServer, ServerSocket } from "../types/socket";
@@ -26,7 +27,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
 
     io.to(result.room).emit(EVENT_ROOM_UPDATE, room.asInfo());
 
-    console.log(`User ${result.username} joined room ${result.room} ${socket.rooms.size}`);
+    logger.info(`User ${user.name} (id: ${user.id}) joined room "${result.room}"`);
 
     callback({
       success: true,

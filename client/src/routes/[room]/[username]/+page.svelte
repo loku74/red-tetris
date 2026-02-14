@@ -193,7 +193,7 @@
   function startWarmUp() {
     const data: GameSettings = {
       tick: 500 // TO CHANGE
-    }
+    };
     socket.emit(EVENT_WARMUP_START, data, (response) => {
       if (response.success) {
         warmUp = true;
@@ -444,7 +444,7 @@
                   <div class="flex">
                     {#each row as cell, index_cell (index_cell)}
                       {#if !row.some((cell) => cell)}
-                        <!-- do nothing -->
+                        <!-- do nothing if none of the cells are filled -->
                       {:else if cell !== Colors.EMPTY}
                         <Piece color={piece.color} size={32} />
                       {:else}
