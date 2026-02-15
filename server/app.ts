@@ -7,6 +7,7 @@ import { Server as IoServer } from "socket.io";
 
 // intern
 import { SERVER_PORT } from "./src/constants/core";
+import { logger } from "./src/utils/log";
 
 // handlers
 import { registerHandlers as disconnectingHandler } from "./src/events/disconnecting";
@@ -38,7 +39,7 @@ function configureHttp(app: Express) {
 
 function configureSocket(io: AppServer) {
   io.on("connection", (socket: ServerSocket) => {
-    console.log("New client connected");
+    logger.info(`New client connected (id: ${socket.id})`);
 
     messageHandler(io, socket);
     disconnectingHandler(io, socket);

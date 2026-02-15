@@ -3,6 +3,7 @@ import { getRooms } from "../core/room";
 import { deleteUser } from "../core/user";
 import { Game } from "./Game";
 import { Colors } from "@app/shared";
+import { logger } from "../utils/log";
 
 import type { RoomData } from "@app/shared";
 import type { User } from "./User";
@@ -69,11 +70,10 @@ export class Room {
     this.users.delete(retrieved.user.id);
     this.colors.push(retrieved.color);
 
-    console.log(`User ${user.name} left room ${user.name}`);
     // deletion of empty room
     if (this.users.size == 0) {
       getRooms().delete(this.name);
-      console.log(`room ${this.name} deleted`);
+      logger.info(`Room ${this.name} deleted`);
     } else {
       if (user === this.host) {
         this.setNextHost();

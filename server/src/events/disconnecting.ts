@@ -4,6 +4,7 @@ import { EVENT_ROOM_UPDATE, EVENT_USER_DISCONNECT } from "@app/shared";
 // intern
 import { getRoomBySocket } from "../core/room";
 import { getUser } from "../core/user";
+import { logger } from "../utils/log";
 
 // types
 import type { AppServer, ServerSocket } from "../types/socket";
@@ -18,8 +19,10 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
 
       socket.leave(room.name);
       io.to(room.name).emit(EVENT_ROOM_UPDATE, roomInfo);
-    }
 
-    console.log("user disconnected");
+      logger.info(`User ${user.name} (id: ${user.id}) disconnected`);
+    } else {
+      logger.info(`A user disconnected`);
+    }
   });
 }
