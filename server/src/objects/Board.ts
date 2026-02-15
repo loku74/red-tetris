@@ -9,7 +9,7 @@ export class Board {
   public matrix: Matrix2D<number>; // row, column
   public restrictedLines: number = 0;
   public placedPieces: number = 0;
-  public filledRows: Set<number> = new Set();
+  public completedRowIndices: Set<number> = new Set();
 
   constructor() {
     // fill grid with 0;
@@ -59,19 +59,19 @@ export class Board {
 
         if (!row) return;
         if (row.every((cell) => cell != Colors.EMPTY)) {
-          this.filledRows.add(i);
+          this.completedRowIndices.add(i);
         }
       });
   }
 
   public cleanLines(): number {
-    const size = this.filledRows.size;
+    const size = this.completedRowIndices.size;
 
-    this.filledRows.forEach((row_i) => {
+    this.completedRowIndices.forEach((row_i) => {
       this.matrix.splice(row_i, 1);
       this.matrix.unshift(structuredClone(BOARD[0]));
     });
-    this.filledRows.clear();
+    this.completedRowIndices.clear();
     return size;
   }
 
