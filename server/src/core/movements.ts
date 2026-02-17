@@ -1,11 +1,40 @@
 import { GameActions } from "@app/shared";
 
+import { PIECES } from "@app/constants/pieces";
+import { Rotations } from "@app/enums/Rotations";
 import type { Game } from "@app/objects/Game";
+import type { Piece } from "@app/objects/Piece";
 import type { Player } from "@app/objects/Player";
 import type { ActionData } from "@app/types/server";
 
-const actions: Record<GameActions, (data: ActionData) => void> = {
-  UP: (data: ActionData) => data.piece.rotate90(),
+function superRotationSystem(data: ActionData): Piece {
+  const offsets = PIECES[data.piece.type].offsets;
+  const currentRotation: Rotations = data.piece.rotation;
+  const nextRotation: Rotations = (data.piece.rotation + 1) % 4;
+
+  for (let i = 0; i < 5; i++) {
+    const currentRotationOffset = offsets[currentRotation][i];
+    const nextRotationOffset = offsets[nextRotation][i];
+
+    if (currentRotationOffset != undefined && nextRotationOffset != undefined) {
+      const moveX = currentRotationOffset[0] - nextRotationOffset[0];
+      const moveY = currentRotationOffset[1] - nextRotationOffset[1];
+
+      const copy = data.piece.clone();
+      copy.rotate90();
+      copy.x += moveX;
+      copy.y += moveY;
+
+      if (data.board.isValidPiece(copy)) {
+        return copy;
+      }
+    }
+  }
+  return data.piece;
+}
+
+const actions: Record<GameActions, (data: ActionData) => Piece> = {
+  UP: (data: ActionData) => superRotationSystem(data),
   LEFT: (data: ActionData) => data.piece.moveLeft(),
   RIGHT: (data: ActionData) => data.piece.moveRight(),
   DOWN: (data: ActionData) => data.piece.moveDown(),
@@ -13,6 +42,7 @@ const actions: Record<GameActions, (data: ActionData) => void> = {
     while (data.board.isValidPiece(data.piece.clone().moveDown())) {
       data.piece.moveDown();
     }
+    return data.piece;
   }
 };
 
@@ -20,13 +50,11 @@ export function applyMovement(game: Game, player: Player, key: keyof typeof acti
   if (!player.alive) return;
   if (!game.ongoing) return;
 
-  const actualPiece = player.actualPiece.clone();
+  const actionData: ActionData = { piece: player.actualPiece.clone(), board: player.board };
+  const movedPiece = actions[key](actionData);
 
-  const actionData: ActionData = { piece: actualPiece, board: player.board };
-  actions[key](actionData);
-
-  if (player.board.isValidPiece(actualPiece)) {
-    player.actualPiece = actualPiece;
+  if (player.board.isValidPiece(movedPiece)) {
+    player.actualPiece = movedPiece;
 
     // hard drop
     if (key === GameActions.SPACE) {
