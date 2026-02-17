@@ -18,7 +18,6 @@ export * from "./types/room";
 export * from "./types/socket";
 
 // game
-export * from "./types/matrix";
 export * from "./types/piece";
 export * from "./types/game";
 
