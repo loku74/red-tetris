@@ -21,8 +21,8 @@ type PieceData = {
 };
 
 type PieceSpectrum = {
-  blocks: Coordinate[],
+  blocks: Coordinate[];
   color: Colors;
-}
+};
 
 export type { PieceData, Piece, PieceColorDetail, PieceSpectrum };
