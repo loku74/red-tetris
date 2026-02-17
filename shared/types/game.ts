@@ -3,12 +3,12 @@ import { Colors } from "../enums/colors";
 
 // type
 import type { Matrix2D } from "./matrix";
-import type { PieceData } from "./piece";
+import type { PieceData, PieceSpectrum } from "./piece";
 
 export type GameData = {
   matrix: Matrix2D<number>;
   nextPieces: PieceData[];
-  shadowPiece: PieceData;
+  shadowPiece: PieceSpectrum;
   score: number;
   alive: boolean;
 };
@@ -23,3 +23,5 @@ export type PlayerInfo = {
 export type GameSettings = {
   tick: number;
 };
+
+export type Coordinate = [number, number]; // x, y;

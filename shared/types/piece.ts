@@ -1,8 +1,6 @@
 // intern
 import { Colors } from "../enums/colors";
-
-// types
-import type { Matrix2D } from "./matrix";
+import type { Coordinate } from "./game";
 
 interface Piece {
   size: number | string;
@@ -16,10 +14,15 @@ type PieceColorDetail = {
 };
 
 type PieceData = {
-  matrix: Matrix2D<number>;
+  matrix: number[][];
   x: number;
   y: number;
   color: Colors;
 };
 
-export type { PieceData, Piece, PieceColorDetail };
+type PieceSpectrum = {
+  blocks: Coordinate[],
+  color: Colors;
+}
+
+export type { PieceData, Piece, PieceColorDetail, PieceSpectrum };

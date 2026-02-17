@@ -79,14 +79,14 @@
 
   // check if a cell is part of the shadow piece
   function isShadowCell(data: GameData, rowIndex: number, cellIndex: number): boolean {
-    const { matrix, x, y } = data.shadowPiece;
-    const relativeRow = rowIndex - x;
-    const relativeCol = cellIndex - y;
+    const { blocks } = data.shadowPiece;
 
-    if (relativeRow < 0 || relativeRow >= matrix.length) return false;
-    if (relativeCol < 0 || relativeCol >= matrix[0].length) return false;
-
-    return matrix[relativeRow][relativeCol] !== Colors.EMPTY;
+    for (const block of blocks) {
+      if (block[0] === rowIndex && block[1] === cellIndex) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function joinRoom() {

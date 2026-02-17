@@ -67,13 +67,12 @@ export class Game {
     while (player.board.isValidPiece(pieceCopy)) {
       pieceCopy.moveDown();
     }
-
     pieceCopy.x -= 1;
 
     return {
       matrix: copy,
       nextPieces: nextPieces,
-      shadowPiece: pieceCopy.asData(),
+      shadowPiece: pieceCopy.asSpectrum(),
       score: player.score,
       alive: player.alive
     };
