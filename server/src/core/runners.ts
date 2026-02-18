@@ -3,6 +3,7 @@ import {
   EVENT_GAME_INFO,
   EVENT_GAME_PENALITY,
   EVENT_GAME_SPECTRUM,
+  EVENT_ROOM_UPDATE,
   EVENT_WARMUP_FINISH,
   EVENT_WARMUP_INFO,
   type GameSettings
@@ -51,6 +52,7 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
 
   io.to(room.name).emit(EVENT_GAME_FINISH, {});
   room.game = null;
+  io.to(room.name).emit(EVENT_ROOM_UPDATE, room.asInfo());
 }
 
 export async function warmUpLoop(io: AppServer, user: User, settings: GameSettings) {
