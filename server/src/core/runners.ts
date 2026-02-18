@@ -12,6 +12,7 @@ import { GAME_START_DELAY } from "@app/constants/core";
 import type { Room } from "@app/objects/Room";
 import type { User } from "@app/objects/User";
 import type { AppServer } from "@app/types/socket";
+import { logger } from "@app/utils/log";
 import { sleep } from "@app/utils/sleep";
 
 export async function gameLoop(io: AppServer, room: Room, settings: GameSettings) {
@@ -59,6 +60,7 @@ export async function warmUpLoop(io: AppServer, user: User, settings: GameSettin
 
   game.ongoing = true;
   io.to(user.id).emit(EVENT_WARMUP_INFO, game.getGameInfo(user.id));
+  logger.debug(`User ${user.name} (id: ${user.id}) just started warmup`)
 
   while (game.ongoing) {
     await sleep(settings.tick);
@@ -78,4 +80,5 @@ export async function warmUpLoop(io: AppServer, user: User, settings: GameSettin
 
   io.to(user.id).emit(EVENT_WARMUP_FINISH, {});
   user.warmUp = null;
+  logger.debug(`User ${user.name} (id: ${user.id}) just finished warmup`)
 }
