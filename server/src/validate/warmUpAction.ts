@@ -2,7 +2,7 @@ import z from "zod";
 
 import type { EventWarmUpActionPayload, GameActions } from "@app/shared";
 
-import { ERROR_NOT_IN_A_ROOM, ERROR_NOT_IN_WARNING } from "@app/constants/validateErrors";
+import { ERROR_NOT_IN_A_ROOM, ERROR_NOT_IN_WARMUP } from "@app/constants/validateErrors";
 import { getRoomBySocket } from "@app/core/room";
 import { getUser } from "@app/core/user";
 import type { Game } from "@app/objects/Game";
@@ -43,7 +43,7 @@ export function validateWarmUpAction(
   }
 
   if (!current.warmUp || !current.warmUp.ongoing) {
-    return { status: false, error: { user: ERROR_NOT_IN_WARNING } };
+    return { status: false, error: { user: ERROR_NOT_IN_WARMUP } };
   }
 
   const player = current.warmUp.getPlayer(socket.id);
