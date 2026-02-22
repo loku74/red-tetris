@@ -349,7 +349,9 @@
       </div>
 
       <!-- message -->
-      <div class="bg-dark-secondary border border-border flex flex-col h-[640px] w-96">
+      <div
+        class="bg-dark-secondary border-t border-b border-r border-border flex flex-col h-[640px] w-96"
+      >
         <div bind:this={messagesContainer} class="flex-1 flex flex-col overflow-y-auto py-1 gap-3">
           {#each messages as m, index (index)}
             <div class="space-y-1 flex flex-col">

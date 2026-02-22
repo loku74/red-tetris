@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "Russo One";
-  src: url("$lib/fonts/RussoOne-Regular.ttf") format("truetype");
+  src: url("$lib/fonts/RussoOne-Regular.ttf");
 }
 
 body {
@@ -11,9 +11,10 @@ body {
 }
 
 @theme {
-  --color-red-primary: #d00000;
-  --color-red-accent: #eb0000;
-  --color-red-secondary: #770000;
+  --color-red-primary: #e30226;
+  --color-red-secondary: #990218;
+  --color-red-accent: #fe4f6f;
+  --color-red-button-accent: #fd0d35;
   --color-dark-primary: hsl(0, 0%, 9%);
   --color-dark-secondary: hsl(0, 0%, 18%);
   --color-dark-accent: hsl(0, 0%, 27%);
@@ -39,8 +40,9 @@ body {
   white-space: nowrap;
 
   background-color: var(--bg-color);
+
   box-shadow: 0 var(--btn-depth) 0 var(--shadow-color);
-  transition-duration: 42ms;
+  transition-duration: 142ms;
 }
 
 .btn:active:not(:disabled) {
@@ -56,7 +58,7 @@ body {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--color-red-accent);
+  background-color: var(--color-red-button-accent);
 }
 
 .btn-secondary:hover {

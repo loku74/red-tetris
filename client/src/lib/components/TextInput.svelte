@@ -12,7 +12,8 @@
     outline = true,
     onEnter = () => {},
     bright = false,
-    regex = undefined
+    regex = undefined,
+    label = ""
   }: {
     value: string;
     input?: HTMLInputElement;
@@ -27,17 +28,23 @@
     onEnter?: () => void;
     bright?: boolean;
     regex?: RegExp;
+    label?: string;
   } = $props();
 
-  function format(v: string) {
+  const format = function format(v: string) {
     if (regex !== undefined) {
       return v.replace(regex, "_");
     }
     return v;
-  }
+  };
 </script>
 
 <div class={fill ? "h-full w-full" : "w-xs"}>
+  {#if label}
+    <span class="pl-2 pb-1 text-sm text-white/80">
+      {label}
+    </span>
+  {/if}
   <div class="relative {fill ? 'h-full w-full' : ''}">
     <input
       onkeydown={(e) => {

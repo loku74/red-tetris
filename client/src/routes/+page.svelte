@@ -19,6 +19,8 @@
   import bgTile from "$lib/assets/empty_piece.jpg";
   import { getSocket } from "$lib/socket/socket.svelte";
 
+  const lobbyPieceSize = 52;
+
   // error
   let usernameError = $state<string>();
   let roomError = $state<string>();
@@ -86,44 +88,43 @@
 
 <div class="flex h-screen" style="background-image: url({bgTile});">
   <div class="m-auto flex flex-col">
-    <h1
-      class="text-7xl text-red-primary text-shadow-red-secondary text-shadow-[8px_6px_0px] text-center mb-32 relative"
-    >
-      RED TETRIS
-      <div class="absolute top-1/2 -translate-y-1/2 -left-24">
-        <Piece color={Colors.RED} size={64} />
-      </div>
-      <div class="absolute top-1/2 -translate-y-1/2 -right-24">
-        <Piece color={Colors.RED} size={64} />
-      </div>
-    </h1>
     <div
-      class="bg-dark-primary ring-2 ring-inset ring-border p-8 flex flex-col items-center relative mb-24"
+      class="bg-dark-primary ring-2 ring-inset ring-border py-8 px-12 flex flex-col items-center relative mb-8 gap-8"
     >
-      <div class="space-y-4">
+      <h1
+        class="py-2 text-6xl text-red-primary text-shadow-red-secondary text-shadow-[4px_4px_4px] text-center relative flex items-center gap-5"
+      >
+        RED
+        <Piece color={Colors.RED} size={32} />
+        TETRIS
+      </h1>
+
+      <div class="space-y-2">
         <TextInput
           bind:value={username}
           maxlength={USERNAME_MAX_LENGTH}
-          placeholder="Username"
+          placeholder="Enter username..."
           error={usernameError}
           onEnter={() => {
             roomInput?.focus();
           }}
           regex={REGEX_ROOM_AND_USER_SANITIZE}
+          label="Username"
         />
         <TextInput
           bind:value={room}
           bind:input={roomInput}
           maxlength={ROOM_MAX_LENGTH}
-          placeholder="Room Name"
+          placeholder="Enter room name..."
           error={roomError}
           onEnter={() => {
             canJoinRoom();
           }}
           regex={REGEX_ROOM_AND_USER_SANITIZE}
+          label="Room Name"
         />
       </div>
-      <div class="pt-8 flex flex-col space-y-4 w-xs">
+      <div class="flex flex-col space-y-4 w-xs">
         <button
           disabled={emitting}
           onclick={canJoinRoom}
@@ -142,47 +143,70 @@
           Show existing room(s)
         </button>
       </div>
-      <div class="absolute grid grid-cols-2 -left-32 top-0">
-        <Piece color={Colors.YELLOW} size={64} />
-        <Piece color={Colors.YELLOW} size={64} />
-        <Piece color={Colors.YELLOW} size={64} />
-        <Piece color={Colors.YELLOW} size={64} />
+      <div class="text-white/42 text-xs">
+        Made by <a
+          class="hover:text-red-accent hover:underline"
+          href="https://github.com/ethaaalpha"
+          target="_blank"
+        >
+          @ethaaalpha
+        </a>
+        and
+        <a
+          class="hover:text-red-accent hover:underline"
+          href="https://github.com/loku74"
+          target="_blank"
+        >
+          @loku74
+        </a>
+      </div>
+      <div class="absolute grid grid-cols-2 top-0" style="left: {-lobbyPieceSize * 2}px;">
+        <Piece color={Colors.YELLOW} size={lobbyPieceSize} />
+        <Piece color={Colors.YELLOW} size={lobbyPieceSize} />
+        <Piece color={Colors.YELLOW} size={lobbyPieceSize} />
+        <Piece color={Colors.YELLOW} size={lobbyPieceSize} />
       </div>
 
-      <div class="absolute flex -top-16 -left-16">
-        <Piece color={Colors.CYAN} size={64} />
-        <Piece color={Colors.CYAN} size={64} />
-        <Piece color={Colors.CYAN} size={64} />
-        <Piece color={Colors.CYAN} size={64} />
+      <div class="absolute flex" style="top: {-lobbyPieceSize}px; left: {-lobbyPieceSize}px;">
+        <Piece color={Colors.CYAN} size={lobbyPieceSize} />
+        <Piece color={Colors.CYAN} size={lobbyPieceSize} />
+        <Piece color={Colors.CYAN} size={lobbyPieceSize} />
+        <Piece color={Colors.CYAN} size={lobbyPieceSize} />
       </div>
 
-      <div class="absolute -top-16 -right-16 flex">
+      <div class="absolute flex" style="top: {-lobbyPieceSize}px; right: {-lobbyPieceSize}px;">
         <div>
-          <Piece color={Colors.ORANGE} size={64} />
+          <Piece color={Colors.ORANGE} size={lobbyPieceSize} />
         </div>
         <div>
-          <Piece color={Colors.ORANGE} size={64} />
-          <Piece color={Colors.ORANGE} size={64} />
-          <Piece color={Colors.ORANGE} size={64} />
+          <Piece color={Colors.ORANGE} size={lobbyPieceSize} />
+          <Piece color={Colors.ORANGE} size={lobbyPieceSize} />
+          <Piece color={Colors.ORANGE} size={lobbyPieceSize} />
         </div>
       </div>
 
-      <div class="absolute -bottom-16 -right-32 flex">
-        <Piece color={Colors.PURPLE} size={64} />
-        <Piece color={Colors.PURPLE} size={64} />
-        <Piece color={Colors.PURPLE} size={64} />
+      <div
+        class="absolute flex"
+        style="right: {-lobbyPieceSize * 2}px; bottom: {-lobbyPieceSize}px;"
+      >
+        <Piece color={Colors.PURPLE} size={lobbyPieceSize} />
+        <Piece color={Colors.PURPLE} size={lobbyPieceSize} />
+        <Piece color={Colors.PURPLE} size={lobbyPieceSize} />
       </div>
-      <div class="absolute bottom-0 -right-16 flex">
-        <Piece color={Colors.PURPLE} size={64} />
+      <div class="absolute bottom-0 flex" style="right: {-lobbyPieceSize}px;">
+        <Piece color={Colors.PURPLE} size={lobbyPieceSize} />
       </div>
 
-      <div class="absolute -bottom-16 -left-16 flex flex-col">
-        <Piece color={Colors.GREEN} size={64} />
-        <Piece color={Colors.GREEN} size={64} />
+      <div
+        class="absolute flex flex-col"
+        style="bottom: {-lobbyPieceSize}px; left: {-lobbyPieceSize}px;"
+      >
+        <Piece color={Colors.GREEN} size={lobbyPieceSize} />
+        <Piece color={Colors.GREEN} size={lobbyPieceSize} />
       </div>
-      <div class="absolute -bottom-32 left-0 flex flex-col">
-        <Piece color={Colors.GREEN} size={64} />
-        <Piece color={Colors.GREEN} size={64} />
+      <div class="absolute left-0 flex flex-col" style="bottom: {-lobbyPieceSize * 2}px; ">
+        <Piece color={Colors.GREEN} size={lobbyPieceSize} />
+        <Piece color={Colors.GREEN} size={lobbyPieceSize} />
       </div>
     </div>
   </div>
