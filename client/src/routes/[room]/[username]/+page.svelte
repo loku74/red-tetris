@@ -245,6 +245,7 @@
       socket.off(EVENT_MESSAGE, onMessage);
       socket.off(EVENT_WARMUP_INFO, onWarmUpInfo);
       socket.off(EVENT_WARMUP_FINISH, onWarmUpFinish);
+      leaveRoom();
     };
   });
 </script>
