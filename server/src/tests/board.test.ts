@@ -101,7 +101,6 @@ it("valid placement", () => {
   expect(board.isValidPiece(piece)).toBe(true);
   board.place(piece);
 
-  console.log(board.matrix);
   expect(board.matrix[17]?.slice(3, 6)).toEqual([Colors.EMPTY, Colors.PURPLE, Colors.EMPTY]);
   expect(board.matrix[18]?.slice(3, 6)).toEqual([Colors.PURPLE, Colors.PURPLE, Colors.PURPLE]);
 });

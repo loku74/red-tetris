@@ -1,21 +1,22 @@
-import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type {
   EventGameActionError,
   EventGameActionPayload,
-  EventGameActionSuccess,
-  EventStartError,
-  EventStartPayload,
-  EventStartSuccess,
-  GameSettings
+  EventGameActionSuccess
 } from "@app/shared";
-import { EVENT_GAME_ACTION, EVENT_GAME_START, GameActions } from "@app/shared";
+import { EVENT_GAME_ACTION, GameActions } from "@app/shared";
 
 import * as MovementModule from "@app/core/movements";
-import { getRoom } from "@app/core/room";
 
 import type { TestServerData } from "./types";
-import { emitAsync, setupTestServer, shutdownTestServer, testJoinRoom } from "./utils";
+import {
+  emitAsync,
+  setupTestServer,
+  shutdownTestServer,
+  testJoinRoom,
+  testStartGame
+} from "./utils";
 
 let ctx: TestServerData;
 
@@ -27,31 +28,36 @@ afterEach(async () => {
   await shutdownTestServer(ctx);
 });
 
+describe("wrong actions", () => {
+  it("not in room", async () => {
+    await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
+      ctx.test1.client,
+      EVENT_GAME_ACTION,
+      { action: GameActions.RIGHT }
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
+  });
+
+  it("game not started", async () => {
+    await testJoinRoom(ctx.test1, "example", "test");
+    await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
+      ctx.test1.client,
+      EVENT_GAME_ACTION,
+      { action: GameActions.RIGHT }
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
+  });
+});
+
 it("game perform action", async () => {
-  const GameSettings: GameSettings = {
-    tick: 300
-  };
   const applyMovement = vi.spyOn(MovementModule, "applyMovement");
-  const test1 = ctx.test1;
-  const { user } = await testJoinRoom(test1, "example1", "user1");
+  await testJoinRoom(ctx.test1, "example1", "user1");
 
   vi.useFakeTimers();
 
-  await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
-    test1.client,
-    EVENT_GAME_START,
-    GameSettings
-  ).then(({ success }) => {
-    expect(success).toBe(true);
-  });
-
-  // get variables
-  const game = getRoom("example1")?.game;
-  expect(game).toBeTruthy();
-  if (!game) return;
-  const player = game.players.get(user.id);
-  expect(player).toBeDefined();
-  if (!player) return;
+  const { game, player } = await testStartGame(ctx.test1);
 
   // make on fall tick
   await vi.advanceTimersToNextTimerAsync();
@@ -61,13 +67,13 @@ it("game perform action", async () => {
 
   // perform simple action
   await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
-    test1.client,
+    ctx.test1.client,
     EVENT_GAME_ACTION,
     { action: GameActions.RIGHT }
   ).then((response) => {
     expect(response.success).toBe(true);
     if (response.success) {
-      expect(response.data).toEqual(game.getGameInfo(test1.server.id));
+      expect(response.data).toEqual(game.getGameInfo(ctx.test1.server.id));
     }
   });
   expect(player.actualPiece.y).toBeGreaterThan(pieceBeforeY);

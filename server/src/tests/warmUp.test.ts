@@ -72,24 +72,19 @@ it("valid warm-up", async () => {
 
 it("warmup loop", async () => {
   const test1 = ctx.test1;
-  const { user } = await testJoinRoom(test1, "example1", "user1");
+  await testJoinRoom(test1, "example1", "user1");
 
   const listener1 = onceAsync<GameData>(test1.client, EVENT_WARMUP_INFO);
 
   vi.useFakeTimers();
 
   // start warmup
-  const { game } = await testStartWarmup(test1);
+  const { game, player } = await testStartWarmup(test1);
 
   // check game info
   await listener1.then((data) => {
     expect(data).toEqual(game.getGameInfo(test1.server.id));
   });
-
-  // retrieve player
-  const player = game.players.get(user.id);
-  expect(player).toBeDefined();
-  if (!player) return;
 
   await vi.advanceTimersToNextTimerAsync();
   expect(game.ongoing).toBe(true);
