@@ -17,7 +17,8 @@ import {
   onceAsync,
   setupTestServer,
   shutdownTestServer,
-  testJoinRoom
+  testJoinRoom,
+  testStartGame
 } from "./utils";
 
 let ctx: TestServerData;
@@ -81,14 +82,7 @@ it("valid start", async () => {
   const listener1 = onceAsync<RoomData>(ctx.test1.client, EVENT_GAME_START);
   const listener2 = onceAsync<RoomData>(test2.client, EVENT_GAME_START);
 
-  await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
-    ctx.test1.client,
-    EVENT_GAME_START,
-    GameSettings
-  ).then((response) => {
-    expect(response.success).toBe(true);
-  });
-
+  await testStartGame(ctx.test1);
   const roomInfo = room.asInfo();
 
   await listener1.then((data) => {

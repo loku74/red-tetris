@@ -10,7 +10,14 @@ import type {
 import { EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
 
 import type { TestServerData } from "./types";
-import { emitAsync, onceAsync, setupTestServer, shutdownTestServer, testJoinRoom } from "./utils";
+import {
+  emitAsync,
+  onceAsync,
+  setupTestServer,
+  shutdownTestServer,
+  testJoinRoom,
+  testStartWarmup
+} from "./utils";
 
 let ctx: TestServerData;
 
@@ -72,17 +79,7 @@ it("warmup loop", async () => {
   vi.useFakeTimers();
 
   // start warmup
-  await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-    test1.client,
-    EVENT_WARMUP_START,
-    GameSettings
-  ).then((response) => {
-    expect(response.success).toBe(true);
-  });
-
-  const game = user.warmUp;
-  expect(game).toBeTruthy();
-  if (!game) return;
+  const { game } = await testStartWarmup(test1);
 
   // check game info
   await listener1.then((data) => {
