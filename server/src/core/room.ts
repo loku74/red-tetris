@@ -14,6 +14,9 @@ export function removeUserFromRoom(user: User, room: Room): RoomData {
   if (user.warmUp) {
     user.warmUp.ongoing = false;
   }
+  if (room.game && room.game.ongoing) {
+    room.game.getPlayer(user.id).alive = false;
+  }
 
   return info;
 }
