@@ -1,4 +1,4 @@
-import { EVENT_GAME_ACTION } from "@app/shared";
+import { EVENT_GAME_ACTION, EVENT_GAME_PENALITY } from "@app/shared";
 
 import { applyMovement } from "@app/core/movements";
 import type { ServerSocket } from "@app/types/socket";
@@ -13,7 +13,9 @@ export function registerHandlers(socket: ServerSocket) {
       return;
     }
 
-    applyMovement(result.game, result.player, result.action);
+    if (applyMovement(result.game, result.player, result.action)) {
+      socket.to(result.room.name).emit(EVENT_GAME_PENALITY, { from: result.player.user.name });
+    }
 
     callback({ success: true, data: result.game.getGameInfo(socket.id) });
   });

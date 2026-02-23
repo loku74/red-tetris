@@ -60,8 +60,9 @@ export function applyMovement(game: Game, player: Player, key: keyof typeof acti
     // hard drop
     if (key === GameActions.SPACE) {
       player.attachCurrentPiece(game);
-    }
 
-    player.board.cleanLines();
+      return player.board.cleanLines() > 0;
+    }
   }
+  return false;
 }

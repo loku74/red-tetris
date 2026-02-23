@@ -7,6 +7,7 @@ import { getRoomBySocket } from "@app/core/room";
 import { getUser } from "@app/core/user";
 import type { Game } from "@app/objects/Game";
 import type { Player } from "@app/objects/Player";
+import type { Room } from "@app/objects/Room";
 import type { ServerSocket } from "@app/types/socket";
 import type { ValidateError } from "@app/types/validate";
 
@@ -21,6 +22,7 @@ type ValidateGameActionSuccess = {
   game: Game;
   player: Player;
   action: GameActions;
+  room: Room;
 };
 
 type ValidateGameActionResult = ValidateGameActionSuccess | ValidateError;
@@ -48,5 +50,5 @@ export function validateGameAction(
 
   const player = room.game.getPlayer(socket.id);
 
-  return { status: true, game: room.game, player: player, action: result.data.action };
+  return { status: true, game: room.game, player: player, action: result.data.action, room: room };
 }
