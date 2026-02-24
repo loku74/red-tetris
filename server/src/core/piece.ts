@@ -1,4 +1,4 @@
-import { shuffle } from "fast-shuffle";
+import { shuffle } from "lodash";
 
 import { PieceShape } from "@app/shared";
 

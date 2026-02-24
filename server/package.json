@@ -27,8 +27,9 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@types/lodash": "^4.17.24",
     "express": "^5.2.1",
-    "fast-shuffle": "^6.1.1",
+    "lodash": "^4.17.23",
     "socket.io": "^4.8.3",
     "zod": "^4.3.6"
   }
