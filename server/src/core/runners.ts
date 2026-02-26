@@ -37,9 +37,11 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
         }
         if (player.board.cleanLines() > 0) {
           game.players.forEach((p) => {
-            if (p != player) p.applyPenality();
+            if (p != player) {
+              p.applyPenality();
+              io.to(p.user.id).emit(EVENT_GAME_PENALITY, game.getGameInfo(p.user.id));
+            }
           });
-          io.to(room.name).emit(EVENT_GAME_PENALITY, { from: player.user.name });
         }
         player.checkLost();
       }

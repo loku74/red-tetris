@@ -7,7 +7,7 @@ import { Piece } from "./Piece";
 
 export class Board {
   public matrix: number[][]; // row, column
-  public restrictedLines: number = 0;
+  public playableLines: number = BOARD_HEIGHT - 1;
   public placedPieces: number = 0;
   public completedRowIndices: Set<number> = new Set();
 
@@ -68,10 +68,12 @@ export class Board {
   }
 
   public addRestrictedLine() {
-    const row = this.getRow(this.restrictedLines);
+    if (this.playableLines < 0) return;
+
+    const row = this.getRow(this.playableLines);
     row.forEach((_, i) => {
       row[i] = Colors.GREY;
     });
-    this.restrictedLines++;
+    this.playableLines--;
   }
 }

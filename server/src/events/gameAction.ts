@@ -14,7 +14,12 @@ export function registerHandlers(socket: ServerSocket) {
     }
 
     if (applyMovement(result.game, result.player, result.action)) {
-      socket.to(result.room.name).emit(EVENT_GAME_PENALITY, { from: result.player.user.name });
+      result.game.players.forEach((p) => {
+        if (p != result.player) {
+          p.applyPenality();
+          socket.to(p.user.id).emit(EVENT_GAME_PENALITY, result.game.getGameInfo(p.user.id));
+        }
+      });
     }
 
     callback({ success: true, data: result.game.getGameInfo(socket.id) });

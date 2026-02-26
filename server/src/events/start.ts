@@ -19,17 +19,14 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
 
     await Promise.all(
       room.users.values().map(async ({ user }) => {
-        console.log("loop");
         while (user.warmUp != null) {
-          if (!user.warmUp.ongoing) {
+          if (user.warmUp.ongoing) {
             user.warmUp.ongoing = false;
           }
           await sleep(WARMUP_CHECK_DELAY);
         }
       })
     );
-
-    console.log("post loop");
 
     io.to(result.room.name).emit(EVENT_GAME_START);
     gameLoop(io, room, result.GameSettings);

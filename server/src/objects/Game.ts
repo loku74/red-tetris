@@ -33,7 +33,9 @@ export class Game {
   }
 
   public checkFinished() {
-    if (this.getDeadPlayers().length === this.players.size || !this.ongoing) {
+    const offset = this.players.size === 1 ? 0 : 1
+
+    if (this.getDeadPlayers().length === this.players.size - offset|| !this.ongoing) {
       this.ongoing = false;
     }
   }
