@@ -48,8 +48,8 @@ const actions: Record<GameActions, (data: ActionData) => Piece> = {
 };
 
 export function applyMovement(game: Game, player: Player, key: keyof typeof actions) {
-  if (!player.alive) return;
-  if (!game.ongoing) return;
+  if (!player.alive) return 0;
+  if (!game.ongoing) return 0;
 
   const actionData: ActionData = { piece: player.actualPiece.clone(), board: player.board };
   const movedPiece = actions[key](actionData);
@@ -61,8 +61,8 @@ export function applyMovement(game: Game, player: Player, key: keyof typeof acti
     if (key === GameActions.SPACE) {
       player.attachCurrentPiece(game);
 
-      return player.board.cleanLines() > 0;
+      return player.board.cleanLines();
     }
   }
-  return false;
+  return 0;
 }

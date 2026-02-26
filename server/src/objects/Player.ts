@@ -43,9 +43,9 @@ export class Player {
     return this.board.isValidPiece(next);
   }
 
-  public applyPenality() {
+  public applyPenality(nb: number) {
     if (this.alive) {
-      this.board.addRestrictedLine();
+      this.board.addRestrictedLines(nb);
     }
   }
 

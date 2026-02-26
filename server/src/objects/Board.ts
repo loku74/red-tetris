@@ -67,13 +67,15 @@ export class Board {
     return size;
   }
 
-  public addRestrictedLine() {
-    if (this.playableLines < 0) return;
+  public addRestrictedLines(nb: number) {
+    for (let i = 0; i < nb - 1; i++) {
+      if (this.playableLines < 0) return;
 
-    const row = this.getRow(this.playableLines);
-    row.forEach((_, i) => {
-      row[i] = Colors.GREY;
-    });
-    this.playableLines--;
+      const row = this.getRow(this.playableLines);
+      row.forEach((_, col) => {
+        row[col] = Colors.GREY;
+      });
+      this.playableLines--;
+    }
   }
 }

@@ -35,10 +35,11 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
         } else {
           player.attachCurrentPiece(game);
         }
-        if (player.board.cleanLines() > 0) {
+        const nb = player.board.cleanLines();
+        if (nb > 0) {
           game.players.forEach((p) => {
             if (p != player) {
-              p.applyPenality();
+              p.applyPenality(nb);
               io.to(p.user.id).emit(EVENT_GAME_PENALITY, game.getGameInfo(p.user.id));
             }
           });
