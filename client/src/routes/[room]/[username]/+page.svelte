@@ -326,11 +326,14 @@
     {#if !game}
       <div class="h-[640px] flex">
         <div class="p-4 bg-dark-secondary border border-border w-[360px] h-full flex flex-col">
-          <h1 class="text-center text-red-primary overflow-hidden text-ellipsis text-3xl pb-2">
+          <h1 class="text-center text-red-primary overflow-hidden text-ellipsis text-3xl">
             {room}
           </h1>
-          <span class="text-center text-xl">{roomState.data.userCount} / {roomState.data.max}</span>
-          <ul class="py-4">
+          <span class="py-2 text-center text-xl">
+            {roomState.data.userCount} / {roomState.data.max}
+          </span>
+          <ul class="py-6">
+            <!-- PLAYER LIST -->
             {#each roomState.data.players as player, index (player.color)}
               <li
                 class="p-2 text-lg flex items-center gap-2 group/list {username === player.username

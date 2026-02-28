@@ -1,5 +1,5 @@
 // room
-export const ROOM_MAX_USERS = Number(process.env.ROOM_MAX_USERS) || 8;
+export const ROOM_MAX_USERS = Number(process.env.ROOM_MAX_USERS) || 4;
 export const ROOM_MAX = Number(process.env.ROOM_MAX) || 1024;
 
 // server
