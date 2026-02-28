@@ -36,7 +36,7 @@ const GameSettings: GameSettings = {
 describe("invalid warm-up", () => {
   it("not in a room", async () => {
     await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_WARMUP_START,
       GameSettings
     ).then((response) => {
@@ -45,11 +45,11 @@ describe("invalid warm-up", () => {
   });
 
   it("user room is playing", async () => {
-    const { room } = await testJoinRoom(ctx.test1, "example", "user1");
+    const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
     room.start();
 
     await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_WARMUP_START,
       GameSettings
     ).then((response) => {
@@ -59,10 +59,10 @@ describe("invalid warm-up", () => {
 });
 
 it("valid warm-up", async () => {
-  await testJoinRoom(ctx.test1, "example", "user1");
+  await testJoinRoom(ctx.socket1, "example", "user1");
 
   await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
-    ctx.test1.client,
+    ctx.socket1.client,
     EVENT_WARMUP_START,
     GameSettings
   ).then((response) => {
@@ -71,7 +71,7 @@ it("valid warm-up", async () => {
 });
 
 it("warmup loop", async () => {
-  const test1 = ctx.test1;
+  const test1 = ctx.socket1;
   await testJoinRoom(test1, "example1", "user1");
 
   const listener1 = onceAsync<GameData>(test1.client, EVENT_WARMUP_INFO);

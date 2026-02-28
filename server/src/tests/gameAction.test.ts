@@ -31,7 +31,7 @@ afterEach(async () => {
 describe("wrong actions", () => {
   it("not in room", async () => {
     await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_GAME_ACTION,
       { action: GameActions.RIGHT }
     ).then((response) => {
@@ -40,9 +40,9 @@ describe("wrong actions", () => {
   });
 
   it("game not started", async () => {
-    await testJoinRoom(ctx.test1, "example", "test");
+    await testJoinRoom(ctx.socket1, "example", "test");
     await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_GAME_ACTION,
       { action: GameActions.RIGHT }
     ).then((response) => {
@@ -53,11 +53,12 @@ describe("wrong actions", () => {
 
 it("game perform action", async () => {
   const applyMovement = vi.spyOn(MovementModule, "applyMovement");
-  await testJoinRoom(ctx.test1, "example1", "user1");
+  await testJoinRoom(ctx.socket1, "example1", "user1");
+  await testJoinRoom(ctx.socket2, "example1", "user2");
 
   vi.useFakeTimers();
 
-  const { game, player } = await testStartGame(ctx.test1);
+  const { game, player } = await testStartGame(ctx.socket1);
 
   // make on fall tick
   await vi.advanceTimersToNextTimerAsync();
@@ -67,13 +68,13 @@ it("game perform action", async () => {
 
   // perform simple action
   await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
-    ctx.test1.client,
+    ctx.socket1.client,
     EVENT_GAME_ACTION,
     { action: GameActions.RIGHT }
   ).then((response) => {
     expect(response.success).toBe(true);
     if (response.success) {
-      expect(response.data).toEqual(game.getGameInfo(ctx.test1.server.id));
+      expect(response.data).toEqual(game.getGameInfo(ctx.socket1.server.id));
     }
   });
   expect(player.actualPiece.y).toBeGreaterThan(pieceBeforeY);

@@ -30,7 +30,7 @@ afterEach(async () => {
 
 it("warm up perform action", async () => {
   const applyMovement = vi.spyOn(MovementModule, "applyMovement");
-  const test1 = ctx.test1;
+  const test1 = ctx.socket1;
   vi.useFakeTimers();
 
   await testJoinRoom(test1, "example", "user");

@@ -34,7 +34,7 @@ afterEach(async () => {
 describe("invalid leave room", () => {
   it("user not found", async () => {
     await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_LEAVE_ROOM
     ).then((response) => {
       expect(response.success).toBe(false);
@@ -42,11 +42,11 @@ describe("invalid leave room", () => {
   });
 
   it("inexisting room", async () => {
-    await testJoinRoom(ctx.test1, "example", "test");
+    await testJoinRoom(ctx.socket1, "example", "test");
     getRooms().clear();
 
     await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_LEAVE_ROOM
     ).then((response) => {
       expect(response.success).toBe(false);
@@ -57,14 +57,14 @@ describe("invalid leave room", () => {
 it("valid leave room", async () => {
   const test2 = await createClient(ctx.address, ctx.io);
 
-  await testJoinRoom(ctx.test1, "example", "test");
+  await testJoinRoom(ctx.socket1, "example", "test");
   const { room } = await testJoinRoom(test2, "example", "test2");
   expect(getUsers().size).toBe(2);
 
   const listener = onceAsync<RoomData>(test2.client, EVENT_ROOM_UPDATE);
 
   await emitAsync<EventLeaveRoomPayload, EventLeaveRoomError, EventLeaveRoomSuccess>(
-    ctx.test1.client,
+    ctx.socket1.client,
     EVENT_LEAVE_ROOM
   ).then((response) => {
     expect(response.success).toBe(true);
@@ -76,7 +76,7 @@ it("valid leave room", async () => {
   expect(roomInfo?.players.length).toEqual(1);
 
   // the user should not exist anymore in memory
-  const user = getUser(ctx.test1.server.id);
+  const user = getUser(ctx.socket1.server.id);
   expect(user).toBeUndefined();
   expect(getUsers().size).toBe(1);
 

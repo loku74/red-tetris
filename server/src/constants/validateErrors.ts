@@ -17,6 +17,7 @@ export const ERROR_KICK_PLAYING = "You can't kick while the game is in progress"
 
 // game
 export const ERROR_NOT_IN_GAME = "You are not currently playing";
+export const ERROR_GAME_NOT_ENOUGH_PLAYER = "Not enough players to start the game";
 
 // warm-up
 export const ERROR_NOT_IN_WARMUP = "You are not currently doing a warm-up";

@@ -60,7 +60,7 @@ describe("game loop helpers", () => {
     attachCurrentPieceMock = vi.spyOn(Player.prototype, "attachCurrentPiece");
     applyPenalityMock = vi.spyOn(Player.prototype, "applyPenality");
 
-    test1 = ctx.test1;
+    test1 = ctx.socket1;
     test2 = await createClient(ctx.address, ctx.io);
 
     await testJoinRoom(test1, "example", "user1");
@@ -71,7 +71,7 @@ describe("game loop helpers", () => {
 
     vi.useFakeTimers();
 
-    // start room
+    // start game
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       test1.client,
       EVENT_GAME_START,
@@ -79,6 +79,7 @@ describe("game loop helpers", () => {
     ).then((response) => {
       expect(response.success).toBe(true);
     });
+
     const retrievedGame = room.game;
     expect(retrievedGame).toBeDefined();
     if (retrievedGame) game = retrievedGame;
