@@ -259,6 +259,7 @@
   // game
   let game = $state(false);
   let gameCountdown = $state(0);
+  let showGo = $state(false);
 
   function startGame() {
     const data: GameSettings = {
@@ -274,6 +275,10 @@
 
   function onGameCountdown(countdown: number) {
     gameCountdown = countdown;
+    if (countdown === 0) {
+      showGo = true;
+      setTimeout(() => (showGo = false), 420);
+    }
   }
 
   function onGameFinish() {
@@ -312,7 +317,7 @@
 
 <svelte:window on:keydown={onGameKeydown} />
 
-<div class="flex h-screen items-center justify-center bg-dark-primary gap-32">
+<div class="flex h-screen items-center justify-center bg-dark-primary gap-16">
   <!-- error & redirect -->
   {#if !roomState.joined}
     <div class="bg-dark-secondary px-8 py-4 ring-border ring">
@@ -580,12 +585,14 @@
       {/if}
 
       <!-- COUNTDOWN -->
-      {#if gameCountdown > 0}
+      {#if gameCountdown > 0 || showGo}
         {#key gameCountdown}
           <div
-            class="countdown-pop absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 text-7xl"
+            class="{showGo && gameCountdown === 0
+              ? 'countdown-go'
+              : 'countdown-pop'} absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 text-7xl"
           >
-            {gameCountdown}
+            {gameCountdown > 0 ? gameCountdown : "GO!"}
           </div>
         {/key}
       {/if}
@@ -641,11 +648,28 @@
     }
     100% {
       transform: scale(1);
-      opacity: 1;
     }
   }
 
   .countdown-pop {
     animation: countdown-pop 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes countdown-go {
+    0% {
+      transform: scale(2.42);
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+
+  .countdown-go {
+    animation: countdown-go 0.64s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 </style>
