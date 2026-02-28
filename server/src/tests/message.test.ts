@@ -88,7 +88,7 @@ describe("invalid chat", () => {
 });
 
 describe("valid chat", () => {
-  it("valid chat", async () => {
+  it("conversation", async () => {
     const test2 = await createClient(ctx.address, ctx.io);
     const message = "c'est un super message!";
     const chatListener1 = onceAsync<EventMessageData>(ctx.test1.client, "message");
