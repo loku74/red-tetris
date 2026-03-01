@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PieceColor, type UserColor } from "@app/shared";
+  import { getAllUserColors, type UserColor } from "@app/shared";
 
   import { roomState } from "$lib/state/room.svelte";
 
@@ -23,9 +23,7 @@
     return takenColors;
   });
 
-  let allColors = Object.values(PieceColor).filter(
-    (v): v is UserColor => typeof v === "number" && v !== PieceColor.EMPTY
-  );
+  let allColors = getAllUserColors();
 </script>
 
 <div class="bg-dark-secondary border-2 border-border p-4 grid grid-cols-4 gap-4">
