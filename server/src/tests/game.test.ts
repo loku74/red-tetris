@@ -24,7 +24,6 @@ import type { Room } from "@app/objects/Room";
 
 import type { TestServerData, TestSocket } from "./types";
 import {
-  createClient,
   emitAsync,
   onceAsync,
   setupTestServer,
@@ -60,7 +59,7 @@ describe("game loop helpers", () => {
     applyPenalityMock = vi.spyOn(Player.prototype, "applyPenality");
 
     test1 = ctx.socket1;
-    test2 = await createClient(ctx.address, ctx.io);
+    test2 = ctx.socket2;
 
     await testJoinRoom(test1, "example", "user1");
     room = (await testJoinRoom(test2, "example", "user2")).room;

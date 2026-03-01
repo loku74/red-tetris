@@ -13,7 +13,6 @@ import { setUser } from "@app/core/user";
 
 import type { TestServerData } from "./types";
 import {
-  createClient,
   emitAsync,
   fakeUser,
   onceAsync,
@@ -89,16 +88,13 @@ describe("invalid kick", () => {
   });
 
   it("same host name, but different rooms", async () => {
-    const test2 = await createClient(ctx.address, ctx.io);
-    const test3 = await createClient(ctx.address, ctx.io);
-
     await testJoinRoom(ctx.socket1, "example", "user1");
-    await testJoinRoom(test2, "example", "user2");
-    await testJoinRoom(test3, "example", "user2");
+    await testJoinRoom(ctx.socket2, "example", "user2");
+    await testJoinRoom(ctx.socket3, "example", "user2");
 
     // try to usurpate another room with an host
     // with the same name
-    await emitAsync<EventKickPayload, EventKickSuccess, EventKickError>(test2.client, EVENT_KICK, {
+    await emitAsync<EventKickPayload, EventKickSuccess, EventKickError>(ctx.socket2.client, EVENT_KICK, {
       username: "test"
     }).then((response) => {
       expect(response.success).toBe(false);
@@ -122,14 +118,13 @@ describe("invalid kick", () => {
 });
 
 it("valid kick", async () => {
-  const test2 = await createClient(ctx.address, ctx.io);
-  const kickListener = onceAsync<EventKickData>(test2.client, EVENT_KICK);
+  const kickListener = onceAsync<EventKickData>(ctx.socket2.client, EVENT_KICK);
   let roomListener: Promise<RoomData>;
 
   // basic
   roomListener = onceAsync<RoomData>(ctx.socket1.client, EVENT_ROOM_UPDATE);
   await testJoinRoom(ctx.socket1, "example", "user1");
-  const { room } = await testJoinRoom(test2, "example", "user2");
+  const { room } = await testJoinRoom(ctx.socket2, "example", "user2");
 
   roomListener = onceAsync<RoomData>(ctx.socket1.client, EVENT_ROOM_UPDATE);
   await emitAsync<EventKickPayload, EventKickSuccess, EventKickError>(

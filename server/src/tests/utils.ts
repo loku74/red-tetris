@@ -29,7 +29,7 @@ import type { AppServer, ServerSocket } from "@app/types/socket";
 import { init } from "../../app";
 import type { TestServerData, TestSocket } from "./types";
 
-export function createClient(address: string, io: AppServer): Promise<TestSocket> {
+function createClient(address: string, io: AppServer): Promise<TestSocket> {
   return new Promise((resolve) => {
     const client = ioc(address);
     let server: ServerSocket;
