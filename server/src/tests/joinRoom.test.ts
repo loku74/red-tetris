@@ -215,7 +215,4 @@ it("host changed", async () => {
     host: "user2",
     playing: false
   });
-
-  ctx.socket2.client.close();
-  ctx.socket3.client.close();
 });
