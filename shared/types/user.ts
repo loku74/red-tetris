@@ -1,6 +1,14 @@
-import { Colors } from "../enums/colors";
+import { PieceColor } from "../enums/colors";
 
 export type UserData = {
-  color: Colors;
+  color: UserColor;
   username: string;
 };
+
+export type UserColor = Exclude<PieceColor, PieceColor.EMPTY>;
+
+export function getAllUserColors(): UserColor[] {
+  return Object.values(PieceColor).filter(
+    (color) => typeof color === "number" && color !== PieceColor.EMPTY
+  );
+}

@@ -1,4 +1,4 @@
-export interface ValidateError {
+export interface ValidateError<T = Record<string, string>> {
   status: false;
-  error: Record<string, string>;
+  error: T;
 }

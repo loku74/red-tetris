@@ -1,4 +1,4 @@
-import { Colors } from "@app/shared";
+import { PieceColor, type UserColor } from "@app/shared";
 
 import { WARMUP_CHECK_DELAY } from "@app/constants/core";
 import type { ServerSocket } from "@app/types/socket";
@@ -7,7 +7,7 @@ import { sleep } from "@app/utils/sleep";
 import { Game } from "./Game";
 
 export class User {
-  public color: Colors = Colors.CYAN;
+  public color: UserColor = PieceColor.CYAN;
   public warmUp: Game | null = null;
 
   constructor(
@@ -25,6 +25,6 @@ export class User {
       }
     }
 
-    this.warmUp = new Game(new Map([[this.id, { color: this.color, user: this }]]));
+    this.warmUp = new Game(new Map([[this.id, this]]));
   }
 }

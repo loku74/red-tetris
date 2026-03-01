@@ -31,7 +31,7 @@ afterEach(async () => {
 describe("invalid chat", () => {
   it("not in a room", async () => {
     await emitAsync<EventMessagePayload, EventMessageError, EventMessageSuccess>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_MESSAGE,
       {
         message: "test"
@@ -44,15 +44,15 @@ describe("invalid chat", () => {
   it("valid chat", async () => {
     const test2 = await createClient(ctx.address, ctx.io);
     const message = "c'est un super message!";
-    const chatListener1 = onceAsync<EventMessageData>(ctx.test1.client, "message");
+    const chatListener1 = onceAsync<EventMessageData>(ctx.socket1.client, "message");
     const chatListener2 = onceAsync<EventMessageData>(test2.client, "message");
 
-    await testJoinRoom(ctx.test1, "example", "user1");
+    await testJoinRoom(ctx.socket1, "example", "user1");
     await testJoinRoom(test2, "example", "user2");
 
     // users talks
     await emitAsync<EventMessagePayload, EventMessageError, EventMessageSuccess>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_MESSAGE,
       {
         message: message

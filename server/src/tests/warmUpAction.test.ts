@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import type {
-  EventWarmUpActionError,
-  EventWarmUpActionPayload,
-  EventWarmUpActionSuccess
+  EventGameActionError,
+  EventGameActionPayload,
+  EventGameActionSuccess
 } from "@app/shared";
 import { EVENT_WARMUP_ACTION, GameActions } from "@app/shared";
 
@@ -30,7 +30,7 @@ afterEach(async () => {
 
 it("warm up perform action", async () => {
   const applyMovement = vi.spyOn(MovementModule, "applyMovement");
-  const test1 = ctx.test1;
+  const test1 = ctx.socket1;
   vi.useFakeTimers();
 
   await testJoinRoom(test1, "example", "user");
@@ -43,7 +43,7 @@ it("warm up perform action", async () => {
   const pieceBeforeY = player.actualPiece.y;
 
   // perform simple action
-  await emitAsync<EventWarmUpActionPayload, EventWarmUpActionSuccess, EventWarmUpActionError>(
+  await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
     test1.client,
     EVENT_WARMUP_ACTION,
     { action: GameActions.RIGHT }

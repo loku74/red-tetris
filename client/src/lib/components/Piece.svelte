@@ -1,10 +1,15 @@
 <script lang="ts">
   import type { Piece } from "@app/shared";
-  import { pieceColors } from "@app/shared";
+  import { PIECE_COLORS } from "@app/shared";
 
-  let { size, color, inline = false }: Piece & { inline?: boolean } = $props();
+  type PieceOptionalParams = {
+    inline?: boolean;
+    disabled?: boolean;
+  };
 
-  const pieceColor = $derived(pieceColors[color]);
+  let { size, color, inline = false, disabled = false }: Piece & PieceOptionalParams = $props();
+
+  const pieceColor = $derived(PIECE_COLORS[color]);
   const sizeValue = $derived(typeof size === "number" ? `${size}px` : size);
   const borderWidth = $derived(
     typeof size === "number" ? `${size * 0.125}px` : `calc(${size} * 0.125)`
@@ -22,11 +27,8 @@
 		border-bottom-color: ${pieceColor.dark};
 		box-sizing: border-box;
 		${inline ? "display: inline-block; vertical-align: text-top;" : ""}
+		${disabled ? "opacity: 0.42;" : ""}
 	`);
 </script>
 
-{#if inline}
-  <span {style}></span>
-{:else}
-  <div {style}></div>
-{/if}
+<div {style}></div>

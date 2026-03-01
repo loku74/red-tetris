@@ -6,12 +6,11 @@ export * from "./types/socket-events";
 export * from "./types/events/joinRoom";
 export * from "./types/events/message";
 export * from "./types/events/kick";
+export * from "./types/events/changeColor";
 export * from "./types/events/leaveRoom";
 export * from "./types/events/getRooms";
 export * from "./types/events/start";
 export * from "./types/events/warmUp";
-export * from "./types/events/warmUpAction";
-export * from "./types/events/gamePenality";
 export * from "./types/events/gameAction";
 
 export * from "./types/user";

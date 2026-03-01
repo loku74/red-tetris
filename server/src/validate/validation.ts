@@ -1,15 +1,15 @@
 import z, { ZodError } from "zod";
 
 import {
+  GAME_TICK_MAX,
+  GAME_TICK_MIN,
   GameActions,
   MESSAGE_MAX_LENGTH,
   REGEX_MESSAGE,
   REGEX_ROOM_AND_USER,
   ROOM_MAX_LENGTH,
-  USERNAME_MAX_LENGTH
-} from "@app/shared";
+  USERNAME_MAX_LENGTH} from "@app/shared";
 
-import { GAME_TICK_MAX, GAME_TICK_MIN } from "@app/constants/core";
 import * as ZodSchemaErrors from "@app/constants/zodSchemaErrors";
 
 export function formatSchemeError(error: ZodError) {

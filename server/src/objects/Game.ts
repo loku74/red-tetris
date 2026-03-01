@@ -1,5 +1,4 @@
 import type { GameData, PlayerInfo } from "@app/shared";
-import type { Colors } from "@app/shared";
 
 import { placePieceOnMatrix } from "@app/core/matrix";
 import { createBagOfPieces } from "@app/core/piece";
@@ -13,11 +12,11 @@ export class Game {
   public pieces: Array<Piece> = [];
   public ongoing: boolean = false;
 
-  constructor(users: Map<string, { color: Colors; user: User }>) {
+  constructor(users: Map<string, User>) {
     const initPiece = this.nextPiece(0);
 
-    users.forEach((data, id) => {
-      this.players.set(id, new Player(data.user, data.color, initPiece));
+    users.forEach((user, id) => {
+      this.players.set(id, new Player(user, user.color, initPiece));
     });
   }
 
@@ -33,7 +32,9 @@ export class Game {
   }
 
   public checkFinished() {
-    if (this.getDeadPlayers().length === this.players.size || !this.ongoing) {
+    const offset = this.players.size === 1 ? 0 : 1;
+
+    if (this.getDeadPlayers().length === this.players.size - offset || !this.ongoing) {
       this.ongoing = false;
     }
   }

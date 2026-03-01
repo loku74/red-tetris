@@ -18,9 +18,9 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
     room.start();
 
     await Promise.all(
-      room.users.values().map(async ({ user }) => {
+      room.users.values().map(async (user) => {
         while (user.warmUp != null) {
-          if (!user.warmUp.ongoing) {
+          if (user.warmUp.ongoing) {
             user.warmUp.ongoing = false;
           }
           await sleep(WARMUP_CHECK_DELAY);
@@ -28,7 +28,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
       })
     );
 
-    io.to(result.room.name).emit(EVENT_GAME_START, room.asInfo());
+    io.to(result.room.name).emit(EVENT_GAME_START);
     gameLoop(io, room, result.GameSettings);
     callback({ success: true });
   });

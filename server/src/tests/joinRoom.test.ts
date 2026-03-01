@@ -1,7 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { EventJoinRoomError, EventJoinRoomSuccess, RoomData } from "@app/shared";
-import { Colors, EVENT_JOIN_ROOM, EVENT_ROOM_UPDATE, type EventJoinRoomPayload } from "@app/shared";
+import {
+  EVENT_JOIN_ROOM,
+  EVENT_ROOM_UPDATE,
+  type EventJoinRoomPayload,
+  PieceColor
+} from "@app/shared";
 
 import { ROOM_MAX, ROOM_MAX_USERS } from "@app/constants/core";
 import {
@@ -40,7 +45,7 @@ describe("invalid join", () => {
 
   it("invalid scheme", async () => {
     await emitAsync<unknown, EventJoinRoomSuccess, EventJoinRoomError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_JOIN_ROOM,
       {
         invalid_scheme: "test"
@@ -58,7 +63,7 @@ describe("invalid join", () => {
     setRoom("example", room);
 
     await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_JOIN_ROOM,
       {
         username: "user1",
@@ -77,7 +82,7 @@ describe("invalid join", () => {
       setRoom(i.toString(), new Room(`test${i}`, user));
     }
     await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_JOIN_ROOM,
       {
         username: "user1",
@@ -95,7 +100,7 @@ describe("invalid join", () => {
     setRoom("example", new Room("example", user));
 
     await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_JOIN_ROOM,
       {
         username: "name",
@@ -111,7 +116,7 @@ describe("invalid join", () => {
 
   it("already in a room", async () => {
     await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_JOIN_ROOM,
       {
         username: "user1",
@@ -119,7 +124,7 @@ describe("invalid join", () => {
       }
     );
     await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_JOIN_ROOM,
       {
         username: "user1",
@@ -138,7 +143,7 @@ describe("invalid join", () => {
     getRoom("example")?.start();
 
     await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_JOIN_ROOM,
       {
         username: "user1",
@@ -159,7 +164,7 @@ it("valid join", async () => {
     room: "example"
   };
   await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-    ctx.test1.client,
+    ctx.socket1.client,
     EVENT_JOIN_ROOM,
     payload
   ).then((response) => {
@@ -174,10 +179,10 @@ it("valid join", async () => {
 it("host changed", async () => {
   const test2 = await createClient(ctx.address, ctx.io);
   const test3 = await createClient(ctx.address, ctx.io);
-  const roomListener = onceAsync<RoomData>(ctx.test1.client, EVENT_ROOM_UPDATE);
+  const roomListener = onceAsync<RoomData>(ctx.socket1.client, EVENT_ROOM_UPDATE);
 
   await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-    ctx.test1.client,
+    ctx.socket1.client,
     EVENT_JOIN_ROOM,
     {
       username: "user1",
@@ -204,15 +209,15 @@ it("host changed", async () => {
   const data1 = await roomListener;
   expect(data1.host).toBe("user1");
 
-  ctx.test1.client.close();
+  ctx.socket1.client.close();
 
   await sleep(42);
 
   expect(getRoom("example")?.asInfo()).toEqual({
     name: "example",
     players: [
-      { username: "user2", color: Colors.BLUE },
-      { username: "user3", color: Colors.GREEN }
+      { username: "user2", color: PieceColor.BLUE },
+      { username: "user3", color: PieceColor.GREEN }
     ],
     userCount: 2,
     max: ROOM_MAX_USERS,

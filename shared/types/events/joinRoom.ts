@@ -1,4 +1,4 @@
-import { Colors } from "../../enums/colors";
+import { type UserColor } from "../user";
 
 export type EventJoinRoomPayload = {
   room: string;
@@ -8,7 +8,7 @@ export type EventJoinRoomPayload = {
 export type EventJoinRoomSuccess = {
   room: string;
   username: string;
-  color: Colors;
+  color: UserColor;
 };
 
 export type EventJoinRoomError = Partial<EventJoinRoomPayload>;

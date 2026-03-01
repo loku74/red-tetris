@@ -1,5 +1,5 @@
 // intern
-import { Colors } from "../enums/colors";
+import { PieceColor } from "../enums/colors";
 
 // type
 import type { PieceData, PieceSpectrum } from "./piece";
@@ -16,7 +16,7 @@ export type PlayerInfo = {
   matrix: number[][];
   score: number;
   alive: boolean;
-  color: Colors;
+  color: PieceColor;
 };
 
 export type GameSettings = {

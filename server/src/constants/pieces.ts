@@ -2,7 +2,7 @@ import type { Coordinate, PieceShape } from "@app/shared";
 
 import { Rotations } from "@app/enums/Rotations";
 
-import { Colors } from "../../../shared/enums/colors";
+import { PieceColor } from "../../../shared/enums/colors";
 
 const OFFSETS: Record<Rotations, Coordinate[]> = {
   // for J, L, S, T, Z
@@ -69,7 +69,7 @@ const I_OFFSETS: Record<Rotations, Coordinate[]> = {
 
 export const PIECES: Record<
   PieceShape,
-  { blocks: Coordinate[]; color: Colors; offsets: Record<Rotations, Coordinate[]> }
+  { blocks: Coordinate[]; color: PieceColor; offsets: Record<Rotations, Coordinate[]> }
 > = {
   I: {
     blocks: [
@@ -78,7 +78,7 @@ export const PIECES: Record<
       [0, 1],
       [0, 2]
     ],
-    color: Colors.CYAN,
+    color: PieceColor.CYAN,
     offsets: I_OFFSETS
   },
   J: {
@@ -88,7 +88,7 @@ export const PIECES: Record<
       [0, 1],
       [-1, -1]
     ],
-    color: Colors.BLUE,
+    color: PieceColor.BLUE,
     offsets: OFFSETS
   },
   L: {
@@ -98,7 +98,7 @@ export const PIECES: Record<
       [0, 1],
       [-1, 1]
     ],
-    color: Colors.ORANGE,
+    color: PieceColor.ORANGE,
     offsets: OFFSETS
   },
   O: {
@@ -108,7 +108,7 @@ export const PIECES: Record<
       [1, 0],
       [1, 1]
     ],
-    color: Colors.YELLOW,
+    color: PieceColor.YELLOW,
     offsets: OFFSETS
   },
   S: {
@@ -118,7 +118,7 @@ export const PIECES: Record<
       [-1, 0],
       [-1, 1]
     ],
-    color: Colors.GREEN,
+    color: PieceColor.GREEN,
     offsets: OFFSETS
   },
   T: {
@@ -128,7 +128,7 @@ export const PIECES: Record<
       [0, -1],
       [0, 1]
     ],
-    color: Colors.PURPLE,
+    color: PieceColor.PURPLE,
     offsets: OFFSETS
   },
   Z: {
@@ -138,7 +138,7 @@ export const PIECES: Record<
       [-1, -1],
       [0, 1]
     ],
-    color: Colors.RED,
+    color: PieceColor.RED,
     offsets: OFFSETS
   }
 };

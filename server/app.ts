@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { Server as IoServer } from "socket.io";
 
 import { SERVER_PORT } from "@app/constants/core";
+import { registerHandlers as changeColorHandler } from "@app/events/changeColor";
 import { registerHandlers as disconnectingHandler } from "@app/events/disconnecting";
 import { registerHandlers as gameActionHandler } from "@app/events/gameAction";
 import { registerHandlers as getRoomsHandler } from "@app/events/getRooms";
@@ -42,6 +43,7 @@ function configureSocket(io: AppServer) {
     joinRoomHandler(io, socket);
     kickHandler(io, socket);
     startHandler(io, socket);
+    changeColorHandler(io, socket);
     leaveRoomHandler(io, socket);
     warmUpHandler(io, socket);
     warmUpActionHandler(socket);

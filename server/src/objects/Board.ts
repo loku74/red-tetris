@@ -1,4 +1,4 @@
-import { Colors } from "@app/shared";
+import { PieceColor } from "@app/shared";
 
 import { BOARD_HEIGHT, BOARD_WIDTH } from "@app/constants/core";
 import { placePieceOnMatrix } from "@app/core/matrix";
@@ -7,12 +7,14 @@ import { Piece } from "./Piece";
 
 export class Board {
   public matrix: number[][]; // row, column
-  public restrictedLines: number = 0;
+  public playableLines: number = BOARD_HEIGHT - 1;
   public placedPieces: number = 0;
   public completedRowIndices: Set<number> = new Set();
 
   constructor() {
-    this.matrix = Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(Colors.EMPTY));
+    this.matrix = Array.from({ length: BOARD_HEIGHT }, () =>
+      Array(BOARD_WIDTH).fill(PieceColor.EMPTY)
+    );
   }
 
   private getRow(index: number): number[] {
@@ -32,7 +34,7 @@ export class Board {
 
       if (boardRow === undefined) return false;
       const boardCell = boardRow[column];
-      if (boardCell === undefined || boardCell != Colors.EMPTY) return false;
+      if (boardCell === undefined || boardCell != PieceColor.EMPTY) return false;
     }
     return true;
   }
@@ -50,7 +52,7 @@ export class Board {
       const indice = piece.x + x;
       const row = this.matrix[indice];
       if (!row) return;
-      if (row.every((cell) => cell != Colors.EMPTY)) {
+      if (row.every((cell) => cell != PieceColor.EMPTY)) {
         this.completedRowIndices.add(indice);
       }
     });
@@ -61,17 +63,21 @@ export class Board {
 
     this.completedRowIndices.forEach((row_i) => {
       this.matrix.splice(row_i, 1);
-      this.matrix.unshift(Array(BOARD_WIDTH).fill(Colors.EMPTY));
+      this.matrix.unshift(Array(BOARD_WIDTH).fill(PieceColor.EMPTY));
     });
     this.completedRowIndices.clear();
     return size;
   }
 
-  public addRestrictedLine() {
-    const row = this.getRow(this.restrictedLines);
-    row.forEach((_, i) => {
-      row[i] = Colors.GREY;
-    });
-    this.restrictedLines++;
+  public addRestrictedLines(nb: number) {
+    for (let i = 0; i < nb - 1; i++) {
+      if (this.playableLines < 0) return;
+
+      const row = this.getRow(this.playableLines);
+      row.forEach((_, col) => {
+        row[col] = PieceColor.GREY;
+      });
+      this.playableLines--;
+    }
   }
 }

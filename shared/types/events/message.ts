@@ -1,4 +1,4 @@
-import { Colors } from "../../enums/colors";
+import { PieceColor } from "../../enums/colors";
 
 export type EventMessagePayload = {
   message: string;
@@ -10,6 +10,6 @@ export type EventMessageError = void;
 
 export type EventMessageData = {
   from: string;
-  color: Colors;
+  color: PieceColor;
   message: string;
 };

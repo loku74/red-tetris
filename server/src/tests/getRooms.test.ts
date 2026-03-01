@@ -25,7 +25,7 @@ describe(EVENT_GET_ROOMS, () => {
     setRoom("example", new Room("example", fakeUser("id", "example")));
 
     await emitAsync<EventGetRoomsPayload, EventGetRoomsSuccess, EventGetRoomsError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_GET_ROOMS
     ).then((response) => {
       expect(response.success).toBe(true);
@@ -47,7 +47,7 @@ describe(EVENT_GET_ROOMS, () => {
     getRoom("example2")?.start();
 
     await emitAsync<EventGetRoomsPayload, EventGetRoomsSuccess, EventGetRoomsError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_GET_ROOMS
     ).then((response) => {
       expect(response.success).toBe(true);

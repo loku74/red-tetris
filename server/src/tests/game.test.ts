@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import type {
-  EventGamePenalityData,
   EventStartError,
   EventStartPayload,
   EventStartSuccess,
@@ -9,11 +8,11 @@ import type {
   GameSettings
 } from "@app/shared";
 import {
-  Colors,
   EVENT_GAME_FINISH,
   EVENT_GAME_INFO,
   EVENT_GAME_PENALITY,
   EVENT_GAME_START,
+  PieceColor,
   PieceShape
 } from "@app/shared";
 
@@ -60,7 +59,7 @@ describe("game loop helpers", () => {
     attachCurrentPieceMock = vi.spyOn(Player.prototype, "attachCurrentPiece");
     applyPenalityMock = vi.spyOn(Player.prototype, "applyPenality");
 
-    test1 = ctx.test1;
+    test1 = ctx.socket1;
     test2 = await createClient(ctx.address, ctx.io);
 
     await testJoinRoom(test1, "example", "user1");
@@ -71,7 +70,7 @@ describe("game loop helpers", () => {
 
     vi.useFakeTimers();
 
-    // start room
+    // start game
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       test1.client,
       EVENT_GAME_START,
@@ -79,6 +78,7 @@ describe("game loop helpers", () => {
     ).then((response) => {
       expect(response.success).toBe(true);
     });
+
     const retrievedGame = room.game;
     expect(retrievedGame).toBeDefined();
     if (retrievedGame) game = retrievedGame;
@@ -121,10 +121,10 @@ describe("game loop helpers", () => {
     player1.actualPiece = pieceO.clone();
 
     // fake a line to be cleared (a stop line and a line to clear)
-    player1.board.matrix[2] = [0, 0, ...Array(BOARD_WIDTH - 3).fill(Colors.RED)];
-    player1.board.matrix[3] = [0, ...Array(BOARD_WIDTH - 1).fill(Colors.RED)];
+    player1.board.matrix[2] = [0, 0, ...Array(BOARD_WIDTH - 3).fill(PieceColor.RED)];
+    player1.board.matrix[3] = [0, ...Array(BOARD_WIDTH - 1).fill(PieceColor.RED)];
 
-    const listener1 = onceAsync<EventGamePenalityData>(test2.client, EVENT_GAME_PENALITY);
+    const listener1 = onceAsync<GameData>(test2.client, EVENT_GAME_PENALITY);
 
     // there is 2 round because of the "last time" movement delay
     await vi.advanceTimersToNextTimerAsync();
@@ -153,8 +153,8 @@ describe("game loop helpers", () => {
     player2.actualPiece = pieceI.clone();
 
     // to make game faster
-    player1.board.matrix[1] = [0, ...Array(BOARD_WIDTH - 1).fill(Colors.RED)];
-    player2.board.matrix[1] = [0, ...Array(BOARD_WIDTH - 1).fill(Colors.RED)];
+    player1.board.matrix[1] = [0, ...Array(BOARD_WIDTH - 1).fill(PieceColor.RED)];
+    player2.board.matrix[1] = [0, ...Array(BOARD_WIDTH - 1).fill(PieceColor.RED)];
 
     const listener1 = onceAsync<undefined>(test1.client, EVENT_GAME_FINISH);
     const listener2 = onceAsync<undefined>(test2.client, EVENT_GAME_FINISH);

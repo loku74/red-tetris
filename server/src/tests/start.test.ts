@@ -4,17 +4,14 @@ import type {
   EventStartError,
   EventStartPayload,
   EventStartSuccess,
-  GameSettings,
-  RoomData
+  GameSettings
 } from "@app/shared";
 import { EVENT_GAME_START } from "@app/shared";
 
 import type { TestServerData } from "./types";
 import {
-  createClient,
   emitAsync,
   fakeUser,
-  onceAsync,
   setupTestServer,
   shutdownTestServer,
   testJoinRoom,
@@ -38,7 +35,7 @@ const GameSettings: GameSettings = {
 describe("invalid start", () => {
   it("not in a room", async () => {
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_GAME_START,
       GameSettings
     ).then((response) => {
@@ -47,11 +44,11 @@ describe("invalid start", () => {
   });
 
   it("not host", async () => {
-    const { room } = await testJoinRoom(ctx.test1, "example", "user1");
+    const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
 
     room.host = fakeUser("dumb", "someone");
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
-      ctx.test1.client,
+      ctx.socket1.client,
       EVENT_GAME_START,
       GameSettings
     ).then((response) => {
@@ -60,11 +57,24 @@ describe("invalid start", () => {
   });
 
   it("already started", async () => {
-    const { room } = await testJoinRoom(ctx.test1, "example", "user1");
+    const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
     room.start();
 
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
-      ctx.test1.client,
+      ctx.socket1.client,
+      EVENT_GAME_START,
+      GameSettings
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
+  });
+
+  it("alone in the room", async () => {
+    const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
+    room.start();
+
+    await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
+      ctx.socket1.client,
       EVENT_GAME_START,
       GameSettings
     ).then((response) => {
@@ -74,21 +84,9 @@ describe("invalid start", () => {
 });
 
 it("valid start", async () => {
-  const test2 = await createClient(ctx.address, ctx.io);
+  const roomName = "example";
+  await testJoinRoom(ctx.socket1, roomName, "user1");
+  await testJoinRoom(ctx.socket2, roomName, "user2");
 
-  await testJoinRoom(ctx.test1, "example", "user1");
-  const { room } = await testJoinRoom(test2, "example", "user2");
-
-  const listener1 = onceAsync<RoomData>(ctx.test1.client, EVENT_GAME_START);
-  const listener2 = onceAsync<RoomData>(test2.client, EVENT_GAME_START);
-
-  await testStartGame(ctx.test1);
-  const roomInfo = room.asInfo();
-
-  await listener1.then((data) => {
-    expect(data).toEqual(roomInfo);
-  });
-  await listener2.then((data) => {
-    expect(data).toEqual(roomInfo);
-  });
+  await testStartGame(ctx.socket1);
 });

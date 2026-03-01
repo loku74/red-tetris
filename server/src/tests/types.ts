@@ -4,8 +4,9 @@ import type { AppServer, ServerSocket } from "@app/types/socket";
 
 export interface TestServerData {
   io: AppServer;
-  test1: TestSocket;
   address: string;
+  socket1: TestSocket;
+  socket2: TestSocket;
 }
 
 export interface TestSocket {

@@ -79,11 +79,13 @@ export async function setupTestServer(): Promise<TestServerData> {
 
   const address = `http://localhost:${(struct.server.address() as AddressInfo).port}`;
   const test1 = await createClient(address, io);
+  const test2 = await createClient(address, io);
 
   return {
     io,
     address,
-    test1
+    socket1: test1,
+    socket2: test2
   };
 }
 
@@ -147,11 +149,12 @@ export async function testStartGame(test: TestSocket): Promise<{ game: Game; pla
   const GameSettings: GameSettings = {
     tick: 300
   };
-  const room = getRoomBySocket(test.server);
 
+  const room = getRoomBySocket(test.server);
   if (!room) {
     expect.fail("Room not defined!");
   }
+
   await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
     test.client,
     EVENT_GAME_START,
@@ -164,6 +167,7 @@ export async function testStartGame(test: TestSocket): Promise<{ game: Game; pla
   if (!game) {
     expect.fail("Game not defined!");
   }
+
   return { game: game, player: game.getPlayer(test.server.id) };
 }
 

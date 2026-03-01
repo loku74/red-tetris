@@ -1,5 +1,5 @@
 import type { Coordinate, PieceData, PieceShape } from "@app/shared";
-import { Colors } from "@app/shared";
+import { PieceColor } from "@app/shared";
 
 import { MAX_ROTATIONS } from "@app/constants/core";
 import { PIECES } from "@app/constants/pieces";
@@ -9,7 +9,7 @@ export class Piece {
   public rotation: Rotations = Rotations.SPAWN;
   public alreadyMoved: boolean = false;
   public blocks: Coordinate[]; // row, column
-  public color: Colors;
+  public color: PieceColor;
 
   constructor(
     public type: PieceShape,
@@ -80,7 +80,7 @@ export class Piece {
 
     const size = this.blocks.reduce((acc, [x, y]) => Math.max(acc, x - minX + 1, y - minY + 1), 0);
 
-    const grid = Array.from({ length: size }, () => Array(size).fill(Colors.EMPTY));
+    const grid = Array.from({ length: size }, () => Array(size).fill(PieceColor.EMPTY));
 
     this.blocks.forEach(([x, y]) => {
       const row = grid[x - minX];

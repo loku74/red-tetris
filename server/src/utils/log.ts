@@ -1,4 +1,5 @@
 function log(type: string, message: string) {
+  if (process.env.VITEST) return;
   console.log(`[${type}] [${new Date().toLocaleString()}] - ${message}`);
 }
 

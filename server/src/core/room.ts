@@ -28,10 +28,8 @@ export function joinOrCreateRoom(user: User, room_id: string): Room {
     room = new Room(room_id, user);
 
     rooms.set(room_id, room);
-  } else {
-    const userColor = room.add(user);
-    user.color = userColor;
-  }
+  } else room.add(user);
+
   return room;
 }
 

@@ -1,5 +1,4 @@
-import type { RoomData } from "@app/shared";
-import { Colors } from "@app/shared";
+import { PieceColor, type RoomData, type UserColor } from "@app/shared";
 
 import { ROOM_MAX_USERS } from "@app/constants/core";
 import { getRooms } from "@app/core/room";
@@ -10,16 +9,16 @@ import { Game } from "./Game";
 import type { User } from "./User";
 
 export class Room {
-  public users: Map<string, { color: Colors; user: User }> = new Map();
-  public colors: Array<Colors> = [
-    Colors.RED,
-    Colors.BLUE,
-    Colors.GREEN,
-    Colors.YELLOW,
-    Colors.PURPLE,
-    Colors.ORANGE,
-    Colors.CYAN,
-    Colors.GREY
+  public users: Map<string, User> = new Map();
+  public colors: Array<UserColor> = [
+    PieceColor.RED,
+    PieceColor.BLUE,
+    PieceColor.GREEN,
+    PieceColor.YELLOW,
+    PieceColor.PURPLE,
+    PieceColor.ORANGE,
+    PieceColor.CYAN,
+    PieceColor.GREY
   ];
   public game: Game | null = null;
 
@@ -31,11 +30,11 @@ export class Room {
     host.color = userColor;
   }
 
-  public exist(user: User) {
+  public userExists(user: User) {
     return this.users.has(user.id);
   }
 
-  private getColor(): Colors {
+  private getColor(): UserColor {
     const color = this.colors.shift();
 
     // should never be empty because max player is checked
@@ -48,16 +47,18 @@ export class Room {
     const next = this.users.entries().next();
 
     if (next.value) {
-      this.host = next.value[1].user;
+      this.host = next.value[1];
     }
   }
 
   public add(user: User) {
-    if (this.exist(user)) throw new Error("User already exists");
+    if (this.userExists(user)) throw new Error("User already exists");
     else if (this.users.size >= ROOM_MAX_USERS) throw new Error("Room is full");
 
     const color = this.getColor();
-    this.users.set(user.id, { color, user });
+    user.color = color;
+
+    this.users.set(user.id, user);
 
     return color;
   }
@@ -68,7 +69,7 @@ export class Room {
     const retrieved = this.users.get(user.id);
     if (!retrieved) throw new Error("User not found");
 
-    this.users.delete(retrieved.user.id);
+    this.users.delete(retrieved.id);
     this.colors.push(retrieved.color);
 
     // deletion of empty room
@@ -88,14 +89,13 @@ export class Room {
 
   // there are no duplicates usernames in a room
   public get(username: string): User | undefined {
-    const found = [...this.users.values()].find((u) => u.user.name === username);
-    return found?.user;
+    return this.users.values().find((u) => u.name === username);
   }
 
   public asInfo(): RoomData {
     return {
       name: this.name,
-      players: [...this.users.values()].map((u) => ({ color: u.color, username: u.user.name })),
+      players: [...this.users.values().map((u) => ({ color: u.color, username: u.name }))],
       userCount: this.users.size,
       max: ROOM_MAX_USERS,
       host: this.host.name,

@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { Colors, PieceShape } from "@app/shared";
+import { PieceColor, PieceShape } from "@app/shared";
 
 import { PIECES } from "@app/constants/pieces";
 import { Piece } from "@app/objects/Piece";
 
-const C = Colors.CYAN;
-const B = Colors.BLUE;
-const O = Colors.ORANGE;
-const G = Colors.GREEN;
-const P = Colors.PURPLE;
-const R = Colors.RED;
+const C = PieceColor.CYAN;
+const B = PieceColor.BLUE;
+const O = PieceColor.ORANGE;
+const G = PieceColor.GREEN;
+const P = PieceColor.PURPLE;
+const R = PieceColor.RED;
 
 describe("toGrid() rotations", () => {
   it("invalid rotations", () => {

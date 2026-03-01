@@ -1,8 +1,9 @@
 import z from "zod";
 
-import type { EventStartPayload, GameSettings } from "@app/shared";
+import { type EventStartPayload, GAME_MIN_PLAYERS, type GameSettings } from "@app/shared";
 
 import {
+  ERROR_GAME_NOT_ENOUGH_PLAYERS,
   ERROR_NOT_HOST,
   ERROR_NOT_IN_A_ROOM,
   ERROR_PLAYING_ROOM
@@ -33,6 +34,7 @@ export function validateStart(socket: ServerSocket, payload: EventStartPayload):
   if (!result.success) {
     return { status: false, error: formatSchemeError(result.error) };
   }
+
   const current = getUser(socket.id);
   const room = getRoomBySocket(socket);
 
@@ -44,6 +46,9 @@ export function validateStart(socket: ServerSocket, payload: EventStartPayload):
   }
   if (room.game) {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
+  }
+  if (room.users.size < GAME_MIN_PLAYERS) {
+    return { status: false, error: { room: ERROR_GAME_NOT_ENOUGH_PLAYERS } };
   }
 
   const GameSettings: GameSettings = {

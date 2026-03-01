@@ -1,4 +1,4 @@
-import { ERROR_INEXISTING_ROOM, ERROR_USER_NOT_FOUND } from "@app/constants/validateErrors";
+import { ERROR_NOT_IN_A_ROOM, ERROR_USER_NOT_FOUND } from "@app/constants/validateErrors";
 import { getRoomBySocket } from "@app/core/room";
 import { getUser } from "@app/core/user";
 import type { Room } from "@app/objects/Room";
@@ -23,7 +23,7 @@ export function validateLeaveRoom(socket: ServerSocket): ValidateLeaveRoomResult
 
   const room = getRoomBySocket(socket);
   if (room === undefined) {
-    return { status: false, error: { room: ERROR_INEXISTING_ROOM } };
+    return { status: false, error: { room: ERROR_NOT_IN_A_ROOM } };
   }
 
   return { status: true, room, current };

@@ -1,4 +1,5 @@
 import {
+  EVENT_GAME_COUNTDOWN,
   EVENT_GAME_FINISH,
   EVENT_GAME_INFO,
   EVENT_GAME_PENALITY,
@@ -23,11 +24,14 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
     io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
   });
 
-  await sleep(GAME_START_DELAY);
+  for (let i = GAME_START_DELAY / 1000; i >= 0; i--) {
+    io.to(room.name).emit(EVENT_GAME_COUNTDOWN, i);
+    if (i) await sleep(1000);
+  }
+
   game.ongoing = true;
 
   while (game.ongoing) {
-    await sleep(settings.tick);
     game.players.forEach((player, id) => {
       if (player.alive) {
         if (player.isNextPositionValid()) {
@@ -35,11 +39,14 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
         } else {
           player.attachCurrentPiece(game);
         }
-        if (player.board.cleanLines() > 0) {
+        const nb = player.board.cleanLines();
+        if (nb > 0) {
           game.players.forEach((p) => {
-            if (p != player) p.applyPenality();
+            if (p != player) {
+              p.applyPenality(nb);
+              io.to(p.user.id).emit(EVENT_GAME_PENALITY, game.getGameInfo(p.user.id));
+            }
           });
-          io.to(room.name).emit(EVENT_GAME_PENALITY, { from: player.user.name });
         }
         player.checkLost();
       }
@@ -48,9 +55,10 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
       io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
     });
     game.checkFinished();
+    await sleep(settings.tick);
   }
 
-  io.to(room.name).emit(EVENT_GAME_FINISH, {});
+  io.to(room.name).emit(EVENT_GAME_FINISH);
   room.game = null;
   io.to(room.name).emit(EVENT_ROOM_UPDATE, room.asInfo());
 }
@@ -78,6 +86,6 @@ export async function warmUpLoop(io: AppServer, user: User, settings: GameSettin
     game.checkFinished();
   }
 
-  io.to(user.id).emit(EVENT_WARMUP_FINISH, {});
+  io.to(user.id).emit(EVENT_WARMUP_FINISH);
   user.warmUp = null;
 }
