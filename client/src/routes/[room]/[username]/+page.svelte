@@ -201,7 +201,7 @@
   });
 
   function sendMessage() {
-    if (message) {
+    if (message.trim()) {
       const data: EventMessagePayload = { message };
       socket.emit(EVENT_MESSAGE, data, (response) => {
         if (response.success) {

@@ -37,6 +37,7 @@ export const usernameValidation = z
 
 export const messageValidation = z
   .string()
+  .trim()
   .regex(REGEX_MESSAGE, ZodSchemaErrors.Z_ERROR_REGEX_MESSAGE)
   .min(1, ZodSchemaErrors.Z_ERROR_MESSAGE_EMPTY)
   .max(MESSAGE_MAX_LENGTH, ZodSchemaErrors.Z_ERROR_MESSAGE_MAX);
