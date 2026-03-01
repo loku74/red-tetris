@@ -28,5 +28,15 @@
       "@app/shared": ["../shared/index.ts"],
       "@app/*": ["./src/*"]
     }
-  }
+  },
+
+  "include": [
+    "src/**/*.ts",
+    "../shared/*.ts",
+    "../shared/**/*.ts",
+    "../shared/**/**/*.ts",
+    "eslint.config.js",
+    "vitest.config.ts",
+    "app.ts"
+  ],
 }

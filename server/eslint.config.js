@@ -1,4 +1,4 @@
-import { defineConfig } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import prettier from "eslint-config-prettier";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import tseslint from 'typescript-eslint';
@@ -31,5 +31,8 @@ export default defineConfig(
         tsconfigRootDir: import.meta.dirname,
       },
     },
-  }
+  },
+  globalIgnores(
+    ["dist/**", "node_modules/**", "coverage/**"]
+  )
 );
