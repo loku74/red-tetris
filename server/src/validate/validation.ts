@@ -8,7 +8,8 @@ import {
   REGEX_MESSAGE,
   REGEX_ROOM_AND_USER,
   ROOM_MAX_LENGTH,
-  USERNAME_MAX_LENGTH} from "@app/shared";
+  USERNAME_MAX_LENGTH
+} from "@app/shared";
 
 import * as ZodSchemaErrors from "@app/constants/zodSchemaErrors";
 

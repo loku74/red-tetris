@@ -1,7 +1,7 @@
 import type { AddressInfo } from "net";
 import type { Socket as ClientSocket } from "socket.io-client";
 import { io as ioc } from "socket.io-client";
-import { expect } from "vitest";
+import { expect, vi } from "vitest";
 
 import type {
   EventJoinRoomError,
@@ -18,6 +18,7 @@ import type {
 } from "@app/shared";
 import { EVENT_GAME_START, EVENT_JOIN_ROOM, EVENT_WARMUP_START } from "@app/shared";
 
+import { GAME_START_DELAY } from "@app/constants/core";
 import { getRoom, getRoomBySocket, getRooms } from "@app/core/room";
 import { getUser, getUsers } from "@app/core/user";
 import type { Game } from "@app/objects/Game";
@@ -177,4 +178,10 @@ export async function testStartGame(test: TestSocket): Promise<{ game: Game; pla
 
 export function fakeUser(id: string, name: string): User {
   return new User(id, name, {} as ServerSocket);
+}
+
+export async function passGameCountdown() {
+  for (let i = GAME_START_DELAY / 1000; i >= 0; i--) {
+    if (i) await vi.advanceTimersToNextTimerAsync();
+  }
 }

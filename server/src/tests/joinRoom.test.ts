@@ -21,13 +21,7 @@ import { Room } from "@app/objects/Room";
 import { sleep } from "@app/utils/sleep";
 
 import type { TestServerData } from "./types";
-import {
-  emitAsync,
-  fakeUser,
-  onceAsync,
-  setupTestServer,
-  shutdownTestServer
-} from "./utils";
+import { emitAsync, fakeUser, onceAsync, setupTestServer, shutdownTestServer } from "./utils";
 
 let ctx: TestServerData;
 
@@ -195,7 +189,7 @@ it("host changed", async () => {
     }
   );
   await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
-    ctx.socket2.client,
+    ctx.socket3.client,
     EVENT_JOIN_ROOM,
     {
       username: "user3",

@@ -12,13 +12,7 @@ import { getRooms } from "@app/core/room";
 import { getUser, getUsers } from "@app/core/user";
 
 import type { TestServerData } from "./types";
-import {
-  emitAsync,
-  onceAsync,
-  setupTestServer,
-  shutdownTestServer,
-  testJoinRoom
-} from "./utils";
+import { emitAsync, onceAsync, setupTestServer, shutdownTestServer, testJoinRoom } from "./utils";
 
 let ctx: TestServerData;
 

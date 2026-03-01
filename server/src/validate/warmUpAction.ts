@@ -1,6 +1,6 @@
 import z from "zod";
 
-import type { EventWarmUpActionPayload, GameActions } from "@app/shared";
+import type { EventGameActionPayload, GameActions } from "@app/shared";
 
 import { ERROR_NOT_IN_A_ROOM, ERROR_NOT_IN_WARMUP } from "@app/constants/validateErrors";
 import { getRoomBySocket } from "@app/core/room";
@@ -27,7 +27,7 @@ type ValidateWarmUpActionResult = ValidateWarmUpActionSuccess | ValidateError;
 
 export function validateWarmUpAction(
   socket: ServerSocket,
-  payload: EventWarmUpActionPayload
+  payload: EventGameActionPayload
 ): ValidateWarmUpActionResult {
   const result = schema.safeParse(payload);
 

@@ -12,6 +12,7 @@ import * as MovementModule from "@app/core/movements";
 import type { TestServerData } from "./types";
 import {
   emitAsync,
+  passGameCountdown,
   setupTestServer,
   shutdownTestServer,
   testJoinRoom,
@@ -60,8 +61,8 @@ it("game perform action", async () => {
 
   const { game, player } = await testStartGame(ctx.socket1);
 
-  // make on fall tick
-  await vi.advanceTimersToNextTimerAsync();
+  await passGameCountdown();
+
   expect(game.ongoing).toBe(true);
 
   const pieceBeforeY = player.actualPiece.y;

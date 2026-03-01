@@ -94,9 +94,13 @@ describe("invalid kick", () => {
 
     // try to usurpate another room with an host
     // with the same name
-    await emitAsync<EventKickPayload, EventKickSuccess, EventKickError>(ctx.socket2.client, EVENT_KICK, {
-      username: "test"
-    }).then((response) => {
+    await emitAsync<EventKickPayload, EventKickSuccess, EventKickError>(
+      ctx.socket2.client,
+      EVENT_KICK,
+      {
+        username: "test"
+      }
+    ).then((response) => {
       expect(response.success).toBe(false);
     });
   });

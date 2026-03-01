@@ -9,13 +9,7 @@ import type {
 import { EVENT_MESSAGE, MESSAGE_MAX_LENGTH } from "@app/shared";
 
 import type { TestServerData } from "./types";
-import {
-  emitAsync,
-  onceAsync,
-  setupTestServer,
-  shutdownTestServer,
-  testJoinRoom
-} from "./utils";
+import { emitAsync, onceAsync, setupTestServer, shutdownTestServer, testJoinRoom } from "./utils";
 
 let ctx: TestServerData;
 

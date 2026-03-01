@@ -32,9 +32,7 @@ export class Game {
   }
 
   public checkFinished() {
-    const offset = this.players.size === 1 ? 0 : 1;
-
-    if (this.getDeadPlayers().length === this.players.size - offset || !this.ongoing) {
+    if (this.getDeadPlayers().length === this.players.size) {
       this.ongoing = false;
     }
   }
