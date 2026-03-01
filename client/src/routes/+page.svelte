@@ -217,7 +217,7 @@
     </div>
   </div>
 
-  <Dialog icon={Gamepad2} confirm="exit" title="Available Rooms" bind:open={showRoomsDialog}>
+  <Dialog icon={Gamepad2} confirm="exit" title="Existing Rooms" bind:open={showRoomsDialog}>
     {#if rooms.length === 0}
       <p class="text-white/50 text-center">No rooms available</p>
     {:else}
