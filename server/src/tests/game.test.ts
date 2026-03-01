@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 import type {
-  EventGamePenalityData, // ?
   EventStartError,
   EventStartPayload,
   EventStartSuccess,
@@ -125,7 +124,7 @@ describe("game loop helpers", () => {
     player1.board.matrix[2] = [0, 0, ...Array(BOARD_WIDTH - 3).fill(PieceColor.RED)];
     player1.board.matrix[3] = [0, ...Array(BOARD_WIDTH - 1).fill(PieceColor.RED)];
 
-    const listener1 = onceAsync<EventGamePenalityData>(test2.client, EVENT_GAME_PENALITY);
+    const listener1 = onceAsync<GameData>(test2.client, EVENT_GAME_PENALITY);
 
     // there is 2 round because of the "last time" movement delay
     await vi.advanceTimersToNextTimerAsync();
