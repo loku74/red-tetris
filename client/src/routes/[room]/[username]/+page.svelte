@@ -385,11 +385,11 @@
             <!-- PLAYER LIST -->
             {#each roomState.data.players as player, index (player.color)}
               <li
-                class="p-2 text-lg flex items-center gap-2 group/list border-l-2
+                class="p-2 text-lg flex items-center gap-2 group/list border-l-2 border-l-transparent
                 {index % 2 === 0 ? 'bg-dark-accent' : ''}"
                 style={isCurrentUser(player.username)
                   ? `border-color: ${userHexColor}; color: ${userHexColor};`
-                  : `border-color: transparent;`}
+                  : "border-color: transparent;"}
               >
                 <button
                   onclick={() => {
@@ -397,7 +397,9 @@
                       showColorChoice = true;
                     }
                   }}
-                  class={isCurrentUser(player.username) ? "piece-select hover-darken" : ""}
+                  class={isCurrentUser(player.username)
+                    ? "piece-select hover-darken"
+                    : "border-2 border-transparent"}
                 >
                   <Piece color={player.color} size={24} />
                 </button>
