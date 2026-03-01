@@ -6,7 +6,7 @@ import type {
   EventMessagePayload,
   EventMessageSuccess
 } from "@app/shared";
-import { EVENT_MESSAGE } from "@app/shared";
+import { EVENT_MESSAGE, MESSAGE_MAX_LENGTH } from "@app/shared";
 
 import type { TestServerData } from "./types";
 import {
@@ -41,7 +41,54 @@ describe("invalid chat", () => {
     });
   });
 
-  it("valid chat", async () => {
+  it("empty message", async () => {
+    await testJoinRoom(ctx.test1, "test", "test");
+    const message = "";
+
+    await emitAsync<EventMessagePayload, EventMessageError, EventMessageSuccess>(
+      ctx.test1.client,
+      EVENT_MESSAGE,
+      {
+        message: message
+      }
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
+  });
+
+  it("blank message", async () => {
+    await testJoinRoom(ctx.test1, "test", "test");
+    const message = "      ";
+
+    await emitAsync<EventMessagePayload, EventMessageError, EventMessageSuccess>(
+      ctx.test1.client,
+      EVENT_MESSAGE,
+      {
+        message: message
+      }
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
+  });
+
+  it("message too long", async () => {
+    await testJoinRoom(ctx.test1, "test", "test");
+    const message = "a".repeat(MESSAGE_MAX_LENGTH + 1);
+
+    await emitAsync<EventMessagePayload, EventMessageError, EventMessageSuccess>(
+      ctx.test1.client,
+      EVENT_MESSAGE,
+      {
+        message: message
+      }
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
+  });
+});
+
+describe("valid chat", () => {
+  it("conversation", async () => {
     const test2 = await createClient(ctx.address, ctx.io);
     const message = "c'est un super message!";
     const chatListener1 = onceAsync<EventMessageData>(ctx.test1.client, "message");
