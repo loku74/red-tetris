@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Gamepad2, Info } from "@lucide/svelte";
+  import { Gamepad2, Info, Radio } from "@lucide/svelte";
 
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
@@ -221,16 +221,26 @@
     {#if rooms.length === 0}
       <p class="text-white/50 text-center">No rooms available</p>
     {:else}
-      <ul class="space-y-2 px-4 max-h-128 overflow-y-auto w-80">
-        {#each rooms as { name, userCount, max } (name)}
+      <ul class="space-y-2 px-16 max-h-128 overflow-y-auto w-full">
+        {#each rooms as room (room.name)}
           <li>
             <button
-              onclick={() => joinSelectedRoom(name)}
-              class="w-full text-left px-4 py-3 bg-dark-secondary hover:bg-dark-accent border border-border transition-colors duration-75 flex justify-between items-center"
+              disabled={room.playing}
+              onclick={() => joinSelectedRoom(room.name)}
+              class="w-full text-left px-4 py-3 bg-dark-secondary hover:bg-dark-accent border border-border transition-colors duration-75 flex justify-between items-center {room.playing
+                ? 'pointer-events-none opacity-50'
+                : ''}"
             >
-              <span>{name}</span>
-              <span class="{userCount === max ? 'text-red-400' : 'text-white/50'} text-sm">
-                {userCount}/{max}
+              <span class="overflow-hidden text-ellipsis">{room.name}</span>
+              {#if room.playing}
+                <span class="text-red-primary px-3">
+                  <Radio />
+                </span>
+              {/if}
+              <span
+                class="{room.userCount === room.max ? 'text-red-400' : 'text-white/50'} text-sm"
+              >
+                {room.userCount}/{room.max}
               </span>
             </button>
           </li>

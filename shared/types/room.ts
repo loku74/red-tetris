@@ -13,4 +13,5 @@ export type RoomListData = {
   name: string;
   userCount: number;
   max: number;
+  playing: boolean;
 };
