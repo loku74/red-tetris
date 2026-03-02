@@ -369,7 +369,7 @@
 
     <div class="flex justify-between gap-4">
       <label for="dynamic_clean">Dynamic clean</label>
-      <Checkbox id="dynamic_clean" checked={destructiblePenality} />
+      <Checkbox id="dynamic_clean" bind:checked={destructiblePenality} />
     </div>
   </div>
 </Dialog>
