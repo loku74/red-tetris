@@ -32,7 +32,9 @@ export class Game {
   }
 
   public checkFinished() {
-    if (this.getDeadPlayers().length === this.players.size) {
+    const offset = this.players.size === 1 ? 0 : 1;
+
+    if (this.getDeadPlayers().length + offset >= this.players.size) {
       this.ongoing = false;
     }
   }
