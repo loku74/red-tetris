@@ -1,4 +1,4 @@
-import { PieceColor, type RoomData, type UserColor } from "@app/shared";
+import { type GameSettings, PieceColor, type RoomData, type UserColor } from "@app/shared";
 
 import { ROOM_MAX_USERS } from "@app/constants/core";
 import { getRooms } from "@app/core/room";
@@ -103,7 +103,11 @@ export class Room {
     };
   }
 
-  public start() {
+  public start(settings?: GameSettings) {
     this.game = new Game(this.users);
+
+    if (settings) {
+      this.game.settings = settings;
+    }
   }
 }

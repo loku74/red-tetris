@@ -4,8 +4,7 @@ import type {
   EventWarmUpError,
   EventWarmUpPayload,
   EventWarmUpSuccess,
-  GameData,
-  GameSettings
+  GameData
 } from "@app/shared";
 import { EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
 
@@ -29,16 +28,11 @@ afterEach(async () => {
   await shutdownTestServer(ctx);
 });
 
-const GameSettings: GameSettings = {
-  tick: 300
-};
-
 describe("invalid warm-up", () => {
   it("not in a room", async () => {
     await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
       ctx.socket1.client,
-      EVENT_WARMUP_START,
-      GameSettings
+      EVENT_WARMUP_START
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -50,8 +44,7 @@ describe("invalid warm-up", () => {
 
     await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
       ctx.socket1.client,
-      EVENT_WARMUP_START,
-      GameSettings
+      EVENT_WARMUP_START
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -63,8 +56,7 @@ it("valid warm-up", async () => {
 
   await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
     ctx.socket1.client,
-    EVENT_WARMUP_START,
-    GameSettings
+    EVENT_WARMUP_START
   ).then((response) => {
     expect(response.success).toBe(true);
   });

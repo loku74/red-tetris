@@ -7,8 +7,7 @@ import {
   EVENT_GAME_SPECTRUM,
   EVENT_ROOM_UPDATE,
   EVENT_WARMUP_FINISH,
-  EVENT_WARMUP_INFO,
-  type GameSettings
+  EVENT_WARMUP_INFO
 } from "@app/shared";
 
 import { GAME_START_DELAY } from "@app/constants/core";
@@ -17,7 +16,7 @@ import type { User } from "@app/objects/User";
 import type { AppServer } from "@app/types/socket";
 import { sleep } from "@app/utils/sleep";
 
-export async function gameLoop(io: AppServer, room: Room, settings: GameSettings) {
+export async function gameLoop(io: AppServer, room: Room) {
   const game = room.game;
   if (!game) throw new Error("Game not prepared!");
 
@@ -40,7 +39,7 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
         } else {
           player.attachCurrentPiece(game);
         }
-        const nb = player.board.cleanLines();
+        const nb = player.board.cleanLines(game.settings.destructiblePenality);
         if (nb > 0) {
           game.players.forEach((p) => {
             if (p != player) {
@@ -60,7 +59,7 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
       io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums(id));
     });
     game.checkFinished();
-    await sleep(settings.tick);
+    await sleep(game.settings.tick);
   }
 
   io.to(room.name).emit(EVENT_GAME_FINISH);
@@ -68,7 +67,7 @@ export async function gameLoop(io: AppServer, room: Room, settings: GameSettings
   io.to(room.name).emit(EVENT_ROOM_UPDATE, room.asInfo());
 }
 
-export async function warmUpLoop(io: AppServer, user: User, settings: GameSettings) {
+export async function warmUpLoop(io: AppServer, user: User) {
   const game = user.warmUp;
   if (!game) throw new Error("Game not prepared!");
 
@@ -76,14 +75,14 @@ export async function warmUpLoop(io: AppServer, user: User, settings: GameSettin
   io.to(user.id).emit(EVENT_WARMUP_INFO, game.getGameInfo(user.id));
 
   while (game.ongoing) {
-    await sleep(settings.tick);
+    await sleep(game.settings.tick);
     game.players.forEach((player, id) => {
       if (player.isNextPositionValid()) {
         player.actualPiece.moveDown();
       } else {
         player.attachCurrentPiece(game);
       }
-      player.board.cleanLines();
+      player.board.cleanLines(game.settings.destructiblePenality);
       player.checkLost();
 
       io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));

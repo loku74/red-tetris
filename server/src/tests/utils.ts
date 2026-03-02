@@ -13,7 +13,6 @@ import type {
   EventWarmUpError,
   EventWarmUpPayload,
   EventWarmUpSuccess,
-  GameSettings,
   SocketResponse
 } from "@app/shared";
 import { EVENT_GAME_START, EVENT_JOIN_ROOM, EVENT_WARMUP_START } from "@app/shared";
@@ -127,9 +126,6 @@ export async function testJoinRoom(
 }
 
 export async function testStartWarmup(test: TestSocket): Promise<{ game: Game; player: Player }> {
-  const GameSettings: GameSettings = {
-    tick: 300
-  };
   const user = getUser(test.server.id);
 
   if (!user) {
@@ -137,8 +133,7 @@ export async function testStartWarmup(test: TestSocket): Promise<{ game: Game; p
   }
   await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
     test.client,
-    EVENT_WARMUP_START,
-    GameSettings
+    EVENT_WARMUP_START
   ).then(({ success }) => {
     expect(success).toBe(true);
   });
@@ -151,10 +146,6 @@ export async function testStartWarmup(test: TestSocket): Promise<{ game: Game; p
 }
 
 export async function testStartGame(test: TestSocket): Promise<{ game: Game; player: Player }> {
-  const GameSettings: GameSettings = {
-    tick: 300
-  };
-
   const room = getRoomBySocket(test.server);
   if (!room) {
     expect.fail("Room not defined!");
@@ -163,7 +154,7 @@ export async function testStartGame(test: TestSocket): Promise<{ game: Game; pla
   await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
     test.client,
     EVENT_GAME_START,
-    GameSettings
+    {}
   ).then(({ success }) => {
     expect(success).toBe(true);
   });

@@ -1,6 +1,11 @@
 import z from "zod";
 
-import { type EventStartPayload, GAME_MIN_PLAYERS, type GameSettings } from "@app/shared";
+import {
+  DEFAULT_GAME_SETTINGS,
+  type EventStartPayload,
+  GAME_MIN_PLAYERS,
+  type GameSettings
+} from "@app/shared";
 
 import {
   ERROR_GAME_NOT_ENOUGH_PLAYERS,
@@ -14,22 +19,25 @@ import { Room } from "@app/objects/Room";
 import type { ServerSocket } from "@app/types/socket";
 import type { ValidateError } from "@app/types/validate";
 
-import { formatSchemeError, tickValidation } from "./validation";
+import { destructiblePenalityValidation, formatSchemeError, tickValidation } from "./validation";
 
-const schema = z.object({
-  tick: tickValidation
-});
+const schema = z
+  .object({
+    tick: tickValidation,
+    destructiblePenality: destructiblePenalityValidation
+  })
+  .default(DEFAULT_GAME_SETTINGS);
 
 type ValidateStartSuccess = {
   status: true;
   room: Room;
-  GameSettings: GameSettings;
+  settings: GameSettings;
 };
 
 type ValideStartResult = ValidateStartSuccess | ValidateError;
 
 export function validateStart(socket: ServerSocket, payload: EventStartPayload): ValideStartResult {
-  const result = schema.safeParse(payload);
+  const result = schema.safeParse(payload.settings);
 
   if (!result.success) {
     return { status: false, error: formatSchemeError(result.error) };
@@ -51,9 +59,7 @@ export function validateStart(socket: ServerSocket, payload: EventStartPayload):
     return { status: false, error: { room: ERROR_GAME_NOT_ENOUGH_PLAYERS } };
   }
 
-  const GameSettings: GameSettings = {
-    tick: result.data.tick
-  };
+  const GameSettings: GameSettings = result.data;
 
-  return { status: true, room, GameSettings: GameSettings };
+  return { status: true, room, settings: GameSettings };
 }

@@ -1,6 +1,6 @@
 import type { GameSettings } from "../game";
 
-export type EventStartPayload = GameSettings;
+export type EventStartPayload = { settings?: GameSettings };
 
 export type EventStartSuccess = void;
 

@@ -21,6 +21,7 @@ export type PlayerInfo = {
 
 export type GameSettings = {
   tick: number;
+  destructiblePenality: boolean
 };
 
 export type Coordinate = [number, number]; // x, y;

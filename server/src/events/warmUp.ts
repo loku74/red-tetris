@@ -6,8 +6,8 @@ import { logger } from "@app/utils/log";
 import { validateWarmUp } from "@app/validate/warmUp";
 
 export function registerHandlers(io: AppServer, socket: ServerSocket) {
-  socket.on(EVENT_WARMUP_START, async (payload, callback) => {
-    const result = validateWarmUp(socket, payload);
+  socket.on(EVENT_WARMUP_START, async (callback) => {
+    const result = validateWarmUp(socket);
     if (!result.status) {
       callback({ success: false });
       return;
@@ -15,7 +15,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
 
     logger.info(`User ${result.current.name} (${result.current.id}) has started a warm-up`);
     await result.current.setWarmUp();
-    warmUpLoop(io, result.current, result.GameSettings);
+    warmUpLoop(io, result.current);
 
     callback({ success: true });
   });

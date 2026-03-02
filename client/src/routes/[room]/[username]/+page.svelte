@@ -40,6 +40,7 @@
     USERNAME_MAX_LENGTH
   } from "@app/shared";
 
+  import Checkbox from "$lib/components/Checkbox.svelte";
   import Dialog from "$lib/components/Dialog.svelte";
   import Board from "$lib/components/Game/Board.svelte";
   import BoardActions from "$lib/components/Game/BoardActions.svelte";
@@ -180,10 +181,7 @@
   let warmUp = $state(false);
 
   function emitStartWarmUp() {
-    const data: GameSettings = {
-      tick: GAME_TICK_DEFAULT
-    };
-    socket.emit(EVENT_WARMUP_START, data, (response) => {
+    socket.emit(EVENT_WARMUP_START, (response) => {
       if (response.success) {
         warmUp = true;
       }
@@ -202,10 +200,11 @@
 
   function emitStartGame() {
     const data: GameSettings = {
-      tick: gameTick * 100
+      tick: gameTick * 100,
+      destructiblePenality: destructiblePenality
     };
 
-    socket.emit(EVENT_GAME_START, data, () => {});
+    socket.emit(EVENT_GAME_START, { settings: data }, () => {});
   }
 
   function onSocketGameStart() {
@@ -227,7 +226,9 @@
 
   // settings
   let showSettings = $state(false);
+
   let gameTick = $state(GAME_TICK_DEFAULT / 100);
+  let destructiblePenality = $state(false);
 
   onMount(() => {
     if (!roomState.joined) joinRoom();
@@ -343,25 +344,32 @@
 <!-- settings dialog -->
 <Dialog
   icon={Settings}
-  confirm="exit"
+  confirm="ok"
   confirmCallback={() => (showSettings = false)}
   title="Game Settings"
   bind:open={showSettings}
 >
-  <div class="flex justify-between w-full px-16">
-    <div class="flex gap-4">
-      <label for="game_tick">Game tick</label>
-      <input
-        type="range"
-        class="accent-red-primary"
-        min={GAME_TICK_MIN / 100}
-        max={GAME_TICK_MAX / 100}
-        bind:value={gameTick}
-        name="game_tick"
-      />
+  <div class="flex flex-col px-16 gap-3">
+    <div class="flex justify-between gap-4">
+      <div class="flex gap-4">
+        <label for="game_tick">Game tick</label>
+        <input
+          type="range"
+          class="accent-red-primary"
+          min={GAME_TICK_MIN / 100}
+          max={GAME_TICK_MAX / 100}
+          bind:value={gameTick}
+          name="game_tick"
+        />
+      </div>
+      <span class="text-red-accent w-4">
+        {gameTick < 10 ? `0.${gameTick}` : gameTick / 10}
+      </span>
     </div>
-    <span class="text-red-accent w-4">
-      {gameTick < 10 ? `0.${gameTick}` : gameTick / 10}
-    </span>
+
+    <div class="flex justify-between gap-4">
+      <label for="dynamic_clean">Dynamic clean</label>
+      <Checkbox id="dynamic_clean" bind:checked={destructiblePenality} />
+    </div>
   </div>
 </Dialog>

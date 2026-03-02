@@ -46,3 +46,4 @@ export const messageValidation = z
 export const actionValidation = z.enum(GameActions);
 
 export const tickValidation = z.int().min(GAME_TICK_MIN).max(GAME_TICK_MAX);
+export const destructiblePenalityValidation = z.boolean();

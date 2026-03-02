@@ -1,11 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import type {
-  EventStartError,
-  EventStartPayload,
-  EventStartSuccess,
-  GameSettings
-} from "@app/shared";
+import type { EventStartError, EventStartPayload, EventStartSuccess } from "@app/shared";
 import { EVENT_GAME_START } from "@app/shared";
 
 import type { TestServerData } from "./types";
@@ -28,16 +23,12 @@ afterEach(async () => {
   await shutdownTestServer(ctx);
 });
 
-const GameSettings: GameSettings = {
-  tick: 300
-};
-
 describe("invalid start", () => {
   it("not in a room", async () => {
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.socket1.client,
       EVENT_GAME_START,
-      GameSettings
+      {}
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -50,7 +41,7 @@ describe("invalid start", () => {
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.socket1.client,
       EVENT_GAME_START,
-      GameSettings
+      {}
     ).then((response) => {
       expect(response.success).toBe(false);
     });
@@ -63,20 +54,19 @@ describe("invalid start", () => {
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.socket1.client,
       EVENT_GAME_START,
-      GameSettings
+      {}
     ).then((response) => {
       expect(response.success).toBe(false);
     });
   });
 
   it("alone in the room", async () => {
-    const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
-    room.start();
+    await testJoinRoom(ctx.socket1, "example", "user1");
 
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.socket1.client,
       EVENT_GAME_START,
-      GameSettings
+      {}
     ).then((response) => {
       expect(response.success).toBe(false);
     });

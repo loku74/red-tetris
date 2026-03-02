@@ -1,6 +1,4 @@
-import type { GameSettings } from "../game";
-
-export type EventWarmUpPayload = GameSettings;
+export type EventWarmUpPayload = void;
 
 export type EventWarmUpSuccess = void;
 
