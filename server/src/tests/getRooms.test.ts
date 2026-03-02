@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { EventGetRoomsError, EventGetRoomsPayload, EventGetRoomsSuccess } from "@app/shared";
-import { DEFAULT_GAME_SETTINGS, EVENT_GET_ROOMS } from "@app/shared";
+import { EVENT_GET_ROOMS } from "@app/shared";
 
 import { ROOM_MAX_USERS } from "@app/constants/core";
 
@@ -23,7 +23,7 @@ describe(EVENT_GET_ROOMS, () => {
     await testJoinRoom(ctx.socket1, "test", "user1");
     await testJoinRoom(ctx.socket2, "test2", "user2");
     const { room } = await testJoinRoom(ctx.socket3, "test2", "user3");
-    room.start(DEFAULT_GAME_SETTINGS);
+    room.start();
 
     await emitAsync<EventGetRoomsPayload, EventGetRoomsSuccess, EventGetRoomsError>(
       ctx.socket4.client,

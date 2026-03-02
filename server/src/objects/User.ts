@@ -25,6 +25,7 @@ export class User {
       }
     }
 
-    this.warmUp = new Game(new Map([[this.id, this]]), settings);
+    this.warmUp = new Game(new Map([[this.id, this]]));
+    this.warmUp.settings = settings;
   }
 }

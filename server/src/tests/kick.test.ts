@@ -7,7 +7,7 @@ import type {
   EventKickSuccess,
   RoomData
 } from "@app/shared";
-import { DEFAULT_GAME_SETTINGS, EVENT_KICK, EVENT_ROOM_UPDATE } from "@app/shared";
+import { EVENT_KICK, EVENT_ROOM_UPDATE } from "@app/shared";
 
 import { setUser } from "@app/core/user";
 
@@ -107,7 +107,7 @@ describe("invalid kick", () => {
 
   it("room already started", async () => {
     const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
-    room.start(DEFAULT_GAME_SETTINGS);
+    room.start();
 
     await emitAsync<EventKickPayload, EventKickSuccess, EventKickError>(
       ctx.socket1.client,

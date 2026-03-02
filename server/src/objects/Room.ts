@@ -103,7 +103,11 @@ export class Room {
     };
   }
 
-  public start(settings: GameSettings) {
-    this.game = new Game(this.users, settings);
+  public start(settings?: GameSettings) {
+    this.game = new Game(this.users);
+
+    if (settings) {
+      this.game.settings = settings;
+    }
   }
 }
