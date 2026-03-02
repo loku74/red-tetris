@@ -233,7 +233,7 @@
             >
               <span class="overflow-hidden text-ellipsis">{room.name}</span>
               {#if room.playing}
-                <span class="text-red-primary px-3">
+                <span class="text-red-primary ml-auto px-3">
                   <Radio />
                 </span>
               {/if}
