@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "vite
 
 import type { GameData } from "@app/shared";
 import {
-  EVENT_GAME_DEAD,
   BOARD_HEIGHT,
   BOARD_WIDTH,
+  EVENT_GAME_DEAD,
   EVENT_GAME_FINISH,
   EVENT_GAME_INFO,
   EVENT_GAME_PENALITY,
