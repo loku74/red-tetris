@@ -58,7 +58,7 @@ export class Board {
     });
   }
 
-  public cleanLines(): number {
+  public cleanLines(destructible: boolean): number {
     const size = this.completedRowIndices.size;
 
     this.completedRowIndices.forEach((row_i) => {
@@ -66,6 +66,10 @@ export class Board {
       this.matrix.unshift(Array(BOARD_WIDTH).fill(PieceColor.EMPTY));
     });
     this.completedRowIndices.clear();
+
+    if (destructible) {
+      this.removeRestrictedLines(size);
+    }
     return size;
   }
 
@@ -78,6 +82,16 @@ export class Board {
         row[col] = PieceColor.GREY;
       });
       this.playableLines--;
+    }
+  }
+
+  public removeRestrictedLines(nb: number) {
+    for (let i = 0; i < nb - 1; i++) {
+      if (this.playableLines === BOARD_HEIGHT - 1) return;
+
+      this.matrix.splice(BOARD_HEIGHT - 1, 1);
+      this.matrix.unshift(Array(BOARD_WIDTH).fill(PieceColor.EMPTY));
+      this.playableLines++;
     }
   }
 }

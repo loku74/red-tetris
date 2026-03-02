@@ -10,7 +10,7 @@ import type { ValidateError } from "@app/types/validate";
 type ValidateWarmUpSuccess = {
   status: true;
   current: User;
-  GameSettings: GameSettings;
+  settings: GameSettings;
 };
 
 type ValidateWarmUpResult = ValidateWarmUpSuccess | ValidateError;
@@ -26,5 +26,5 @@ export function validateWarmUp(socket: ServerSocket): ValidateWarmUpResult {
     return { status: false, error: { room: ERROR_PLAYING_ROOM } };
   }
 
-  return { status: true, current: current, GameSettings: DEFAULT_GAME_SETTINGS };
+  return { status: true, current: current, settings: DEFAULT_GAME_SETTINGS };
 }

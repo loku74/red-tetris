@@ -1,4 +1,4 @@
-import type { GameData, PlayerInfo } from "@app/shared";
+import type { GameData, GameSettings, PlayerInfo } from "@app/shared";
 
 import { placePieceOnMatrix } from "@app/core/matrix";
 import { createBagOfPieces } from "@app/core/piece";
@@ -11,13 +11,15 @@ export class Game {
   public players: Map<string, Player> = new Map();
   public pieces: Array<Piece> = [];
   public ongoing: boolean = false;
+  public settings: GameSettings;
 
-  constructor(users: Map<string, User>) {
+  constructor(users: Map<string, User>, settings: GameSettings) {
     const initPiece = this.nextPiece(0);
 
     users.forEach((user, id) => {
       this.players.set(id, new Player(user, user.color, initPiece));
     });
+    this.settings = settings;
   }
 
   public getPlayer(id: string): Player {

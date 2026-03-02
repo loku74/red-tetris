@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { EventJoinRoomError, EventJoinRoomSuccess, RoomData } from "@app/shared";
 import {
+  DEFAULT_GAME_SETTINGS,
   EVENT_JOIN_ROOM,
   EVENT_ROOM_UPDATE,
   type EventJoinRoomPayload,
@@ -133,7 +134,7 @@ describe("invalid join", () => {
 
   it("room already started", async () => {
     setRoom("example", new Room("example", user));
-    getRoom("example")?.start();
+    getRoom("example")?.start(DEFAULT_GAME_SETTINGS);
 
     await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
       ctx.socket1.client,

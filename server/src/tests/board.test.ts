@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { PieceColor, PieceShape } from "@app/shared";
+import { DEFAULT_GAME_SETTINGS, PieceColor, PieceShape } from "@app/shared";
 
 import { Board } from "@app/objects/Board";
 import { Piece } from "@app/objects/Piece";
@@ -128,7 +128,7 @@ it("clear lines", () => {
   board.place(new Piece(PieceShape.I, 10, 5));
   board.place(new Piece(PieceShape.S, 11, 8));
 
-  expect(board.cleanLines()).toEqual(2);
+  expect(board.cleanLines(DEFAULT_GAME_SETTINGS.destructiblePenality)).toEqual(2);
 
   // check if the first line have dropped twice
   expect(board.matrix[2]?.slice(0, 4)).toEqual([

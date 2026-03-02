@@ -1,11 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
-import type {
-  EventStartError,
-  EventStartPayload,
-  EventStartSuccess,
-  GameData,
-} from "@app/shared";
+import type { EventStartError, EventStartPayload, EventStartSuccess, GameData } from "@app/shared";
 import {
   DEFAULT_GAME_SETTINGS,
   EVENT_GAME_DEAD,

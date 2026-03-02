@@ -14,8 +14,8 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
     }
 
     logger.info(`User ${result.current.name} (${result.current.id}) has started a warm-up`);
-    await result.current.setWarmUp();
-    warmUpLoop(io, result.current, result.GameSettings);
+    await result.current.setWarmUp(result.settings);
+    warmUpLoop(io, result.current);
 
     callback({ success: true });
   });

@@ -15,7 +15,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
     }
 
     const room = result.room;
-    room.start();
+    room.start(result.settings);
 
     await Promise.all(
       room.users.values().map(async (user) => {
@@ -29,7 +29,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
     );
 
     io.to(result.room.name).emit(EVENT_GAME_START);
-    gameLoop(io, room, result.GameSettings);
+    gameLoop(io, room);
     callback({ success: true });
   });
 }

@@ -49,7 +49,7 @@ describe("invalid start", () => {
 
   it("already started", async () => {
     const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
-    room.start();
+    room.start(DEFAULT_GAME_SETTINGS);
 
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.socket1.client,
@@ -61,8 +61,7 @@ describe("invalid start", () => {
   });
 
   it("alone in the room", async () => {
-    const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
-    room.start();
+    await testJoinRoom(ctx.socket1, "example", "user1");
 
     await emitAsync<EventStartPayload, EventStartSuccess, EventStartError>(
       ctx.socket1.client,

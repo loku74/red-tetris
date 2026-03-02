@@ -24,7 +24,7 @@ const schema = z.object({
 type ValidateStartSuccess = {
   status: true;
   room: Room;
-  GameSettings: GameSettings;
+  settings: GameSettings;
 };
 
 type ValideStartResult = ValidateStartSuccess | ValidateError;
@@ -54,5 +54,5 @@ export function validateStart(socket: ServerSocket, payload: EventStartPayload):
 
   const GameSettings: GameSettings = result.data;
 
-  return { status: true, room, GameSettings: GameSettings };
+  return { status: true, room, settings: GameSettings };
 }

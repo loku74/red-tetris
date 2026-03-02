@@ -1,4 +1,4 @@
-import { PieceColor, type UserColor } from "@app/shared";
+import { type GameSettings, PieceColor, type UserColor } from "@app/shared";
 
 import { WARMUP_CHECK_DELAY } from "@app/constants/core";
 import type { ServerSocket } from "@app/types/socket";
@@ -16,7 +16,7 @@ export class User {
     public socket: ServerSocket
   ) {}
 
-  public async setWarmUp() {
+  public async setWarmUp(settings: GameSettings) {
     if (this.warmUp) {
       this.warmUp.ongoing = false;
 
@@ -25,6 +25,6 @@ export class User {
       }
     }
 
-    this.warmUp = new Game(new Map([[this.id, this]]));
+    this.warmUp = new Game(new Map([[this.id, this]]), settings);
   }
 }

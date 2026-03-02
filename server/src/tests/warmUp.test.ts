@@ -6,7 +6,7 @@ import type {
   EventWarmUpSuccess,
   GameData
 } from "@app/shared";
-import { EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
+import { DEFAULT_GAME_SETTINGS, EVENT_WARMUP_INFO, EVENT_WARMUP_START } from "@app/shared";
 
 import type { TestServerData } from "./types";
 import {
@@ -40,7 +40,7 @@ describe("invalid warm-up", () => {
 
   it("user room is playing", async () => {
     const { room } = await testJoinRoom(ctx.socket1, "example", "user1");
-    room.start();
+    room.start(DEFAULT_GAME_SETTINGS);
 
     await emitAsync<EventWarmUpPayload, EventWarmUpSuccess, EventWarmUpError>(
       ctx.socket1.client,

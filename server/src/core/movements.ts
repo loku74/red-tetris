@@ -61,7 +61,7 @@ export function applyMovement(game: Game, player: Player, key: keyof typeof acti
     if (key === GameActions.SPACE) {
       player.attachCurrentPiece(game);
 
-      return player.board.cleanLines();
+      return player.board.cleanLines(game.settings.destructiblePenality);
     }
   }
   return 0;
