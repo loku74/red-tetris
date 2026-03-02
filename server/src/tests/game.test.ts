@@ -8,6 +8,7 @@ import type {
   GameSettings
 } from "@app/shared";
 import {
+  EVENT_GAME_DEAD,
   EVENT_GAME_FINISH,
   EVENT_GAME_INFO,
   EVENT_GAME_PENALITY,
@@ -158,9 +159,13 @@ describe("game loop helpers", () => {
 
     const listener1 = onceAsync<undefined>(test1.client, EVENT_GAME_FINISH);
     const listener2 = onceAsync<undefined>(test2.client, EVENT_GAME_FINISH);
+    const listener3 = onceAsync<undefined>(test2.client, EVENT_GAME_DEAD);
+    const listener4 = onceAsync<undefined>(test2.client, EVENT_GAME_DEAD);
 
     // instant death
     await passGameCountdown();
+    await listener3;
+    await listener4;
 
     expect(player1.alive).toBe(false);
     expect(player2.alive).toBe(false);

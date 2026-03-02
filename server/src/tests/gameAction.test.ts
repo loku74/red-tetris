@@ -50,6 +50,29 @@ describe("wrong actions", () => {
       expect(response.success).toBe(false);
     });
   });
+
+  it("dead player", async () => {
+    await testJoinRoom(ctx.socket1, "example", "test");
+    await testJoinRoom(ctx.socket2, "example", "test2");
+
+    vi.useFakeTimers();
+    const { player, game } = await testStartGame(ctx.socket1);
+
+    await passGameCountdown();
+    expect(game.ongoing).toBe(true);
+    expect(player.alive).toBe(true);
+
+    player.alive = false;
+
+    await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
+      ctx.socket1.client,
+      EVENT_GAME_ACTION,
+      { action: GameActions.RIGHT }
+    ).then((response) => {
+      expect(response.success).toBe(false);
+    });
+    vi.useRealTimers();
+  });
 });
 
 it("game perform action", async () => {
