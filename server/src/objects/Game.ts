@@ -47,7 +47,7 @@ export class Game {
       });
       return this.nextPiece(i);
     } else {
-      return piece;
+      return piece.clone();
     }
   }
 
