@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GameData } from "@app/shared";
+  import type { GameData, UserColor } from "@app/shared";
   import { BOARD_HEIGHT, BOARD_WIDTH, PIECE_COLORS, PieceColor } from "@app/shared";
 
   import Piece from "$lib/components/Piece.svelte";
@@ -7,11 +7,13 @@
   let {
     matrix,
     shadowPiece,
-    pieceSize = 32
+    pieceSize = 32,
+    spectrumColor
   }: {
     matrix?: GameData["matrix"];
     shadowPiece?: GameData["shadowPiece"];
     pieceSize?: number;
+    spectrumColor?: UserColor;
   } = $props();
 
   function isShadowCell(
@@ -35,7 +37,7 @@
     <div class="flex">
       {#each row as cell, index_cell (index_cell)}
         {#if cell !== PieceColor.EMPTY}
-          <Piece color={cell} size={pieceSize} />
+          <Piece color={cell} size={pieceSize} {spectrumColor} />
         {:else if shadowPiece && isShadowCell(shadowPiece, index_row, index_cell)}
           <!-- Shadow piece preview -->
           <div class="relative">
@@ -46,7 +48,7 @@
             ></div>
           </div>
         {:else}
-          <Piece color={cell} size={pieceSize} />
+          <Piece color={cell} size={pieceSize} {spectrumColor} />
         {/if}
       {/each}
     </div>

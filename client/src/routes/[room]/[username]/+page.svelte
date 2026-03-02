@@ -224,12 +224,13 @@
   function onSocketGameFinish() {
     game = false;
     gameData = undefined;
+    spectrums = undefined;
   }
 
   // spectrum
-  let spectrums = $state<PlayerInfo[]>([]);
+  let spectrums = $state<PlayerInfo[]>();
   function onSocketGameSpectrum(data: PlayerInfo[]) {
-    spectrums = data;
+    spectrums = data.filter((spectrum) => spectrum.color !== roomState.color);
   }
 
   // settings
@@ -300,10 +301,10 @@
       {/if}
 
       {#if game && spectrums}
-        <div class="absolute top-0 -left-32 space-y-8">
+        <div class="absolute top-0 -left-16 space-y-8">
           {#each spectrums as spectrum (spectrum.name)}
-            <div>
-              <Board matrix={spectrum.matrix} pieceSize={4} />
+            <div class="border border-border/42">
+              <Board matrix={spectrum.matrix} pieceSize={4} spectrumColor={spectrum.color} />
             </div>
           {/each}
         </div>
