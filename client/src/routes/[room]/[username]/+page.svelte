@@ -270,14 +270,10 @@
     <LobbyCheck bind:this={lobbyCheck} />
 
     <!-- connected -->
-  {:else if roomState.data}
+  {:else}
     {#if !game}
       <Lobby
         {userHexColor}
-        host={roomState.data.host}
-        players={roomState.data.players}
-        userCount={roomState.data.userCount}
-        userMax={roomState.data.max}
         bind:showLeaveDialog
         bind:showSettings
         {handleKickUser}

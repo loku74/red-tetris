@@ -6,20 +6,18 @@
   import Piece from "$lib/components/Piece.svelte";
   import UserColorPicker from "$lib/components/UserColorPicker.svelte";
 
+  import { roomState } from "$lib/state/room.svelte";
+
   import { clickOutside } from "$lib/utils/clickOutside";
   import { isCurrentUser, isCurrentUserHost } from "$lib/utils/isCurrentUser";
 
   let {
-    players,
     userHexColor,
-    host,
     showColorChoice = $bindable(false),
     handleKickUser,
     handleColorChange
   }: {
-    players: UserData[];
     userHexColor: string;
-    host: string;
     showColorChoice: boolean;
     handleKickUser: (user: UserData) => void;
     handleColorChange: (color: UserData["color"]) => void;
@@ -27,7 +25,7 @@
 </script>
 
 <ul class="py-6">
-  {#each players as player, index (player.color)}
+  {#each roomState.data!.players as player, index (player.color)}
     <li
       class="p-2 text-lg flex items-center gap-2 group/list border-l-2 border-l-transparent
         {index % 2 === 0 ? 'bg-dark-accent' : ''}"
@@ -50,7 +48,7 @@
       <span class="overflow-hidden text-ellipsis">
         {player.username}
       </span>
-      {#if host === player.username}
+      {#if roomState.data!.host === player.username}
         <Crown color="#FFC832" />
       {/if}
 

@@ -13,10 +13,6 @@
 
   let {
     userHexColor,
-    host,
-    players,
-    userCount,
-    userMax,
     showLeaveDialog = $bindable(false),
     showSettings = $bindable(false),
     handleKickUser,
@@ -27,10 +23,6 @@
     onSendMessage
   }: {
     userHexColor: string;
-    host: string;
-    players: UserData[];
-    userCount: number;
-    userMax: number;
     showLeaveDialog: boolean;
     showSettings: boolean;
     handleKickUser: (user: UserData) => void;
@@ -61,68 +53,63 @@
   }
 </script>
 
-<div class="h-[640px] flex">
-  <div class="p-4 bg-dark-secondary border border-border w-[360px] h-full flex flex-col">
-    <h1
-      class="text-center text-red-primary overflow-hidden text-ellipsis text-3xl relative
-        {isCurrentUserHost() ? 'px-8' : ''}"
-    >
-      {roomState.room}
-      {#if isCurrentUserHost()}
-        <button
-          onclick={() => (showSettings = true)}
-          class="absolute right-0 top-1/2 -translate-y-1/2 text-white/42 hover:text-white/74 hover:bg-dark-accent duration-100 p-1 rounded-lg"
-        >
-          <Settings />
-        </button>
-      {/if}
-    </h1>
-    <span class="py-2 text-center text-xl">
-      {userCount} / {userMax}
-    </span>
+{#if roomState.data}
+  <div class="h-[640px] flex">
+    <div class="p-4 bg-dark-secondary border border-border w-[360px] h-full flex flex-col">
+      <h1
+        class="text-center text-red-primary overflow-hidden text-ellipsis text-3xl relative
+          {isCurrentUserHost() ? 'px-8' : ''}"
+      >
+        {roomState.room}
+        {#if isCurrentUserHost()}
+          <button
+            onclick={() => (showSettings = true)}
+            class="absolute right-0 top-1/2 -translate-y-1/2 text-white/42 hover:text-white/74 hover:bg-dark-accent duration-100 p-1 rounded-lg"
+          >
+            <Settings />
+          </button>
+        {/if}
+      </h1>
+      <span class="py-2 text-center text-xl">
+        {roomState.data.userCount} / {roomState.data.max}
+      </span>
 
-    <!-- PLAYER LIST -->
-    <PlayerList
-      {players}
-      {userHexColor}
-      {host}
-      bind:showColorChoice
-      {handleKickUser}
-      {handleColorChange}
-    />
-    <div class="mt-auto space-y-4">
-      {#if isCurrentUserHost()}
-        <button
-          onclick={() => (showLeaveDialog = true)}
-          class="btn btn-secondary text-lg py-1.5 w-full"
-        >
-          leave room
-        </button>
-      {:else}
-        <p class="text-center text-white/70">Waiting for the host to start...</p>
-      {/if}
-      {#if isCurrentUserHost()}
-        <button
-          disabled={players.length < GAME_MIN_PLAYERS}
-          onclick={startGame}
-          class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
-          style="--btn-depth: 6px;"
-        >
-          START GAME
-        </button>
-      {:else}
-        <button
-          onclick={() => (showLeaveDialog = true)}
-          class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
-          style="--btn-depth: 6px;"
-        >
-          EXIT ROOM
-          <LogOut size={32} />
-        </button>
-      {/if}
+      <!-- PLAYER LIST -->
+      <PlayerList {userHexColor} bind:showColorChoice {handleKickUser} {handleColorChange} />
+      <div class="mt-auto space-y-4">
+        {#if isCurrentUserHost()}
+          <button
+            onclick={() => (showLeaveDialog = true)}
+            class="btn btn-secondary text-lg py-1.5 w-full"
+          >
+            leave room
+          </button>
+        {:else}
+          <p class="text-center text-white/70">Waiting for the host to start...</p>
+        {/if}
+        {#if isCurrentUserHost()}
+          <button
+            disabled={roomState.data.players.length < GAME_MIN_PLAYERS}
+            onclick={startGame}
+            class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
+            style="--btn-depth: 6px;"
+          >
+            START GAME
+          </button>
+        {:else}
+          <button
+            onclick={() => (showLeaveDialog = true)}
+            class="btn btn-primary w-full text-3xl py-3 flex items-center justify-center gap-4"
+            style="--btn-depth: 6px;"
+          >
+            EXIT ROOM
+            <LogOut size={32} />
+          </button>
+        {/if}
+      </div>
     </div>
-  </div>
 
-  <!-- message -->
-  <MessageList {messages} bind:message bind:messageInputFocused {sendMessage} />
-</div>
+    <!-- message -->
+    <MessageList {messages} bind:message bind:messageInputFocused {sendMessage} />
+  </div>
+{/if}
