@@ -90,9 +90,7 @@ export async function warmUpLoop(io: AppServer, user: User) {
         }
         const nbCleanedLines = player.board.cleanLines(game.settings.destructiblePenality);
         const score = SCORE_DICT[nbCleanedLines];
-        if (score) {
-          player.score += score;
-        }
+        player.score += score || 0;
       });
 
       player.checkLost();
