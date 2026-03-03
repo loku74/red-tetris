@@ -22,6 +22,7 @@ export * from "./types/piece";
 export * from "./types/game";
 
 // [ CONSTANTS ]
+export * from "./constants/core";
 export * from "./constants/events";
 export * from "./constants/pieceColors";
 export * from "./constants/regex";

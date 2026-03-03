@@ -6,8 +6,6 @@ export const ROOM_MAX = Number(process.env.ROOM_MAX) || 1024;
 export const SERVER_PORT = Number(process.env.SERVER_PORT) || 8080;
 
 // game
-export const BOARD_WIDTH = 10;
-export const BOARD_HEIGHT = 20;
 export const GAME_START_DELAY = 3000;
 export const MAX_ROTATIONS = 4;
 

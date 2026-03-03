@@ -56,8 +56,10 @@ export async function gameLoop(io: AppServer, room: Room) {
         }
       }
 
-      io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums(id));
+      io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
     });
+
+    io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums());
     game.checkFinished();
     await sleep(game.settings.tick);
   }

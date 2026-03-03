@@ -22,7 +22,7 @@ export class Game {
     const initPiece = this.nextPiece(0);
 
     users.forEach((user, id) => {
-      this.players.set(id, new Player(user, user.color, initPiece));
+      this.players.set(id, new Player(user, initPiece));
     });
   }
 
@@ -87,10 +87,8 @@ export class Game {
     };
   }
 
-  public getGameSpectrums(id: string): PlayerInfo[] {
-    const currentPlayer = this.getPlayer(id);
-
-    const players = this.players.values().filter((p) => currentPlayer !== p);
+  public getGameSpectrums(): PlayerInfo[] {
+    const players = this.players.values();
 
     return players.map((p) => p.getInfo()).toArray();
   }

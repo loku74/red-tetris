@@ -64,7 +64,7 @@
         {#if isCurrentUserHost()}
           <button
             onclick={() => (showSettings = true)}
-            class="absolute right-0 top-1/2 -translate-y-1/2 text-white/42 hover:text-white/74 hover:bg-dark-accent duration-100 p-1 rounded-lg"
+            class="absolute right-0 top-1/2 -translate-y-1/2 text-white/42 hover:text-white/74 hover:bg-dark-accent duration-100 p-1 rounded-xs"
           >
             <Settings />
           </button>

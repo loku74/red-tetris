@@ -30,7 +30,7 @@
   {#each players as player, index (player.color)}
     <li
       class="p-2 text-lg flex items-center gap-2 group/list border-l-2 border-l-transparent
-        {index % 2 === 0 ? 'bg-dark-accent' : ''}"
+        {index % 2 === 0 ? 'bg-dark-accent/42' : ''}"
       style={isCurrentUser(player.username)
         ? `border-color: ${userHexColor}; color: ${userHexColor};`
         : "border-color: transparent;"}

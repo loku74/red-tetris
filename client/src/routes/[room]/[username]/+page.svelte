@@ -14,6 +14,7 @@
     EventMessagePayload,
     GameData,
     GameSettings,
+    PlayerInfo,
     UserColor,
     UserData
   } from "@app/shared";
@@ -23,6 +24,7 @@
     EVENT_GAME_COUNTDOWN,
     EVENT_GAME_FINISH,
     EVENT_GAME_INFO,
+    EVENT_GAME_SPECTRUM,
     EVENT_GAME_START,
     EVENT_JOIN_ROOM,
     EVENT_KICK,
@@ -222,6 +224,13 @@
   function onSocketGameFinish() {
     game = false;
     gameData = undefined;
+    spectrums = undefined;
+  }
+
+  // spectrum
+  let spectrums = $state<PlayerInfo[]>();
+  function onSocketGameSpectrum(data: PlayerInfo[]) {
+    spectrums = data.filter((spectrum) => spectrum.color !== roomState.color);
   }
 
   // settings
@@ -241,6 +250,7 @@
     socket.on(EVENT_GAME_INFO, onSocketGameInfo);
     socket.on(EVENT_GAME_COUNTDOWN, onSocketGameCountdown);
     socket.on(EVENT_GAME_FINISH, onSocketGameFinish);
+    socket.on(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
 
     return () => {
       socket.off(EVENT_KICK, onSocketKick);
@@ -251,6 +261,7 @@
       socket.off(EVENT_GAME_INFO, onSocketGameInfo);
       socket.off(EVENT_GAME_FINISH, onSocketGameFinish);
       socket.off(EVENT_GAME_COUNTDOWN, onSocketGameCountdown);
+      socket.off(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
 
       leaveRoom();
     };
@@ -282,11 +293,21 @@
     <!-- GAME & WARMUP-->
     <div class="relative border-4 border-red-secondary">
       <!-- BOARD -->
-      <Board {gameData} />
+      <Board matrix={gameData?.matrix} shadowPiece={gameData?.shadowPiece} />
 
       {#if gameData}
         <Score score={gameData.score} />
         <NextPieces nextPieces={gameData.nextPieces} />
+      {/if}
+
+      {#if game && spectrums}
+        <div class="absolute top-0 -left-32 space-y-8">
+          {#each spectrums as spectrum (spectrum.name)}
+            <div class="border border-border/42">
+              <Board matrix={spectrum.matrix} pieceSize={8} spectrumColor={spectrum.color} />
+            </div>
+          {/each}
+        </div>
       {/if}
 
       <!-- BOARD BOTTOM INFO / ACTION -->
@@ -349,27 +370,30 @@
   title="Game Settings"
   bind:open={showSettings}
 >
-  <div class="flex flex-col px-16 gap-3">
-    <div class="flex justify-between gap-4">
+  <div class="flex flex-col px-16 py-4 gap-3 w-full">
+    <div class="flex justify-between gap-8">
+      <label for="game_tick" class="text-nowrap">Game tick</label>
       <div class="flex gap-4">
-        <label for="game_tick">Game tick</label>
         <input
+          id="game_tick"
+          name="game_tick"
           type="range"
-          class="accent-red-primary"
+          class="accent-red-primary w-32"
           min={GAME_TICK_MIN / 100}
           max={GAME_TICK_MAX / 100}
           bind:value={gameTick}
-          name="game_tick"
         />
+        <span class="text-red-accent w-8 text-center">
+          {gameTick < 10 ? `0.${gameTick}` : gameTick / 10}
+        </span>
       </div>
-      <span class="text-red-accent w-4">
-        {gameTick < 10 ? `0.${gameTick}` : gameTick / 10}
-      </span>
     </div>
 
-    <div class="flex justify-between gap-4">
+    <div class="flex justify-between">
       <label for="dynamic_clean">Dynamic clean</label>
-      <Checkbox id="dynamic_clean" bind:checked={destructiblePenality} />
+      <div class="w-8 flex items-center justify-center">
+        <Checkbox id="dynamic_clean" bind:checked={destructiblePenality} />
+      </div>
     </div>
   </div>
 </Dialog>

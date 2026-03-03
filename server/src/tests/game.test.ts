@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "vite
 
 import type { GameData } from "@app/shared";
 import {
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
   EVENT_GAME_DEAD,
   EVENT_GAME_FINISH,
   EVENT_GAME_INFO,
@@ -10,7 +12,6 @@ import {
   PieceShape
 } from "@app/shared";
 
-import { BOARD_HEIGHT, BOARD_WIDTH } from "@app/constants/core";
 import type { Game } from "@app/objects/Game";
 import { Piece } from "@app/objects/Piece";
 import { Player } from "@app/objects/Player";

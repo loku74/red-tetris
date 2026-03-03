@@ -1,6 +1,5 @@
-import { PieceColor } from "@app/shared";
+import { BOARD_HEIGHT, BOARD_WIDTH, PieceColor } from "@app/shared";
 
-import { BOARD_HEIGHT, BOARD_WIDTH } from "@app/constants/core";
 import { placePieceOnMatrix } from "@app/core/matrix";
 
 import { Piece } from "./Piece";

@@ -7,8 +7,8 @@
 <button
   onclick={() => (checked = !checked)}
   {id}
-  class="w-5 h-5 rounded border duration-75 grid
-  {checked ? 'border-red-accent/64' : 'border-border/64 hover:border-border'}"
+  class="w-5 h-5 rounded-xs border duration-75 grid hover:brightness-125
+  {checked ? 'border-red-accent' : ' border-border'}"
 >
   {#if checked}
     <Check class="text-red-accent w-4 h-4 place-self-center pt-0.5" />
