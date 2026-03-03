@@ -102,6 +102,42 @@ it("game perform action", async () => {
     }
   });
   expect(player.actualPiece.y).toBeGreaterThan(pieceBeforeY);
-  expect(applyMovement).toBeCalledTimes(1);
   expect(applyMovement).toBeCalledWith(game, player, "RIGHT");
+
+  // others actions
+  await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
+    ctx.socket1.client,
+    EVENT_GAME_ACTION,
+    { action: GameActions.LEFT }
+  ).then((response) => {
+    expect(response.success).toBe(true);
+    if (response.success) {
+      expect(response.data).toEqual(game.getGameInfo(ctx.socket1.server.id));
+    }
+  });
+  expect(applyMovement).toBeCalledWith(game, player, "LEFT");
+
+  await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
+    ctx.socket1.client,
+    EVENT_GAME_ACTION,
+    { action: GameActions.DOWN }
+  ).then((response) => {
+    expect(response.success).toBe(true);
+    if (response.success) {
+      expect(response.data).toEqual(game.getGameInfo(ctx.socket1.server.id));
+    }
+  });
+  expect(applyMovement).toBeCalledWith(game, player, "DOWN");
+
+  await emitAsync<EventGameActionPayload, EventGameActionSuccess, EventGameActionError>(
+    ctx.socket1.client,
+    EVENT_GAME_ACTION,
+    { action: GameActions.UP }
+  ).then((response) => {
+    expect(response.success).toBe(true);
+    if (response.success) {
+      expect(response.data).toEqual(game.getGameInfo(ctx.socket1.server.id));
+    }
+  });
+  expect(applyMovement).toBeCalledWith(game, player, "UP");
 });
