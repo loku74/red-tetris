@@ -81,13 +81,15 @@ export async function warmUpLoop(io: AppServer, user: User) {
 
   while (game.ongoing) {
     await sleep(game.settings.tick);
-    game.players.forEach((player, id) => {
-      if (player.isNextPositionValid()) {
-        player.actualPiece.moveDown();
-      } else {
-        player.attachCurrentPiece(game);
-      }
-      player.board.cleanLines(game.settings.destructiblePenality);
+    game.players.forEach(async (player, id) => {
+      await player.mutex.runExclusive(() => {
+        if (player.isNextPositionValid()) {
+          player.actualPiece.moveDown();
+        } else {
+          player.attachCurrentPiece(game);
+        }
+        player.board.cleanLines(game.settings.destructiblePenality);
+      })
       player.checkLost();
 
       io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
