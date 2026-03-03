@@ -7,9 +7,9 @@
     "build": "bun build --target=node --outdir build/ app.ts",
     "prod": "node build/app.js",
     "dev": "bun --hot app.ts",
-    "format": "bunx prettier . --write",
-    "lint": "bunx eslint . --fix && bunx tsc --noEmit",
-    "coverage": "bunx vitest run --coverage"
+    "format": "prettier . --write",
+    "lint": "eslint . --fix && tsc --noEmit",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

@@ -2,7 +2,6 @@ import type { Express } from "express";
 import express from "express";
 import { createServer } from "node:http";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { Server as IoServer } from "socket.io";
 
 import { SERVER_HOST, SERVER_PORT } from "@app/constants/core";
@@ -62,7 +61,7 @@ export function init(): ServerData {
 if (import.meta.main) {
   const struct = init();
 
-  struct.server.listen(SERVER_PORT, () => {
+  struct.server.listen(SERVER_PORT, SERVER_HOST, () => {
     logger.info(`Server running at http://${SERVER_HOST}:${SERVER_PORT}`);
   });
 }
