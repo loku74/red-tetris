@@ -35,13 +35,11 @@ export async function gameLoop(io: AppServer, room: Room) {
     game.players.forEach(async (player, id) => {
       if (player.alive) {
         await player.mutex.runExclusive(() => {
-          console.log(`LOOP je prends le mutex de ${player.user.name}`)
           if (player.isNextPositionValid()) {
             player.actualPiece.moveDown();
           } else {
             player.attachCurrentPiece(game);
           }
-          console.log(`LOOP je relache le mutex de ${player.user.name}`)
         });
 
         const nb = player.board.cleanLines(game.settings.destructiblePenality);

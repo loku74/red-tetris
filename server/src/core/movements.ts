@@ -53,7 +53,6 @@ export async function applyMovement(game: Game, player: Player, key: keyof typeo
   let result = 0;
 
   await player.mutex.runExclusive(() => {
-    console.log(`MOVEMENT je prends le mutex de ${player.user.name}`)
     const actionData: ActionData = { piece: player.actualPiece.clone(), board: player.board };
     const movedPiece = actions[key](actionData);
 
@@ -67,7 +66,6 @@ export async function applyMovement(game: Game, player: Player, key: keyof typeo
         result = player.board.cleanLines(game.settings.destructiblePenality);
       }
     }
-    console.log(`MOVEMENT je relache le mutex de ${player.user.name}`)
   });
 
   return result;

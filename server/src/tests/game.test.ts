@@ -115,7 +115,6 @@ describe("game loop helpers", () => {
 
     // there is 2 round because of the "last time" movement delay
     await vi.advanceTimersToNextTimerAsync();
-    const dataToCheck = game.getGameInfo(player2.user.id);
     await vi.advanceTimersToNextTimerAsync();
 
     // piece should stop, reach the line and generate a penality
@@ -124,7 +123,7 @@ describe("game loop helpers", () => {
     expect(player2.board.playableLines).toBe(BOARD_HEIGHT - 1);
 
     await listener1.then((data) => {
-      expect(data).toStrictEqual(dataToCheck);
+      expect(data).toStrictEqual(game.getGameInfo(player2.user.id));
     });
   });
 
