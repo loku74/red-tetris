@@ -5,5 +5,9 @@
     "client",
     "server",
     "shared"
-  ]
+  ],
+  "scripts": {
+    "prod": "npm --workspace=client run build && npm --workspace=server run build && npm --workspace=server run prod",
+    "coverage": "npm --workspace=server run coverage"
+  }
 }

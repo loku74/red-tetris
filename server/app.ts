@@ -21,7 +21,7 @@ import type { ServerData } from "@app/types/server";
 import type { AppServer, ServerSocket } from "@app/types/socket";
 import { logger } from "@app/utils/log";
 
-const frontendPath = path.join(import.meta.dirname, "../client/build");
+const frontendPath = path.join(import.meta.dirname, "../../client/build");
 
 function configureHttp(app: Express) {
   app.use(express.static(frontendPath));

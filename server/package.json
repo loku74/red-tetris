@@ -4,6 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "build": "bun build --target=node --outdir build/ app.ts",
+    "prod": "node build/app.js",
     "dev": "bun --hot app.ts",
     "format": "bunx prettier . --write",
     "lint": "bunx eslint . --fix && bunx tsc --noEmit",
