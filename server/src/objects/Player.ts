@@ -2,6 +2,8 @@ import { Mutex } from "async-mutex";
 
 import type { PlayerInfo } from "@app/shared";
 
+import { SCORE_PIECE } from "@app/constants/core";
+
 import { Board } from "./Board";
 import type { Game } from "./Game";
 import type { Piece } from "./Piece";
@@ -64,7 +66,7 @@ export class Player {
     if (this.alive) {
       this.board.place(this.actualPiece);
       this.actualPiece = game.nextPiece(this.board.placedPieces);
-      this.score++;
+      this.score += SCORE_PIECE;
       this.checkLost();
     }
   }

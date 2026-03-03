@@ -10,7 +10,7 @@ import {
   EVENT_WARMUP_INFO
 } from "@app/shared";
 
-import { GAME_START_DELAY } from "@app/constants/core";
+import { GAME_START_DELAY, SCORE_DICT } from "@app/constants/core";
 import type { Room } from "@app/objects/Room";
 import type { User } from "@app/objects/User";
 import type { AppServer } from "@app/types/socket";
@@ -88,10 +88,14 @@ export async function warmUpLoop(io: AppServer, user: User) {
         } else {
           player.attachCurrentPiece(game);
         }
-        player.board.cleanLines(game.settings.destructiblePenality);
-      })
-      player.checkLost();
+        const nbCleanedLines = player.board.cleanLines(game.settings.destructiblePenality);
+        const score = SCORE_DICT[nbCleanedLines];
+        if (score) {
+          player.score += score;
+        }
+      });
 
+      player.checkLost();
       io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
     });
     game.checkFinished();
