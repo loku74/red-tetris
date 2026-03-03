@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Server as IoServer } from "socket.io";
 
-import { SERVER_PORT } from "@app/constants/core";
+import { SERVER_HOST, SERVER_PORT } from "@app/constants/core";
 import { registerHandlers as changeColorHandler } from "@app/events/changeColor";
 import { registerHandlers as disconnectingHandler } from "@app/events/disconnecting";
 import { registerHandlers as gameActionHandler } from "@app/events/gameAction";
@@ -65,6 +65,6 @@ if (import.meta.main) {
   const struct = init();
 
   struct.server.listen(SERVER_PORT, () => {
-    logger.info(`Server running at http://localhost:${SERVER_PORT}`);
+    logger.info(`Server running at http://${SERVER_HOST}:${SERVER_PORT}`);
   });
 }
