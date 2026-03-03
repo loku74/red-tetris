@@ -20,10 +20,15 @@ export function registerHandlers(socket: ServerSocket) {
 
     if (nbCleanedLines > 0) {
       result.game.players.forEach(async (p) => {
-        result.player.score += result.game.getScore(nbCleanedLines);
+        const score = result.game.getScore(nbCleanedLines);
+        result.player.score += score;
+
+        const gameInfo = result.game.getGameInfo(p.user.id);
+        gameInfo.incrementedScore = score;
+
         if (p != result.player) {
           await p.applyPenality(nbCleanedLines);
-          socket.to(p.user.id).emit(EVENT_GAME_PENALITY, result.game.getGameInfo(p.user.id));
+          socket.to(p.user.id).emit(EVENT_GAME_PENALITY, gameInfo);
         }
       });
     }

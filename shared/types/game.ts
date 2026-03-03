@@ -7,6 +7,7 @@ export type GameData = {
   shadowPiece: PieceSpectrum;
   score: number;
   alive: boolean;
+  incrementedScore?: number;
 };
 
 export type PlayerInfo = {
@@ -19,7 +20,7 @@ export type PlayerInfo = {
 
 export type GameSettings = {
   tick: number;
-  destructiblePenality: boolean
+  destructiblePenality: boolean;
 };
 
 export type Coordinate = [number, number]; // x, y;

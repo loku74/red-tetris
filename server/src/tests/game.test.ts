@@ -123,7 +123,9 @@ describe("game loop helpers", () => {
     expect(player2.board.playableLines).toBe(BOARD_HEIGHT - 1);
 
     await listener1.then((data) => {
-      expect(data).toStrictEqual(game.getGameInfo(player2.user.id));
+      const gameInfo = game.getGameInfo(player2.user.id);
+      gameInfo.incrementedScore = 42;
+      expect(data).toStrictEqual(gameInfo);
     });
   });
 

@@ -43,12 +43,17 @@ export async function gameLoop(io: AppServer, room: Room) {
           return player.board.cleanLines(game.settings.destructiblePenality);
         });
 
-        if (nb > 0) {
+        const nbCleanedLines = player.board.cleanLines(game.settings.destructiblePenality);
+
+        if (nbCleanedLines > 0) {
           game.players.forEach(async (p) => {
-            player.score += game.getScore(nb);
+            const score = game.getScore(nbCleanedLines);
+            player.score += score;
             if (p != player) {
-              await p.applyPenality(nb);
-              io.to(p.user.id).emit(EVENT_GAME_PENALITY, game.getGameInfo(p.user.id));
+              await p.applyPenality(nbCleanedLines);
+              const gameInfo = game.getGameInfo(p.user.id);
+              gameInfo.incrementedScore = score;
+              io.to(p.user.id).emit(EVENT_GAME_PENALITY, gameInfo);
             }
           });
         }
@@ -92,10 +97,15 @@ export async function warmUpLoop(io: AppServer, user: User) {
       });
 
       const nbCleanedLines = player.board.cleanLines(game.settings.destructiblePenality);
-      player.score += game.getScore(nbCleanedLines);
+      const score = game.getScore(nbCleanedLines);
+
+      player.score += score;
       player.checkLost();
 
-      io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
+      const gameInfo = game.getGameInfo(id);
+      gameInfo.incrementedScore = score;
+
+      io.to(id).emit(EVENT_WARMUP_INFO, gameInfo);
     });
     game.checkFinished();
   }
