@@ -22,15 +22,14 @@ export function registerHandlers(socket: ServerSocket) {
       result.game.players.forEach(async (p) => {
         const gameScore = result.game.getScore(nbCleanedLines);
 
-        const gameInfo = result.game.getGameInfo(p.user.id);
         if (gameScore) {
           result.player.score += gameScore.score;
-          gameInfo.gameScore = gameScore;
+          gameData.gameScore = gameScore;
         }
 
         if (p != result.player) {
           await p.applyPenality(nbCleanedLines);
-          socket.to(p.user.id).emit(EVENT_GAME_PENALITY, gameInfo);
+          socket.to(p.user.id).emit(EVENT_GAME_PENALITY, gameData);
         }
       });
     }
