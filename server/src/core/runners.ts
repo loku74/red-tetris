@@ -34,15 +34,15 @@ export async function gameLoop(io: AppServer, room: Room) {
   while (game.ongoing) {
     game.players.forEach(async (player, id) => {
       if (player.alive) {
-        await player.mutex.runExclusive(() => {
+        const nb = await player.mutex.runExclusive(() => {
           if (player.isNextPositionValid()) {
             player.actualPiece.moveDown();
           } else {
             player.attachCurrentPiece(game);
           }
+          return player.board.cleanLines(game.settings.destructiblePenality);
         });
 
-        const nb = player.board.cleanLines(game.settings.destructiblePenality);
         if (nb > 0) {
           game.players.forEach(async (p) => {
             if (p != player) {
