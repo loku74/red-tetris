@@ -1,3 +1,5 @@
+import type { GameScore } from "@app/shared";
+
 // server
 export const SERVER_PORT = Number(process.env.PUBLIC_SERVER_PORT);
 export const SERVER_HOST = process.env.PUBLIC_SERVER_ADDRESS;
@@ -15,9 +17,9 @@ export const WARMUP_CHECK_DELAY = 100;
 
 // score
 export const SCORE_PIECE = 5;
-export const SCORE_DICT: Record<number, number> = {
-  1: 42,
-  2: 142,
-  3: 420,
-  4: 4242
+export const SCORE_DICT: Record<number, GameScore> = {
+  1: { score: 42, type: "single" },
+  2: { score: 142, type: "double" },
+  3: { score: 420, type: "triple" },
+  4: { score: 4242, type: "tetris" }
 };

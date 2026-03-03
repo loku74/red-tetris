@@ -20,11 +20,13 @@ export function registerHandlers(socket: ServerSocket) {
 
     if (nbCleanedLines > 0) {
       result.game.players.forEach(async (p) => {
-        const score = result.game.getScore(nbCleanedLines);
-        result.player.score += score;
+        const gameScore = result.game.getScore(nbCleanedLines);
 
         const gameInfo = result.game.getGameInfo(p.user.id);
-        gameInfo.incrementedScore = score;
+        if (gameScore) {
+          result.player.score += gameScore.score;
+          gameInfo.gameScore = gameScore;
+        }
 
         if (p != result.player) {
           await p.applyPenality(nbCleanedLines);

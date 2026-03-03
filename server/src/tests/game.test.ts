@@ -12,6 +12,7 @@ import {
   PieceShape
 } from "@app/shared";
 
+import { SCORE_DICT } from "@app/constants/core";
 import type { Game } from "@app/objects/Game";
 import { Piece } from "@app/objects/Piece";
 import { Player } from "@app/objects/Player";
@@ -124,7 +125,7 @@ describe("game loop helpers", () => {
 
     await listener1.then((data) => {
       const gameInfo = game.getGameInfo(player2.user.id);
-      gameInfo.incrementedScore = 42;
+      gameInfo.gameScore = SCORE_DICT[1];
       expect(data).toStrictEqual(gameInfo);
     });
   });

@@ -18,7 +18,12 @@ export function registerHandlers(socket: ServerSocket) {
       result.player,
       result.action
     );
-    result.player.score += result.game.getScore(nbCleanedLines);
+
+    const gameScore = result.game.getScore(nbCleanedLines);
+    if (gameScore) {
+      result.player.score += gameScore.score;
+      gameData.gameScore = gameScore;
+    }
 
     callback({ success: true, data: gameData });
   });

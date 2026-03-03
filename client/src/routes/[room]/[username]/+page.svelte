@@ -13,6 +13,7 @@
     EventMessageData,
     EventMessagePayload,
     GameData,
+    GameScore,
     GameSettings,
     PlayerInfo,
     UserColor,
@@ -49,6 +50,7 @@
   import GameCountdown from "$lib/components/Game/GameCountdown.svelte";
   import NextPieces from "$lib/components/Game/NextPieces.svelte";
   import Score from "$lib/components/Game/Score.svelte";
+  import ScorePopup from "$lib/components/Game/ScorePopup.svelte";
   import Lobby from "$lib/components/Lobby/Lobby.svelte";
   import LobbyCheck from "$lib/components/Lobby/LobbyCheck.svelte";
   import Piece from "$lib/components/Piece.svelte";
@@ -71,6 +73,13 @@
 
   // game data
   let gameData = $state<GameData>();
+
+  function setGameData(data: GameData) {
+    gameData = data;
+    if (data.gameScore) {
+      gameScore = data.gameScore;
+    }
+  }
 
   function joinRoom() {
     const data: EventJoinRoomPayload = {
@@ -160,7 +169,7 @@
 
   // tetris events
   function onSocketGameInfo(data: GameData) {
-    gameData = data;
+    setGameData(data);
   }
 
   function onGameKeydown(event: KeyboardEvent) {
@@ -173,7 +182,7 @@
 
       socket.emit(eventType, { action }, (response) => {
         if (response.success) {
-          gameData = response.data;
+          setGameData(response.data);
         }
       });
     }
@@ -199,6 +208,7 @@
   let game = $state(false);
   let gameCountdown = $state(0);
   let showGo = $state(false);
+  let gameScore = $state<GameScore>();
 
   function emitStartGame() {
     const data: GameSettings = {
@@ -298,6 +308,9 @@
       {#if gameData}
         <Score score={gameData.score} />
         <NextPieces nextPieces={gameData.nextPieces} />
+        {#if gameScore}
+          <ScorePopup {gameScore} />
+        {/if}
       {/if}
 
       {#if game && spectrums}

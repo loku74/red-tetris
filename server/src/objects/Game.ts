@@ -1,6 +1,7 @@
 import {
   DEFAULT_GAME_SETTINGS,
   type GameData,
+  type GameScore,
   type GameSettings,
   type PlayerInfo
 } from "@app/shared";
@@ -94,7 +95,7 @@ export class Game {
     return players.map((p) => p.getInfo()).toArray();
   }
 
-  public getScore(cleanedLines: number) {
+  public getScore(cleanedLines: number): GameScore | 0 {
     return SCORE_DICT[cleanedLines] || 0;
   }
 }

@@ -7,7 +7,7 @@ export type GameData = {
   shadowPiece: PieceSpectrum;
   score: number;
   alive: boolean;
-  incrementedScore?: number;
+  gameScore?: GameScore;
 };
 
 export type PlayerInfo = {
@@ -24,3 +24,8 @@ export type GameSettings = {
 };
 
 export type Coordinate = [number, number]; // x, y;
+
+export type GameScore = {
+  score: number;
+  type: string;
+};
