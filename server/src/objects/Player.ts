@@ -1,3 +1,5 @@
+import { Mutex } from "async-mutex";
+
 import type { PlayerInfo } from "@app/shared";
 
 import { Board } from "./Board";
@@ -10,6 +12,7 @@ export class Player {
   public score = 0;
   public alive = true;
   public actualPiece: Piece;
+  public mutex = new Mutex();
 
   constructor(
     public user: User,
@@ -44,14 +47,26 @@ export class Player {
     return this.board.isValidPiece(next);
   }
 
-  public applyPenality(nb: number) {
+  public async applyPenality(nb: number) {
     if (this.alive) {
-      this.board.addRestrictedLines(nb);
+      await this.mutex.runExclusive(() => {
+        console.log(`PENALITY je prends le mutex de ${this.user.name}`)
+        const diff = this.board.addRestrictedLines(nb);
+
+        console.log(`ligne appliquée ${this.actualPiece.x}|${this.board.playableLines}`)
+        console.log(this.actualPiece.x)
+        for (let i = 0; i < diff; i++) {
+          if (this.actualPiece.x === 0) break;
+          this.actualPiece.x--;
+        }
+        console.log(`PENALITY je relache le mutex de ${this.user.name}`)
+      });
     }
   }
 
   public attachCurrentPiece(game: Game) {
     if (this.alive) {
+      console.log(`j'attache ${this.user.name}`)
       this.board.place(this.actualPiece);
       this.actualPiece = game.nextPiece(this.board.placedPieces);
       this.score++;

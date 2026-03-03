@@ -5,7 +5,7 @@ import type { ServerSocket } from "@app/types/socket";
 import { validateWarmUpAction } from "@app/validate/warmUpAction";
 
 export function registerHandlers(socket: ServerSocket) {
-  socket.on(EVENT_WARMUP_ACTION, (payload, callback) => {
+  socket.on(EVENT_WARMUP_ACTION, async (payload, callback) => {
     const result = validateWarmUpAction(socket, payload);
 
     if (!result.status) {
@@ -13,7 +13,7 @@ export function registerHandlers(socket: ServerSocket) {
       return;
     }
 
-    applyMovement(result.game, result.player, result.action);
+    await applyMovement(result.game, result.player, result.action);
 
     callback({ success: true, data: result.game.getGameInfo(socket.id) });
   });

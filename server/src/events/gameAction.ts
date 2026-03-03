@@ -5,19 +5,19 @@ import type { ServerSocket } from "@app/types/socket";
 import { validateGameAction } from "@app/validate/gameAction";
 
 export function registerHandlers(socket: ServerSocket) {
-  socket.on(EVENT_GAME_ACTION, (payload, callback) => {
+  socket.on(EVENT_GAME_ACTION, async (payload, callback) => {
     const result = validateGameAction(socket, payload);
 
     if (!result.status) {
       callback({ success: false });
       return;
     }
-    const nb = applyMovement(result.game, result.player, result.action);
+    const nb = await applyMovement(result.game, result.player, result.action);
 
     if (nb > 0) {
-      result.game.players.forEach((p) => {
+      result.game.players.forEach(async (p) => {
         if (p != result.player) {
-          p.applyPenality(nb);
+          await p.applyPenality(nb);
           socket.to(p.user.id).emit(EVENT_GAME_PENALITY, result.game.getGameInfo(p.user.id));
         }
       });

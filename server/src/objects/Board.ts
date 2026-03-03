@@ -73,15 +73,16 @@ export class Board {
   }
 
   public addRestrictedLines(nb: number) {
-    for (let i = 0; i < nb - 1; i++) {
-      if (this.playableLines < 0) return;
+    const before = this.playableLines;
 
-      const row = this.getRow(this.playableLines);
-      row.forEach((_, col) => {
-        row[col] = PieceColor.GREY;
-      });
+    for (let i = 0; i < nb - 1; i++) {
+      if (this.playableLines < 0) break;
+
+      this.matrix.splice(0, 1);
+      this.matrix.push(Array(BOARD_WIDTH).fill(PieceColor.GREY));
       this.playableLines--;
     }
+    return before - this.playableLines;
   }
 
   public removeRestrictedLines(nb: number) {
