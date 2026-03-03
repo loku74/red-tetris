@@ -13,7 +13,12 @@ export function registerHandlers(socket: ServerSocket) {
       return;
     }
 
-    const { gameData } = await applyMovement(result.game, result.player, result.action);
+    const { nbCleanedLines, gameData } = await applyMovement(
+      result.game,
+      result.player,
+      result.action
+    );
+    result.player.score += result.game.getScore(nbCleanedLines);
 
     callback({ success: true, data: gameData });
   });

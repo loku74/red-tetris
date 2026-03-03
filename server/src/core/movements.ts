@@ -51,7 +51,7 @@ export async function applyMovement(
   game: Game,
   player: Player,
   key: keyof typeof actions
-): Promise<{ nb: number; gameData: GameData }> {
+): Promise<{ nbCleanedLines: number; gameData: GameData }> {
   let nb = 0;
   const gameData = await player.mutex.runExclusive(() => {
     if (player.alive && game.ongoing) {
@@ -73,5 +73,5 @@ export async function applyMovement(
     return game.getGameInfo(player.user.id);
   });
 
-  return { nb: nb, gameData: gameData };
+  return { nbCleanedLines: nb, gameData: gameData };
 }
