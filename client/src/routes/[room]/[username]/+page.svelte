@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { DoorOpen, Settings, Swords, UserX } from "@lucide/svelte";
+  import { DoorOpen, Settings, UserX } from "@lucide/svelte";
 
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
@@ -51,6 +51,7 @@
   import GameCountdown from "$lib/components/Game/GameCountdown.svelte";
   import NextPieces from "$lib/components/Game/NextPieces.svelte";
   import Score from "$lib/components/Game/Score.svelte";
+  import ScoreBoard from "$lib/components/Game/ScoreBoard.svelte";
   import ScorePopup from "$lib/components/Game/ScorePopup.svelte";
   import Lobby from "$lib/components/Lobby/Lobby.svelte";
   import LobbyCheck from "$lib/components/Lobby/LobbyCheck.svelte";
@@ -212,8 +213,13 @@
   let showGo = $state(false);
 
   let gameScore = $state<GameScore>();
-  let finalScore = $state<PlayerScore[]>([]);
-  let showFinalScore = $state(false);
+  let finalScore = $state<PlayerScore[]>([
+    { name: "israel", color: 2, score: 2147483647 },
+    { name: "US", color: 4, score: 1337 },
+    { name: "pizzaclique", color: 3, score: 42 },
+    { name: "iran", color: 5, score: -1 }
+  ]);
+  let showFinalScore = $state(true);
 
   function emitStartGame() {
     const data: GameSettings = {
@@ -419,32 +425,4 @@
   </div>
 </Dialog>
 
-<Dialog icon={Swords} confirm="ok" bind:open={showFinalScore} title="Game Scoreboard">
-  <div class="flex flex-col gap-4">
-    {#each finalScore as score, index (score.name)}
-      <div class="flex justify-between gap-8">
-        <span class="flex items-center justify-center gap-2">
-          <span
-            class="{index === 0
-              ? 'bg-[#E7B903]/20 text-[#E7B903]'
-              : index === 1
-                ? 'bg-[#C0C0C0]/20 text-[#C0C0C0]'
-                : index === 2
-                  ? 'bg-[#CD7F32]/20 text-[#CD7F32]'
-                  : ''} rounded-xs w-5 h-5 flex items-center justify-center"
-          >
-            {index + 1}
-          </span>
-          {score.name}
-        </span>
-        <span
-          class={Math.max(...finalScore.map((s) => s.score)) === score.score
-            ? "text-red-accent"
-            : ""}
-        >
-          {score.score}
-        </span>
-      </div>
-    {/each}
-  </div>
-</Dialog>
+<ScoreBoard bind:open={showFinalScore} scores={finalScore} />
