@@ -88,10 +88,11 @@ export async function warmUpLoop(io: AppServer, user: User) {
         } else {
           player.attachCurrentPiece(game);
         }
-        const nbCleanedLines = player.board.cleanLines(game.settings.destructiblePenality);
-        const score = SCORE_DICT[nbCleanedLines];
-        player.score += score || 0;
       });
+
+      const nbCleanedLines = player.board.cleanLines(game.settings.destructiblePenality);
+      const score = SCORE_DICT[nbCleanedLines];
+      player.score += score || 0;
 
       player.checkLost();
       io.to(id).emit(EVENT_WARMUP_INFO, game.getGameInfo(id));
