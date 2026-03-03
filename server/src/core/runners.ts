@@ -63,13 +63,12 @@ export async function gameLoop(io: AppServer, room: Room) {
         if (player.checkLost()) {
           io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
         } else {
-          game.finalScore.unshift({
-            name: player.user.name,
-            color: player.user.color,
-            score: player.score
-          });
+          game.addDeadPlayer(player);
+          console.log("player dead", player.user.name);
           io.to(id).emit(EVENT_GAME_DEAD);
         }
+      } else {
+        game.addDeadPlayer(player);
       }
 
       io.to(id).emit(EVENT_GAME_INFO, game.getGameInfo(id));
@@ -82,12 +81,9 @@ export async function gameLoop(io: AppServer, room: Room) {
 
   const lastPlayer = game.players.values().find((p) => p.alive);
   if (lastPlayer) {
-    game.finalScore.unshift({
-      name: lastPlayer.user.name,
-      color: lastPlayer.user.color,
-      score: lastPlayer.score
-    });
+    game.addDeadPlayer(lastPlayer);
   }
+
   io.to(room.name).emit(EVENT_GAME_FINISH, game.finalScore);
   room.game = null;
   io.to(room.name).emit(EVENT_ROOM_UPDATE, room.asInfo());

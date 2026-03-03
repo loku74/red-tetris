@@ -100,4 +100,12 @@ export class Game {
   public getScore(cleanedLines: number): GameScore | 0 {
     return SCORE_DICT[cleanedLines] || 0;
   }
+
+  public addDeadPlayer(player: Player): void {
+    this.finalScore.unshift({
+      name: player.user.name,
+      color: player.user.color,
+      score: player.score
+    });
+  }
 }
