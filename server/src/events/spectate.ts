@@ -12,7 +12,13 @@ export function registerHandlers(_io: AppServer, socket: ServerSocket) {
       return;
     }
 
-    result.spectatedPlayer.spectators.push(result.currentPlayer);
+    if (result.currentPlayer.spectating) {
+      result.currentPlayer.spectating.spectators.delete(result.currentPlayer);
+    }
+
+    result.currentPlayer.spectating = result.spectatedPlayer;
+    result.spectatedPlayer.spectators.add(result.currentPlayer);
+
     logger.info(
       `User ${result.currentPlayer.user.name} (id: ${result.currentPlayer.user.id}) is spectating
        user ${result.spectatedPlayer.user.name} (id: ${result.spectatedPlayer.user.id})`
