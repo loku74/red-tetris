@@ -53,6 +53,7 @@
   import Board from "$lib/components/Game/Board.svelte";
   import BoardActions from "$lib/components/Game/BoardActions.svelte";
   import GameCountdown from "$lib/components/Game/GameCountdown.svelte";
+  import GameSpectrums from "$lib/components/Game/GameSpectrums.svelte";
   import NextPieces from "$lib/components/Game/NextPieces.svelte";
   import Score from "$lib/components/Game/Score.svelte";
   import ScoreBoard from "$lib/components/Game/ScoreBoard.svelte";
@@ -63,8 +64,6 @@
 
   import { kickState } from "$lib/state/kick.svelte";
   import { roomState } from "$lib/state/room.svelte";
-
-  import { getLightColor } from "$lib/utils/getLightColor";
 
   import { keyToAction } from "$lib/constants/keyToActions";
   import { getSocket } from "$lib/socket/socket.svelte";
@@ -367,31 +366,7 @@
       {/if}
 
       {#if game && spectrums}
-        <div class="absolute top-0 -left-36 flex flex-col justify-around h-full w-28">
-          {#each spectrums as spectrum (spectrum.name)}
-            <div class="flex flex-col gap-2 items-center">
-              <button
-                disabled={!spectrum.alive}
-                onclick={() => emitSpectate(spectrum.name)}
-                class="{!spectrum.alive ? 'opacity-42 ' : ''}
-              {spectatedPlayer?.username !== spectrum.name ? 'border border-border' : ''}
-              {dead && spectrum.alive ? 'hover:brightness-125' : ''}
-              border-2 w-fit"
-                style={spectatedPlayer?.username === spectrum.name
-                  ? "border-color: " + getLightColor(spectrum.color)
-                  : ""}
-              >
-                <Board matrix={spectrum.matrix} pieceSize={8} spectrumColor={spectrum.color} />
-              </button>
-              <span
-                class="text-xs w-full truncate text-center"
-                style="color: {getLightColor(spectrum.color)}"
-              >
-                {spectrum.name}
-              </span>
-            </div>
-          {/each}
-        </div>
+        <GameSpectrums {spectrums} {spectatedPlayer} {dead} onSpectate={emitSpectate} />
       {/if}
 
       <!-- BOARD BOTTOM INFO / ACTION -->
