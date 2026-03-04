@@ -5,12 +5,13 @@ set -e
 CONTAINER_IMAGE="red-tetris-image"
 CONTAINER_NAME="red-tetris"
 
+source .env
+
 case "$1" in
   build)
     docker build . -t "$CONTAINER_IMAGE"
     ;;
   run)
-    source .env
     docker run --rm --name "$CONTAINER_NAME" -e PUBLIC_SERVER_PORT=${PUBLIC_SERVER_PORT} -e PUBLIC_SERVER_ADDRESS=${PUBLIC_SERVER_ADDRESS} -p ${PUBLIC_SERVER_PORT}:${PUBLIC_SERVER_PORT} "${CONTAINER_IMAGE}"
     ;;
   terminal)
