@@ -34,7 +34,7 @@ export async function gameLoop(io: AppServer, room: Room) {
   while (game.ongoing) {
     game.players.forEach(async (player, id) => {
       if (player.alive) {
-        const nb = await player.mutex.runExclusive(() => {
+        const nbCleanedLines = await player.mutex.runExclusive(() => {
           if (player.isNextPositionValid()) {
             player.actualPiece.moveDown();
           } else {
@@ -42,8 +42,6 @@ export async function gameLoop(io: AppServer, room: Room) {
           }
           return player.board.cleanLines(game.settings.destructiblePenality);
         });
-
-        const nbCleanedLines = player.board.cleanLines(game.settings.destructiblePenality);
 
         if (nbCleanedLines > 0) {
           game.players.forEach(async (p) => {
