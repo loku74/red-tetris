@@ -88,7 +88,7 @@
     }
   }
 
-  function joinRoom() {
+  function emitJoinRoom() {
     const data: EventJoinRoomPayload = {
       username: roomState.username,
       room: roomState.room
@@ -108,7 +108,7 @@
     });
   }
 
-  function onColorChange(color: UserColor): Promise<boolean> {
+  function emitColorChange(color: UserColor): Promise<boolean> {
     return new Promise((resolve) => {
       socket.emit(EVENT_CHANGE_COLOR, { color }, (response) => {
         if (response.success) {
@@ -122,7 +122,7 @@
   // leave
   let showLeaveDialog = $state(false);
 
-  function leaveRoom() {
+  function emitLeaveRoom() {
     socket.emit(EVENT_LEAVE_ROOM, (response) => {
       if (response.success) {
         goto(resolve("/"));
@@ -161,7 +161,7 @@
   let messageInputFocused = $state(false);
   let messages = $state<Array<EventMessageData>>([]);
 
-  function onSendMessage(msg: string): Promise<boolean> {
+  function emitMessage(msg: string): Promise<boolean> {
     return new Promise((resolve) => {
       const data: EventMessagePayload = { message: msg };
       socket.emit(EVENT_MESSAGE, data, (response) => {
@@ -179,7 +179,7 @@
     setGameData(data);
   }
 
-  function onGameKeydown(event: KeyboardEvent) {
+  function emitGameAction(event: KeyboardEvent) {
     if (!dead && (game || warmUp) && !messageInputFocused) {
       const action = keyToAction[event.key.toLocaleUpperCase()];
 
@@ -284,7 +284,7 @@
   let destructiblePenality = $state(false);
 
   onMount(() => {
-    if (!roomState.joined) joinRoom();
+    if (!roomState.joined) emitJoinRoom();
 
     socket.on(EVENT_KICK, onSocketKick);
     socket.on(EVENT_MESSAGE, onSocketMessage);
@@ -309,12 +309,12 @@
       socket.off(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
       socket.off(EVENT_GAME_DEAD, onSocketGameDead);
 
-      leaveRoom();
+      emitLeaveRoom();
     };
   });
 </script>
 
-<svelte:window on:keydown={onGameKeydown} />
+<svelte:window on:keydown={emitGameAction} />
 
 <div class="flex h-screen items-center justify-center bg-dark-primary gap-16">
   <!-- error & redirect -->
@@ -328,11 +328,11 @@
         bind:showLeaveDialog
         bind:showSettings
         {handleKickUser}
-        {onColorChange}
+        {emitColorChange}
         startGame={emitStartGame}
         {messages}
         bind:messageInputFocused
-        {onSendMessage}
+        emitSendMessage={emitMessage}
       />
     {/if}
 
@@ -421,7 +421,7 @@
 <Dialog
   icon={DoorOpen}
   confirm="leave"
-  confirmCallback={leaveRoom}
+  confirmCallback={emitLeaveRoom}
   title="Leave room"
   cancel="cancel"
   bind:open={showLeaveDialog}

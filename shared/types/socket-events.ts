@@ -95,4 +95,5 @@ export interface ServerToClientEvents {
   [shared.EVENT_GAME_FINISH]: (data: shared.PlayerScore[]) => void;
   [shared.EVENT_GAME_SPECTRUM]: (data: shared.PlayerInfo[]) => void;
   [shared.EVENT_GAME_DEAD]: (data: void) => void;
+  [shared.EVENT_GAME_SPECTATE]: (spectators: number) => void;
 }

@@ -16,20 +16,20 @@
     showLeaveDialog = $bindable(false),
     showSettings = $bindable(false),
     handleKickUser,
-    onColorChange,
+    emitColorChange,
     startGame,
     messages,
     messageInputFocused = $bindable(false),
-    onSendMessage
+    emitSendMessage
   }: {
     showLeaveDialog: boolean;
     showSettings: boolean;
     handleKickUser: (user: UserData) => void;
-    onColorChange: (color: UserColor) => Promise<boolean>;
+    emitColorChange: (color: UserColor) => Promise<boolean>;
     startGame: () => void;
     messages: Array<EventMessageData>;
     messageInputFocused: boolean;
-    onSendMessage: (message: string) => Promise<boolean>;
+    emitSendMessage: (message: string) => Promise<boolean>;
   } = $props();
 
   let userHexColor = $derived(getLightColor(roomState.color));
@@ -37,7 +37,7 @@
   let message = $state("");
 
   async function handleColorChange(color: UserColor) {
-    const success = await onColorChange(color);
+    const success = await emitColorChange(color);
     if (success) {
       showColorChoice = false;
     }
@@ -45,7 +45,7 @@
 
   async function sendMessage() {
     if (message.trim()) {
-      const success = await onSendMessage(message);
+      const success = await emitSendMessage(message);
       if (success) {
         message = "";
       }
