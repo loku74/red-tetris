@@ -1,10 +1,13 @@
 <script lang="ts">
   import { Swords } from "@lucide/svelte";
+  import Gamepad_2 from "@lucide/svelte/icons/gamepad-2";
 
   import type { PlayerScore } from "@app/shared";
 
   import Dialog from "$lib/components/Dialog.svelte";
   import Piece from "$lib/components/Piece.svelte";
+
+  import { roomState } from "$lib/state/room.svelte";
 
   import { getLightColor } from "$lib/utils/getLightColor";
 
@@ -43,7 +46,11 @@
     </thead>
     <tbody>
       {#each scores as score, index (score.name)}
-        <tr>
+        <tr
+          style={roomState.username === score.name
+            ? `background-color: color-mix(in srgb, ${getLightColor(score.color)} 10%, transparent)`
+            : ""}
+        >
           <td class="py-2 pl-8 w-8">
             <span class="{getRankClass(index)} rounded-xs w-6 h-6 flex items-center justify-center">
               {index + 1}
@@ -53,9 +60,12 @@
             <span class="flex items-center gap-2" style="color: {getLightColor(score.color)};">
               <Piece color={score.color} size={14} />
               {score.name}
+              {#if roomState.username === score.name}
+                <Gamepad_2 size={20} />
+              {/if}
             </span>
           </td>
-          <td class="py-2 pr-8 text-right {score.score === maxScore ? 'text-red-accent' : ''}">
+          <td class="py-2 pr-8 text-right {score.score === maxScore ? 'text-[#E7B903]' : ''}">
             {score.score}
           </td>
         </tr>
