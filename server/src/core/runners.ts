@@ -11,10 +11,17 @@ import {
 } from "@app/shared";
 
 import { GAME_START_DELAY } from "@app/constants/core";
+import type { Game } from "@app/objects/Game";
+import type { Player } from "@app/objects/Player";
 import type { Room } from "@app/objects/Room";
 import type { User } from "@app/objects/User";
 import type { AppServer } from "@app/types/socket";
 import { sleep } from "@app/utils/sleep";
+
+function setDeadPlayer(io: AppServer, game: Game, player: Player) {
+  game.addDeadPlayer(player);
+  io.to(player.user.id).emit(EVENT_GAME_DEAD);
+}
 
 export async function gameLoop(io: AppServer, room: Room) {
   const game = room.game;
@@ -30,7 +37,6 @@ export async function gameLoop(io: AppServer, room: Room) {
   }
 
   game.ongoing = true;
-
   while (game.ongoing) {
     for (const [id, player] of game.players) {
       if (player.alive) {
@@ -63,11 +69,10 @@ export async function gameLoop(io: AppServer, room: Room) {
         if (player.checkLost()) {
           io.to(id).emit(EVENT_GAME_INFO, gameInfo);
         } else {
-          game.addDeadPlayer(player);
-          io.to(id).emit(EVENT_GAME_DEAD);
+          setDeadPlayer(io, game, player);
         }
       } else {
-        game.addDeadPlayer(player);
+        setDeadPlayer(io, game, player);
       }
     }
 
@@ -78,7 +83,7 @@ export async function gameLoop(io: AppServer, room: Room) {
 
   const lastPlayer = game.players.values().find((p) => p.alive);
   if (lastPlayer) {
-    game.addDeadPlayer(lastPlayer);
+    setDeadPlayer(io, game, lastPlayer);
   }
 
   io.to(room.name).emit(EVENT_GAME_FINISH, game.getFinalScore());
