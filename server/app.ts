@@ -2,10 +2,9 @@ import type { Express } from "express";
 import express from "express";
 import { createServer } from "node:http";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { Server as IoServer } from "socket.io";
 
-import { SERVER_PORT } from "@app/constants/core";
+import { SERVER_HOST, SERVER_PORT } from "@app/constants/core";
 import { registerHandlers as changeColorHandler } from "@app/events/changeColor";
 import { registerHandlers as disconnectingHandler } from "@app/events/disconnecting";
 import { registerHandlers as gameActionHandler } from "@app/events/gameAction";
@@ -21,14 +20,12 @@ import type { ServerData } from "@app/types/server";
 import type { AppServer, ServerSocket } from "@app/types/socket";
 import { logger } from "@app/utils/log";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const frontendPath = path.join(__dirname, "../client/build");
+const frontendPath = path.join(import.meta.dirname, "../../client/build");
 
 function configureHttp(app: Express) {
   app.use(express.static(frontendPath));
 
-  app.get("/", (req: express.Request, res: express.Response) => {
+  app.get("/{*splat}", (_req: express.Request, res: express.Response) => {
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
@@ -64,7 +61,7 @@ export function init(): ServerData {
 if (import.meta.main) {
   const struct = init();
 
-  struct.server.listen(SERVER_PORT, () => {
-    logger.info(`Server running at http://localhost:${SERVER_PORT}`);
+  struct.server.listen(SERVER_PORT, SERVER_HOST, () => {
+    logger.info(`Server running at http://${SERVER_HOST}:${SERVER_PORT}`);
   });
 }

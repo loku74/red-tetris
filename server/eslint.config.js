@@ -33,6 +33,6 @@ export default defineConfig(
     },
   },
   globalIgnores(
-    ["dist/**", "node_modules/**", "coverage/**"]
+    ["build/**", "node_modules/**", "coverage/**"]
   )
 );
