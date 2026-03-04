@@ -1,5 +1,5 @@
 import type { GameData } from "../game";
-import type { UserColor, UserData } from "../user";
+import type { UserData } from "../user";
 
 export type EventSpectatePayload = {
   username: string;
