@@ -226,6 +226,7 @@
   }
 
   function onSocketGameStart() {
+    showFinalScore = false;
     game = true;
   }
 
