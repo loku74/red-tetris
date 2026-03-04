@@ -57,11 +57,13 @@ export class Player {
         const diff = this.board.addRestrictedLines(nb);
 
         for (let i = 0; i < diff; i++) {
-          if ((this.actualPiece.type === PieceShape.I || this.actualPiece.type === PieceShape.O) && this.actualPiece.x === 1) break;
-          if (this.actualPiece.x === 0) break;
+          if ((this.actualPiece.type === PieceShape.I || this.actualPiece.type === PieceShape.O) && this.actualPiece.x === 0) break;
+          if (this.actualPiece.x === 1) break;
           this.actualPiece.x--;
         }
       }
+
+      logger.debug(`piece x ${this.actualPiece.x}`);
       const data = game.getGameInfo(this.user.id)
       logger.debug(`PENALITY user: ${this.user.name} release`);
       return data;
