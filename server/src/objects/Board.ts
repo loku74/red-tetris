@@ -15,12 +15,6 @@ export class Board {
     );
   }
 
-  private getRow(index: number): number[] {
-    const result = this.matrix[index];
-    if (!result) throw new Error("Invalid row index!");
-    return result;
-  }
-
   public isValidPiece(piece: Piece): boolean {
     // this check if a piece is does not have conflict
     // with others pieces / walls / restricted lines
@@ -47,19 +41,23 @@ export class Board {
   }
 
   public cleanLines(destructible: boolean): number {
-    let count = 0;
+    const nonFilledRows = this.matrix.filter((row) =>
+      row.some((cell) => cell === PieceColor.EMPTY || cell === PieceColor.GREY)
+    );
+    const count = BOARD_HEIGHT - nonFilledRows.length;
 
-    this.matrix.forEach((row, i) => {
-      if (row.every((cell) => cell != PieceColor.EMPTY && cell != PieceColor.GREY)) {
-        this.matrix.splice(i, 1);
-        this.matrix.unshift(Array(BOARD_WIDTH).fill(PieceColor.EMPTY));
-        count++;
+    if (count > 0) {
+      const newRows = Array.from({ length: count }, () =>
+        Array(BOARD_WIDTH).fill(PieceColor.EMPTY)
+      );
+
+      this.matrix = [...newRows, ...nonFilledRows];
+
+      if (destructible) {
+        this.removeRestrictedLines(count);
       }
-    });
-
-    if (destructible) {
-      this.removeRestrictedLines(count);
     }
+
     return count;
   }
 
@@ -67,7 +65,7 @@ export class Board {
     const before = this.playableLines;
 
     for (let i = 0; i < nb - 1; i++) {
-      if (this.playableLines < 0) break;
+      if (this.playableLines <= 0) break;
 
       this.matrix.splice(0, 1);
       this.matrix.push(Array(BOARD_WIDTH).fill(PieceColor.GREY));
