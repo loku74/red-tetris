@@ -266,7 +266,7 @@
 
   // spectate
   let spectatedPlayer = $state<UserData>();
-  function handleSpectate(username: string) {
+  function emitSpectate(username: string) {
     if (spectatedPlayer?.username === username) return;
     const data: EventSpectatePayload = { username };
     socket.emit(EVENT_GAME_SPECTATE, data, (response) => {
@@ -355,7 +355,7 @@
             <div class="flex flex-col gap-2 items-center">
               <button
                 disabled={!spectrum.alive}
-                onclick={() => handleSpectate(spectrum.name)}
+                onclick={() => emitSpectate(spectrum.name)}
                 class="{!spectrum.alive ? 'opacity-42 ' : ''}
               {spectatedPlayer?.username !== spectrum.name ? 'border border-border' : ''}
               {dead && spectrum.alive ? 'hover:brightness-125' : ''}
