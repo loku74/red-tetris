@@ -2,7 +2,6 @@ import { EVENT_GAME_ACTION, EVENT_GAME_PENALITY } from "@app/shared";
 
 import { applyMovement } from "@app/core/movements";
 import type { ServerSocket } from "@app/types/socket";
-import { logger } from "@app/utils/log";
 import { validateGameAction } from "@app/validate/gameAction";
 
 export function registerHandlers(socket: ServerSocket) {
@@ -15,7 +14,6 @@ export function registerHandlers(socket: ServerSocket) {
     }
 
     const gameData = await result.player.mutex.runExclusive(async () => {
-      logger.debug(`MOVEMENT user: ${result.player.user.name} acquire`);
       const { nbCleanedLines, gameData } = applyMovement(result.game, result.player, result.action);
 
       if (nbCleanedLines > 0) {
@@ -33,7 +31,6 @@ export function registerHandlers(socket: ServerSocket) {
           }
         }
       }
-      logger.debug(`MOVEMENT user: ${result.player.user.name} release`);
       return gameData;
     });
 
