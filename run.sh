@@ -9,10 +9,10 @@ source .env
 
 case "$1" in
   build)
-    docker build . -t "$CONTAINER_IMAGE"
+    docker build . --build-arg PUBLIC_SERVER_PORT=${PUBLIC_SERVER_PORT} --build-arg PUBLIC_SERVER_ADDRESS=${PUBLIC_SERVER_ADDRESS} -t "$CONTAINER_IMAGE"
     ;;
   run)
-    docker run --rm --name "$CONTAINER_NAME" -e PUBLIC_SERVER_PORT=${PUBLIC_SERVER_PORT} -e PUBLIC_SERVER_ADDRESS=${PUBLIC_SERVER_ADDRESS} -p ${PUBLIC_SERVER_PORT}:${PUBLIC_SERVER_PORT} "${CONTAINER_IMAGE}"
+    docker run --rm --name "$CONTAINER_NAME" -e PUBLIC_SERVER_PORT=${PUBLIC_SERVER_PORT} -p ${PUBLIC_SERVER_PORT}:${PUBLIC_SERVER_PORT} "${CONTAINER_IMAGE}"
     ;;
   terminal)
     docker exec -it "$CONTAINER_NAME" /bin/bash
