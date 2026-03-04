@@ -80,6 +80,7 @@ export interface ClientToServerEvents {
     shared.EventSpectateSuccess,
     shared.EventSpectateError
   >;
+  [shared.EVENT_GAME_RESET_SPECTATE]: SocketEvent<void, void, void>;
 }
 
 export interface ServerToClientEvents {

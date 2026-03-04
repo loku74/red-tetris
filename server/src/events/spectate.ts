@@ -1,5 +1,6 @@
-import { EVENT_GAME_SPECTATE } from "@app/shared";
+import { EVENT_GAME_RESET_SPECTATE, EVENT_GAME_SPECTATE } from "@app/shared";
 
+import { getRoomBySocket } from "@app/core/room";
 import type { AppServer, ServerSocket } from "@app/types/socket";
 import { logger } from "@app/utils/log";
 import { validateSpectate } from "@app/validate/spectate";
@@ -39,5 +40,24 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
         gameData: result.game.getGameInfo(result.spectatedPlayer.user.id)
       }
     });
+  });
+
+  socket.on(EVENT_GAME_RESET_SPECTATE, () => {
+    const room = getRoomBySocket(socket);
+
+    if (room && room.game) {
+      const player = room.game.getPlayer(socket.id);
+
+      if (player.spectating) {
+        player.spectating.spectators.delete(player);
+
+        io.to(player.spectating.user.id).emit(
+          EVENT_GAME_SPECTATE,
+          player.spectating.spectators.size
+        );
+
+        player.spectating = null;
+      }
+    }
   });
 }
