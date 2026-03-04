@@ -353,7 +353,7 @@
               onclick={() => handleSpectate(spectrum.name)}
               class=" border-border/42 {!spectrum.alive ? 'opacity-42' : ''}
               {spectateUsername === spectrum.name ? 'border-red-accent border-2' : 'border'}
-              hover:border-2"
+              hover:border-2 block"
             >
               <Board matrix={spectrum.matrix} pieceSize={8} spectrumColor={spectrum.color} />
             </button>
