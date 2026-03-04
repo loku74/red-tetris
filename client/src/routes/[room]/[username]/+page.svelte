@@ -25,6 +25,7 @@
     EVENT_CHANGE_COLOR,
     EVENT_GAME_ACTION,
     EVENT_GAME_COUNTDOWN,
+    EVENT_GAME_DEAD,
     EVENT_GAME_FINISH,
     EVENT_GAME_INFO,
     EVENT_GAME_SPECTATE,
@@ -177,7 +178,7 @@
   }
 
   function onGameKeydown(event: KeyboardEvent) {
-    if ((game || warmUp) && !messageInputFocused) {
+    if (!dead && (game || warmUp) && !messageInputFocused) {
       const action = keyToAction[event.key.toLocaleUpperCase()];
 
       if (action === undefined) return;
@@ -217,6 +218,7 @@
   let gameScore = $state<GameScore>();
   let finalScore = $state<PlayerScore[]>([]);
   let showFinalScore = $state(false);
+  let dead = $state(false);
 
   function emitStartGame() {
     const data: GameSettings = {
@@ -248,6 +250,10 @@
     showFinalScore = true;
     finalScore = data;
     spectateUsername = undefined;
+  }
+
+  function onSocketGameDead() {
+    dead = true;
   }
 
   // spectrum
@@ -285,6 +291,7 @@
     socket.on(EVENT_GAME_COUNTDOWN, onSocketGameCountdown);
     socket.on(EVENT_GAME_FINISH, onSocketGameFinish);
     socket.on(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
+    socket.on(EVENT_GAME_DEAD, onSocketGameDead);
 
     return () => {
       socket.off(EVENT_KICK, onSocketKick);
@@ -296,6 +303,7 @@
       socket.off(EVENT_GAME_FINISH, onSocketGameFinish);
       socket.off(EVENT_GAME_COUNTDOWN, onSocketGameCountdown);
       socket.off(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
+      socket.off(EVENT_GAME_DEAD, onSocketGameDead);
 
       leaveRoom();
     };
