@@ -352,8 +352,9 @@
             <button
               disabled={!spectrum.alive}
               onclick={() => handleSpectate(spectrum.name)}
-              class="  {!spectrum.alive ? 'opacity-42 ' : 'hover:brightness-150'}
+              class="{!spectrum.alive ? 'opacity-42 ' : ''}
               {spectateUsername === spectrum.name ? 'border-red-accent' : 'border border-border'}
+              {dead && spectrum.alive ? 'hover:brightness-150' : ''}
               border-2 block"
             >
               <Board matrix={spectrum.matrix} pieceSize={8} spectrumColor={spectrum.color} />
