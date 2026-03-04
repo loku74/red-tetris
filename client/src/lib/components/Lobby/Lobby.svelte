@@ -20,6 +20,7 @@
     startGame,
     messages,
     messageInputFocused = $bindable(false),
+    messageInput = $bindable<HTMLInputElement | undefined>(),
     onSendMessage
   }: {
     showLeaveDialog: boolean;
@@ -29,6 +30,7 @@
     startGame: () => void;
     messages: Array<EventMessageData>;
     messageInputFocused: boolean;
+    messageInput?: HTMLInputElement;
     onSendMessage: (message: string) => Promise<boolean>;
   } = $props();
 
@@ -116,6 +118,6 @@
     </div>
 
     <!-- message -->
-    <MessageList {messages} bind:message bind:messageInputFocused {sendMessage} />
+    <MessageList {messages} bind:message bind:messageInput bind:messageInputFocused {sendMessage} />
   </div>
 {/if}

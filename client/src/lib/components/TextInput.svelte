@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
   let {
     value = $bindable(""),
-    input = $bindable(),
+    input = $bindable<HTMLInputElement | undefined>(),
     focused = $bindable(false),
     maxlength,
     placeholder = "",
@@ -39,14 +37,6 @@
     }
     return v;
   };
-
-  onMount(() => {
-    return () => {
-      console.log("ALOOO");
-      console.log(input);
-      input?.blur();
-    };
-  });
 </script>
 
 <div class={fill ? "h-full w-full" : "w-xs"}>
