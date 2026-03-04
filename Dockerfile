@@ -12,4 +12,4 @@ COPY . .
 RUN bun install --no-cache
 RUN npm run build
 
-ENTRYPOINT ["npm", "run", "prod"]
+CMD ["npm", "run", "prod"]
