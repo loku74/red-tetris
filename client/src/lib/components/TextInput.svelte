@@ -42,6 +42,8 @@
 
   onMount(() => {
     return () => {
+      console.log("ALOOO");
+      console.log(input);
       input?.blur();
     };
   });
