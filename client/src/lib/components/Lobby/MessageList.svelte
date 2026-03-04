@@ -13,13 +13,11 @@
   let {
     messages,
     message = $bindable(""),
-    messageInput = $bindable<HTMLInputElement | undefined>(),
     messageInputFocused = $bindable(false),
     sendMessage
   }: {
     messages: Array<EventMessageData>;
     message: string;
-    messageInput?: HTMLInputElement;
     messageInputFocused: boolean;
     sendMessage: () => void;
   } = $props();
@@ -95,7 +93,6 @@
     <TextInput
       bind:value={message}
       bind:focused={messageInputFocused}
-      bind:input={messageInput}
       maxlength={MESSAGE_MAX_LENGTH}
       placeholder="Type your message..."
       border={false}

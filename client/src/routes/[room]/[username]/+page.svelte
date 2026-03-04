@@ -154,7 +154,6 @@
 
   // messages
   let messageInputFocused = $state(false);
-  let messageInput = $state<HTMLInputElement>();
   let messages = $state<Array<EventMessageData>>([]);
 
   function onSendMessage(msg: string): Promise<boolean> {
@@ -227,7 +226,6 @@
   }
 
   function onSocketGameStart() {
-    messageInput?.blur();
     showFinalScore = false;
     game = true;
   }
@@ -307,7 +305,6 @@
         {onColorChange}
         startGame={emitStartGame}
         {messages}
-        bind:messageInput
         bind:messageInputFocused
         {onSendMessage}
       />
