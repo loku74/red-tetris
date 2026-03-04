@@ -55,7 +55,7 @@ export async function gameLoop(io: AppServer, room: Room) {
         if (nbCleanedLines > 0) {
           for (const p of game.players.values()) {
             const gameScore = game.getScore(nbCleanedLines);
-            if (p != player) {
+            if (p != player && p.alive) {
               const targetGameInfo = await p.applyPenality(game, nbCleanedLines);
               if (gameScore) {
                 targetGameInfo.gameScore = gameScore;

@@ -25,7 +25,7 @@ export function registerHandlers(socket: ServerSocket) {
             gameData.gameScore = gameScore;
           }
 
-          if (p != result.player) {
+          if (p != result.player && p.alive) {
             const targetGameData = await p.applyPenality(result.game, nbCleanedLines);
             socket.to(p.user.id).emit(EVENT_GAME_PENALITY, targetGameData);
           }

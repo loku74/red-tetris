@@ -51,18 +51,16 @@ export class Player {
 
   public async applyPenality(game: Game, nb: number) {
     return await this.mutex.runExclusive(() => {
-      if (this.alive) {
-        const diff = this.board.addRestrictedLines(nb);
+      const diff = this.board.addRestrictedLines(nb);
 
-        for (let i = 0; i < diff; i++) {
-          if (
-            (this.actualPiece.type === PieceShape.I || this.actualPiece.type === PieceShape.O) &&
-            this.actualPiece.x === 0
-          )
-            break;
-          if (this.actualPiece.x === 1) break;
-          this.actualPiece.x--;
-        }
+      for (let i = 0; i < diff; i++) {
+        if (
+          (this.actualPiece.type === PieceShape.I || this.actualPiece.type === PieceShape.O) &&
+          this.actualPiece.x === 0
+        )
+          break;
+        if (this.actualPiece.x === 1) break;
+        this.actualPiece.x--;
       }
 
       return game.getGameInfo(this.user.id);
