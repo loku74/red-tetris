@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { DoorOpen, Settings, UserX } from "@lucide/svelte";
+  import { fade } from "svelte/transition";
+  import { DoorOpen, Eye, Settings, UserX } from "@lucide/svelte";
 
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
@@ -252,6 +253,7 @@
     showFinalScore = true;
     finalScore = data;
     spectatedPlayer = undefined;
+    spectators = 0;
   }
 
   function onSocketGameDead() {
@@ -266,6 +268,8 @@
 
   // spectate
   let spectatedPlayer = $state<UserData>();
+  let spectators = $state<number>(0);
+
   function emitSpectate(username: string) {
     if (spectatedPlayer?.username === username) return;
     const data: EventSpectatePayload = { username };
@@ -275,6 +279,10 @@
         gameData = response.data.gameData;
       }
     });
+  }
+
+  function onSocketGameSpectate(nbSpectators: number) {
+    spectators = nbSpectators;
   }
 
   // settings
@@ -296,6 +304,7 @@
     socket.on(EVENT_GAME_FINISH, onSocketGameFinish);
     socket.on(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
     socket.on(EVENT_GAME_DEAD, onSocketGameDead);
+    socket.on(EVENT_GAME_SPECTATE, onSocketGameSpectate);
 
     return () => {
       socket.off(EVENT_KICK, onSocketKick);
@@ -308,6 +317,7 @@
       socket.off(EVENT_GAME_COUNTDOWN, onSocketGameCountdown);
       socket.off(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
       socket.off(EVENT_GAME_DEAD, onSocketGameDead);
+      socket.off(EVENT_GAME_SPECTATE, onSocketGameSpectate);
 
       emitLeaveRoom();
     };
@@ -343,7 +353,14 @@
 
       {#if gameData}
         <Score score={gameData.score} />
-        <NextPieces nextPieces={gameData.nextPieces} />
+        <div class="absolute top-0 -right-38 flex flex-col gap-8">
+          <NextPieces nextPieces={gameData.nextPieces} />
+          {#if spectators}
+            <span transition:fade={{ duration: 42 }} class="flex items-center gap-2">
+              <Eye size={24} />{spectators}
+            </span>
+          {/if}
+        </div>
         {#if gameScore}
           <ScorePopup {gameScore} />
         {/if}
