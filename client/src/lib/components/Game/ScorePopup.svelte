@@ -37,7 +37,24 @@
 {/if}
 
 <style>
+  @keyframes score-popup {
+    0% {
+      opacity: 0;
+      transform: translateY(0);
+    }
+    20% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-42px);
+    }
+  }
+
   .animate-score-popup {
-    animation: test-popup 1.2s ease-out forwards;
+    animation: score-popup 1.2s ease-out forwards;
   }
 </style>
