@@ -1,4 +1,4 @@
-import { EVENT_GAME_ACTION, EVENT_GAME_PENALITY } from "@app/shared";
+import { EVENT_GAME_ACTION, EVENT_GAME_INFO, EVENT_GAME_PENALITY } from "@app/shared";
 
 import { applyMovement } from "@app/core/movements";
 import type { ServerSocket } from "@app/types/socket";
@@ -32,6 +32,10 @@ export function registerHandlers(socket: ServerSocket) {
         }
       }
       return gameData;
+    });
+
+    result.player.spectators.forEach((spectator) => {
+      socket.to(spectator.user.id).emit(EVENT_GAME_INFO, gameData);
     });
 
     callback({ success: true, data: gameData });

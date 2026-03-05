@@ -12,7 +12,9 @@ export * from "./types/events/getRooms";
 export * from "./types/events/start";
 export * from "./types/events/warmUp";
 export * from "./types/events/gameAction";
+export * from "./types/events/spectate";
 
+// types
 export * from "./types/user";
 export * from "./types/room";
 export * from "./types/socket";

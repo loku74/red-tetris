@@ -13,6 +13,7 @@ import { registerHandlers as joinRoomHandler } from "@app/events/joinRoom";
 import { registerHandlers as kickHandler } from "@app/events/kick";
 import { registerHandlers as leaveRoomHandler } from "@app/events/leaveRoom";
 import { registerHandlers as messageHandler } from "@app/events/message";
+import { registerHandlers as spectateHandler } from "@app/events/spectate";
 import { registerHandlers as startHandler } from "@app/events/start";
 import { registerHandlers as warmUpHandler } from "@app/events/warmUp";
 import { registerHandlers as warmUpActionHandler } from "@app/events/warmUpAction";
@@ -34,17 +35,19 @@ function configureSocket(io: AppServer) {
   io.on("connection", (socket: ServerSocket) => {
     logger.info(`New client connected (id: ${socket.id})`);
 
-    messageHandler(io, socket);
-    disconnectingHandler(io, socket);
     getRoomsHandler(socket);
     joinRoomHandler(io, socket);
-    kickHandler(io, socket);
-    startHandler(io, socket);
-    changeColorHandler(io, socket);
     leaveRoomHandler(io, socket);
+    messageHandler(io, socket);
+    changeColorHandler(io, socket);
+    kickHandler(io, socket);
     warmUpHandler(io, socket);
     warmUpActionHandler(socket);
+    startHandler(io, socket);
     gameActionHandler(socket);
+    spectateHandler(io, socket);
+
+    disconnectingHandler(io, socket);
   });
 }
 

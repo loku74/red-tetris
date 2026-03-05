@@ -43,7 +43,7 @@ export function validateWarmUpAction(
   }
 
   if (!current.warmUp || !current.warmUp.ongoing) {
-    return { status: false, error: { user: ERROR_NOT_IN_WARMUP } };
+    return { status: false, error: { username: ERROR_NOT_IN_WARMUP } };
   }
 
   const player = current.warmUp.getPlayer(socket.id);

@@ -94,6 +94,10 @@ export async function setupTestServer(): Promise<TestServerData> {
 }
 
 export async function shutdownTestServer(ctx: TestServerData): Promise<void> {
+  await ctx.socket1.client.close();
+  await ctx.socket2.client.close();
+  await ctx.socket3.client.close();
+  await ctx.socket4.client.close();
   await ctx.io.close();
   getRooms().clear();
   getUsers().clear();
@@ -104,6 +108,9 @@ export async function testJoinRoom(
   roomName: string,
   username: string
 ): Promise<{ room: Room; user: User }> {
+  const restoreTime = vi.isFakeTimers();
+
+  if (restoreTime) vi.useRealTimers();
   await emitAsync<EventJoinRoomPayload, EventJoinRoomSuccess, EventJoinRoomError>(
     test.client,
     EVENT_JOIN_ROOM,
@@ -121,6 +128,7 @@ export async function testJoinRoom(
   if (!user) {
     expect.fail("User not defined!");
   }
+  if (restoreTime) vi.useFakeTimers();
 
   return { room: room, user: user };
 }

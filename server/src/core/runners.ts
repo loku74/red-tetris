@@ -20,7 +20,7 @@ import { sleep } from "@app/utils/sleep";
 
 function declareFinalScore(io: AppServer, game: Game, player: Player) {
   if (game.addFinalScore(player)) {
-    io.to(player.user.id).emit(EVENT_GAME_DEAD);
+    io.to(player.user.id).emit(EVENT_GAME_DEAD, game.getGameInfo(player.user.id));
   }
 }
 
@@ -68,6 +68,9 @@ export async function gameLoop(io: AppServer, room: Room) {
         }
 
         if (player.checkLost()) {
+          player.spectators.forEach((spectator) => {
+            io.to(spectator.user.id).emit(EVENT_GAME_INFO, gameInfo);
+          });
           io.to(id).emit(EVENT_GAME_INFO, gameInfo);
         } else {
           declareFinalScore(io, game, player);

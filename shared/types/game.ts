@@ -4,7 +4,7 @@ import type { UserColor } from "./user";
 export type GameData = {
   matrix: number[][];
   nextPieces: PieceData[];
-  shadowPiece: PieceSpectrum;
+  shadowPiece: PieceSpectrum | undefined;
   score: number;
   alive: boolean;
   gameScore?: GameScore;

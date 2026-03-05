@@ -6,10 +6,6 @@ export function getUser(socket_id: string): User | undefined {
   return users.get(socket_id);
 }
 
-export function getUserByUsername(username: string): User | undefined {
-  return [...users.values()].find((u) => u.name === username);
-}
-
 export function getUsers(): Map<string, User> {
   return users;
 }

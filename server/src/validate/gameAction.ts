@@ -2,7 +2,11 @@ import z from "zod";
 
 import type { EventGameActionPayload, GameActions } from "@app/shared";
 
-import { ERROR_NOT_IN_A_ROOM, ERROR_NOT_IN_GAME } from "@app/constants/validateErrors";
+import {
+  ERROR_NOT_IN_A_ROOM,
+  ERROR_NOT_IN_GAME,
+  ERROR_SELF_DEAD
+} from "@app/constants/validateErrors";
 import { getRoomBySocket } from "@app/core/room";
 import { getUser } from "@app/core/user";
 import type { Game } from "@app/objects/Game";
@@ -45,13 +49,13 @@ export function validateGameAction(
   }
 
   if (!room.game || !room.game.ongoing) {
-    return { status: false, error: { user: ERROR_NOT_IN_GAME } };
+    return { status: false, error: { username: ERROR_NOT_IN_GAME } };
   }
 
   const player = room.game.getPlayer(socket.id);
 
   if (!player.alive) {
-    return { status: false, error: { user: ERROR_NOT_IN_GAME } };
+    return { status: false, error: { username: ERROR_SELF_DEAD } };
   }
 
   return { status: true, game: room.game, player: player, action: result.data.action, room: room };

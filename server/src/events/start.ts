@@ -1,4 +1,4 @@
-import { EVENT_GAME_START } from "@app/shared";
+import { EVENT_GAME_SPECTRUM, EVENT_GAME_START } from "@app/shared";
 
 import { WARMUP_CHECK_DELAY } from "@app/constants/core";
 import { gameLoop } from "@app/core/runners";
@@ -15,7 +15,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
     }
 
     const room = result.room;
-    room.start(result.settings);
+    const game = room.start(result.settings);
 
     await Promise.all(
       room.users.values().map(async (user) => {
@@ -28,6 +28,7 @@ export function registerHandlers(io: AppServer, socket: ServerSocket) {
       })
     );
 
+    io.to(room.name).emit(EVENT_GAME_SPECTRUM, game.getGameSpectrums());
     io.to(result.room.name).emit(EVENT_GAME_START);
     gameLoop(io, room);
     callback({ success: true });

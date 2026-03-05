@@ -1,4 +1,4 @@
-import { PieceColor, type UserColor } from "@app/shared";
+import { PieceColor, type UserColor, type UserData } from "@app/shared";
 
 import { WARMUP_CHECK_DELAY } from "@app/constants/core";
 import type { ServerSocket } from "@app/types/socket";
@@ -26,5 +26,12 @@ export class User {
     }
 
     this.warmUp = new Game(new Map([[this.id, this]]));
+  }
+
+  public getData(): UserData {
+    return {
+      username: this.name,
+      color: this.color
+    };
   }
 }

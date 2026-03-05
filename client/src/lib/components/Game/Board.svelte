@@ -21,6 +21,8 @@
     rowIndex: number,
     cellIndex: number
   ): boolean {
+    if (!shadowPiece) return false;
+
     const { blocks } = shadowPiece;
 
     for (const block of blocks) {

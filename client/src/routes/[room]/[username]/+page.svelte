@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { DoorOpen, Settings, UserX } from "@lucide/svelte";
+  import { fade } from "svelte/transition";
+  import { DoorOpen, Eye, Settings, UserX } from "@lucide/svelte";
 
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
@@ -12,6 +13,7 @@
     EventKickPayload,
     EventMessageData,
     EventMessagePayload,
+    EventSpectatePayload,
     GameData,
     GameScore,
     GameSettings,
@@ -24,8 +26,11 @@
     EVENT_CHANGE_COLOR,
     EVENT_GAME_ACTION,
     EVENT_GAME_COUNTDOWN,
+    EVENT_GAME_DEAD,
     EVENT_GAME_FINISH,
     EVENT_GAME_INFO,
+    EVENT_GAME_RESET_SPECTATE,
+    EVENT_GAME_SPECTATE,
     EVENT_GAME_SPECTRUM,
     EVENT_GAME_START,
     EVENT_JOIN_ROOM,
@@ -49,6 +54,7 @@
   import Board from "$lib/components/Game/Board.svelte";
   import BoardActions from "$lib/components/Game/BoardActions.svelte";
   import GameCountdown from "$lib/components/Game/GameCountdown.svelte";
+  import GameSpectrums from "$lib/components/Game/GameSpectrums.svelte";
   import NextPieces from "$lib/components/Game/NextPieces.svelte";
   import Score from "$lib/components/Game/Score.svelte";
   import ScoreBoard from "$lib/components/Game/ScoreBoard.svelte";
@@ -75,6 +81,7 @@
 
   // game data
   let gameData = $state<GameData>();
+  let lastGameData = $state<GameData>();
 
   function setGameData(data: GameData) {
     gameData = data;
@@ -83,7 +90,7 @@
     }
   }
 
-  function joinRoom() {
+  function emitJoinRoom() {
     const data: EventJoinRoomPayload = {
       username: roomState.username,
       room: roomState.room
@@ -103,7 +110,7 @@
     });
   }
 
-  function onColorChange(color: UserColor): Promise<boolean> {
+  function emitColorChange(color: UserColor): Promise<boolean> {
     return new Promise((resolve) => {
       socket.emit(EVENT_CHANGE_COLOR, { color }, (response) => {
         if (response.success) {
@@ -117,7 +124,7 @@
   // leave
   let showLeaveDialog = $state(false);
 
-  function leaveRoom() {
+  function emitLeaveRoom() {
     socket.emit(EVENT_LEAVE_ROOM, (response) => {
       if (response.success) {
         goto(resolve("/"));
@@ -156,7 +163,7 @@
   let messageInputFocused = $state(false);
   let messages = $state<Array<EventMessageData>>([]);
 
-  function onSendMessage(msg: string): Promise<boolean> {
+  function emitMessage(msg: string): Promise<boolean> {
     return new Promise((resolve) => {
       const data: EventMessagePayload = { message: msg };
       socket.emit(EVENT_MESSAGE, data, (response) => {
@@ -167,27 +174,6 @@
 
   function onSocketMessage(data: EventMessageData) {
     messages.push({ from: data.from, message: data.message, color: data.color });
-  }
-
-  // tetris events
-  function onSocketGameInfo(data: GameData) {
-    setGameData(data);
-  }
-
-  function onGameKeydown(event: KeyboardEvent) {
-    if ((game || warmUp) && !messageInputFocused) {
-      const action = keyToAction[event.key.toLocaleUpperCase()];
-
-      if (action === undefined) return;
-
-      const eventType = game ? EVENT_GAME_ACTION : EVENT_WARMUP_ACTION;
-
-      socket.emit(eventType, { action }, (response) => {
-        if (response.success) {
-          setGameData(response.data);
-        }
-      });
-    }
   }
 
   // warm-up
@@ -215,6 +201,7 @@
   let gameScore = $state<GameScore>();
   let finalScore = $state<PlayerScore[]>([]);
   let showFinalScore = $state(false);
+  let dead = $state(false);
 
   function emitStartGame() {
     const data: GameSettings = {
@@ -238,19 +225,75 @@
     }
   }
 
+  function onSocketGameInfo(data: GameData) {
+    setGameData(data);
+  }
+
+  function emitGameAction(event: KeyboardEvent) {
+    if (!dead && (game || warmUp) && !messageInputFocused) {
+      const action = keyToAction[event.key.toLocaleUpperCase()];
+
+      if (action === undefined) return;
+
+      const eventType = game ? EVENT_GAME_ACTION : EVENT_WARMUP_ACTION;
+
+      socket.emit(eventType, { action }, (response) => {
+        if (response.success) {
+          setGameData(response.data);
+        }
+      });
+    }
+  }
+
   function onSocketGameFinish(data: PlayerScore[]) {
     game = false;
     gameData = undefined;
+    lastGameData = undefined;
     spectrums = undefined;
 
-    showFinalScore = true;
+    spectatedPlayer = undefined;
+    spectators = 0;
+
     finalScore = data;
+    showFinalScore = true;
+  }
+
+  function onSocketGameDead(data: GameData) {
+    dead = true;
+    gameData = data;
+    gameData.shadowPiece = undefined;
+    lastGameData = gameData;
   }
 
   // spectrum
   let spectrums = $state<PlayerInfo[]>();
   function onSocketGameSpectrum(data: PlayerInfo[]) {
     spectrums = data.filter((spectrum) => spectrum.color !== roomState.color);
+  }
+
+  // spectate
+  let spectatedPlayer = $state<UserData>();
+  let spectators = $state<number>(0);
+
+  function emitSpectate(username: string) {
+    if (spectatedPlayer?.username === username) return;
+    const data: EventSpectatePayload = { username };
+    socket.emit(EVENT_GAME_SPECTATE, data, (response) => {
+      if (response.success) {
+        spectatedPlayer = response.data.userData;
+        gameData = response.data.gameData;
+      }
+    });
+  }
+
+  function onSocketGameSpectate(nbSpectators: number) {
+    spectators = nbSpectators;
+  }
+
+  function emitResetSpectate() {
+    socket.emit(EVENT_GAME_RESET_SPECTATE, () => {});
+    gameData = lastGameData;
+    spectatedPlayer = undefined;
   }
 
   // settings
@@ -260,7 +303,7 @@
   let destructiblePenality = $state(false);
 
   onMount(() => {
-    if (!roomState.joined) joinRoom();
+    if (!roomState.joined) emitJoinRoom();
 
     socket.on(EVENT_KICK, onSocketKick);
     socket.on(EVENT_MESSAGE, onSocketMessage);
@@ -271,6 +314,8 @@
     socket.on(EVENT_GAME_COUNTDOWN, onSocketGameCountdown);
     socket.on(EVENT_GAME_FINISH, onSocketGameFinish);
     socket.on(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
+    socket.on(EVENT_GAME_DEAD, onSocketGameDead);
+    socket.on(EVENT_GAME_SPECTATE, onSocketGameSpectate);
 
     return () => {
       socket.off(EVENT_KICK, onSocketKick);
@@ -282,13 +327,15 @@
       socket.off(EVENT_GAME_FINISH, onSocketGameFinish);
       socket.off(EVENT_GAME_COUNTDOWN, onSocketGameCountdown);
       socket.off(EVENT_GAME_SPECTRUM, onSocketGameSpectrum);
+      socket.off(EVENT_GAME_DEAD, onSocketGameDead);
+      socket.off(EVENT_GAME_SPECTATE, onSocketGameSpectate);
 
-      leaveRoom();
+      emitLeaveRoom();
     };
   });
 </script>
 
-<svelte:window on:keydown={onGameKeydown} />
+<svelte:window on:keydown={emitGameAction} />
 
 <div class="flex h-screen items-center justify-center bg-dark-primary gap-16">
   <!-- error & redirect -->
@@ -302,11 +349,11 @@
         bind:showLeaveDialog
         bind:showSettings
         {handleKickUser}
-        {onColorChange}
+        {emitColorChange}
         startGame={emitStartGame}
         {messages}
         bind:messageInputFocused
-        {onSendMessage}
+        emitSendMessage={emitMessage}
       />
     {/if}
 
@@ -317,24 +364,31 @@
 
       {#if gameData}
         <Score score={gameData.score} />
-        <NextPieces nextPieces={gameData.nextPieces} />
+        <div class="absolute top-0 -right-38 flex flex-col gap-8">
+          <NextPieces nextPieces={gameData.nextPieces} />
+          {#if spectators}
+            <span transition:fade={{ duration: 42 }} class="flex items-center gap-2">
+              <Eye size={24} />{spectators}
+            </span>
+          {/if}
+        </div>
         {#if gameScore}
           <ScorePopup {gameScore} />
         {/if}
       {/if}
 
       {#if game && spectrums}
-        <div class="absolute top-0 -left-32 space-y-8">
-          {#each spectrums as spectrum (spectrum.name)}
-            <div class="border border-border/42">
-              <Board matrix={spectrum.matrix} pieceSize={8} spectrumColor={spectrum.color} />
-            </div>
-          {/each}
-        </div>
+        <GameSpectrums {spectrums} {spectatedPlayer} {dead} onSpectate={emitSpectate} />
       {/if}
 
       <!-- BOARD BOTTOM INFO / ACTION -->
-      <BoardActions {game} {warmUp} startWarmUp={emitStartWarmUp} />
+      <BoardActions
+        {game}
+        {warmUp}
+        startWarmUp={emitStartWarmUp}
+        bind:spectatedPlayer
+        {emitResetSpectate}
+      />
 
       <!-- GAME COUNTDOWN -->
       {#if gameCountdown > 0 || showGo}
@@ -377,7 +431,7 @@
 <Dialog
   icon={DoorOpen}
   confirm="leave"
-  confirmCallback={leaveRoom}
+  confirmCallback={emitLeaveRoom}
   title="Leave room"
   cancel="cancel"
   bind:open={showLeaveDialog}

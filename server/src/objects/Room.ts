@@ -109,5 +109,7 @@ export class Room {
     if (settings) {
       this.game.settings = settings;
     }
+
+    return this.game;
   }
 }

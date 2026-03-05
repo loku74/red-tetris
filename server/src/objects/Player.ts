@@ -15,6 +15,8 @@ export class Player {
   public alive = true;
   public actualPiece: Piece;
   public mutex = new Mutex();
+  public spectators: Set<Player> = new Set();
+  public spectating: Player | null = null;
 
   constructor(
     public user: User,
