@@ -65,6 +65,9 @@ export class Player {
         this.actualPiece.x--;
       }
 
+      if (!this.board.isValidPiece(this.actualPiece)) {
+        this.alive = false;
+      }
       return game.getGameInfo(this.user.id);
     });
   }
