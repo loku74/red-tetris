@@ -363,6 +363,7 @@
         {messages}
         bind:messageInputFocused
         emitSendMessage={emitMessage}
+        {warmUp}
       />
     {/if}
 

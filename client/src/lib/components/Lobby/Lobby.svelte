@@ -20,7 +20,8 @@
     startGame,
     messages,
     messageInputFocused = $bindable(false),
-    emitSendMessage
+    emitSendMessage,
+    warmUp
   }: {
     showLeaveDialog: boolean;
     showSettings: boolean;
@@ -30,6 +31,7 @@
     messages: Array<EventMessageData>;
     messageInputFocused: boolean;
     emitSendMessage: (message: string) => Promise<boolean>;
+    warmUp: boolean;
   } = $props();
 
   let userHexColor = $derived(getLightColor(roomState.color));
@@ -116,6 +118,8 @@
     </div>
 
     <!-- message -->
-    <MessageList {messages} bind:message bind:messageInputFocused {sendMessage} />
+    <div class={warmUp ? "2xl:block hidden" : ""}>
+      <MessageList {messages} bind:message bind:messageInputFocused {sendMessage} />
+    </div>
   </div>
 {/if}
