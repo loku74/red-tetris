@@ -227,6 +227,10 @@
 
   function onSocketGameInfo(data: GameData) {
     setGameData(data);
+    if (spectatedPlayer && !data.alive) {
+      data.shadowPiece = undefined;
+      spectatedPlayer.alive = false;
+    }
   }
 
   function emitGameAction(event: KeyboardEvent) {
@@ -274,7 +278,9 @@
   }
 
   // spectate
-  let spectatedPlayer = $state<UserData>();
+  type UserSpectate = UserData & { alive?: boolean };
+
+  let spectatedPlayer = $state<UserSpectate>();
   let spectators = $state<number>(0);
 
   function emitSpectate(username: string) {
@@ -283,6 +289,7 @@
     socket.emit(EVENT_GAME_SPECTATE, data, (response) => {
       if (response.success) {
         spectatedPlayer = response.data.userData;
+        spectatedPlayer.alive = true;
         gameData = response.data.gameData;
       }
     });
@@ -362,7 +369,13 @@
     <!-- GAME & WARMUP-->
     <div class="relative border-4 border-red-secondary">
       <!-- BOARD -->
-      <Board matrix={gameData?.matrix} shadowPiece={gameData?.shadowPiece} />
+      <div
+        class={(dead && !spectatedPlayer) || (spectatedPlayer && !spectatedPlayer.alive)
+          ? "opacity-42"
+          : ""}
+      >
+        <Board matrix={gameData?.matrix} shadowPiece={gameData?.shadowPiece} />
+      </div>
 
       {#if gameData}
         <Score score={gameData.score} />
@@ -374,9 +387,7 @@
             </span>
           {/if}
         </div>
-        {#if gameScore}
-          <ScorePopup {gameScore} />
-        {/if}
+        <ScorePopup {gameScore} {dead} {spectatedPlayer} />
       {/if}
 
       {#if game && spectrums}

@@ -1,21 +1,40 @@
 <script lang="ts">
-  import type { GameScore } from "@app/shared";
+  import { fade } from "svelte/transition";
 
-  let { gameScore }: { gameScore: GameScore } = $props();
+  import type { GameScore, UserData } from "@app/shared";
+
+  let {
+    gameScore,
+    dead,
+    spectatedPlayer
+  }: { gameScore?: GameScore; dead: boolean; spectatedPlayer?: UserData } = $props();
 </script>
 
 {#key gameScore}
-  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <div class="flex flex-col items-center gap-1 animate-score-popup">
-      <span class="text-red-accent text-sm uppercase tracking-widest">
-        {gameScore.type}
-      </span>
-      <span class="text-red-accent text-2xl">
-        +{gameScore.score}
-      </span>
+  {#if gameScore}
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="flex flex-col items-center gap-1 animate-score-popup">
+        <span class="text-red-accent text-sm uppercase tracking-widest">
+          {gameScore.type}
+        </span>
+        <span class="text-red-accent text-2xl">
+          +{gameScore.score}
+        </span>
+      </div>
     </div>
-  </div>
+  {/if}
 {/key}
+
+{#if dead}
+  <div
+    in:fade={{ duration: 442 }}
+    class="absolute inset-0 flex items-center justify-center pointer-events-none animate-dead-popup {spectatedPlayer
+      ? 'opacity-0'
+      : ''}"
+  >
+    <span class="text-red-accent text-4xl uppercase tracking-widest">you lose!</span>
+  </div>
+{/if}
 
 <style>
   @keyframes score-popup {
