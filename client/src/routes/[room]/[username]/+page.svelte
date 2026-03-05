@@ -256,6 +256,8 @@
 
     finalScore = data;
     showFinalScore = true;
+    dead = false;
+    gameScore = undefined;
   }
 
   function onSocketGameDead(data: GameData) {
