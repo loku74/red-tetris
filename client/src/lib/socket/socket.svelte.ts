@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-import { PUBLIC_SERVER_ADDRESS, PUBLIC_SERVER_PORT } from "$env/static/public";
+import { dev } from "$app/environment";
 
 import type { AppClientSocket } from "@app/shared";
 
@@ -11,7 +11,9 @@ export function getSocket(): AppClientSocket {
     return socket;
   }
 
-  socket = io(`${PUBLIC_SERVER_ADDRESS}:${PUBLIC_SERVER_PORT}`, {
+  const serverUrl = dev ? "localhost:3000" : undefined;
+
+  socket = io(serverUrl, {
     transports: ["websocket"],
     timeout: 5000
   });

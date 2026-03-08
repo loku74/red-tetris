@@ -65,6 +65,6 @@ if (import.meta.main) {
   const struct = init();
 
   struct.server.listen(SERVER_PORT, () => {
-    logger.info(`Server running at http://localhost:${SERVER_PORT}`);
+    logger.info(`Server running on port ${SERVER_PORT}`);
   });
 }
