@@ -309,7 +309,7 @@
   let showSettings = $state(false);
 
   let gameTick = $state(GAME_TICK_DEFAULT / 100);
-  let destructiblePenality = $state(false);
+  let destructiblePenality = $state(true);
 
   onMount(() => {
     if (!roomState.joined) emitJoinRoom();
