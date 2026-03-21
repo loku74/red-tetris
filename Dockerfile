@@ -1,9 +1,15 @@
 FROM oven/bun:1.3.10 AS builder
 
 WORKDIR /app
-COPY . .
 
-RUN bun install
+COPY package.json bun.lock ./
+COPY client/package.json client/
+COPY server/package.json ./server/
+COPY shared/package.json ./shared/
+
+RUN bun install --frozen-lockfile
+
+COPY . .
 RUN bun run build
 
 
@@ -16,5 +22,6 @@ COPY --from=builder /app/server/app.js app.js
 
 ARG SERVER_PORT
 ENV SERVER_PORT=${SERVER_PORT}
+EXPOSE ${SERVER_PORT}
 
 CMD ["bun", "app.js"]
