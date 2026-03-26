@@ -60,7 +60,7 @@
   <title>Red Tetris</title>
   <meta
     name="description"
-    content="Play Tetris for free with your friends. Chat, warm-up and play together with the settings you choose."
+    content="Play Red Tetris for free with your friends. Chat, warm-up and play together with the settings you choose."
   />
   <script
     defer
