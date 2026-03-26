@@ -28,7 +28,7 @@ function configureHttp(app: Express) {
   app.use(express.static(frontendPath));
 
   app.get("/{*splat}", (_req: express.Request, res: express.Response) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
+    res.sendFile(path.join(frontendPath, "app.html"));
   });
 }
 

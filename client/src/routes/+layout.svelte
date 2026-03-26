@@ -69,22 +69,29 @@
   ></script>
 </svelte:head>
 
-<Dialog
-  bind:open={showError}
-  confirm="retry"
-  confirmCallback={retry}
-  title="Connection Error"
-  icon={ServerOff}
->
-  {connectionError}
-</Dialog>
+{@render children()}
 
 {#if !isConnected}
-  <div class="flex h-screen items-center justify-center bg-dark-primary">
+  <div
+    class="fixed inset-0 z-9999 flex items-center justify-center bg-dark-primary pointer-events-auto"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Connecting to server"
+  >
     <div class="bg-dark-secondary px-8 py-4 ring-border ring">
-      <div class="text-center">Connecting...</div>
+      {#if connectionError}
+        <Dialog
+          bind:open={showError}
+          confirm="retry"
+          confirmCallback={retry}
+          title="Connection Error"
+          icon={ServerOff}
+        >
+          {connectionError}
+        </Dialog>
+      {:else}
+        <div class="text-center">Connecting...</div>
+      {/if}
     </div>
   </div>
-{:else}
-  {@render children()}
 {/if}
