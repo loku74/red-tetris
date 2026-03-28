@@ -56,16 +56,29 @@
 
 <svelte:head>
   <link rel="icon" href="/favicon.jpg" />
-  <title>Red Tetris</title>
-  <meta
-    name="description"
-    content="Play Red Tetris for free with your friends. Chat, warm-up and play together with the settings you choose."
-  />
+  <title>Red Tetris - Play for free with your friends</title>
+
+  <!-- analytics -->
   <script
     defer
     src="https://analytics.red-tetris.fr/script.js"
     data-website-id="568ff6d6-0ec7-4abe-b1bf-afa5179f4103"
   ></script>
+
+  <!-- SEO -->
+  <meta property="og:site_name" content="Red Tetris" />
+  <meta
+    name="description"
+    content="Play Red Tetris for free with your friends. Chat, warm-up and play together with the settings you choose."
+  />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Red Tetris",
+      "url": "https://red-tetris.fr/"
+    }
+  </script>
 </svelte:head>
 
 {@render children()}
