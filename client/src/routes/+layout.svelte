@@ -8,7 +8,6 @@
 
   import { setRoomData } from "$lib/state/room.svelte";
 
-  import redPiece from "$lib/assets/red_piece.jpg";
   import { getSocket } from "$lib/socket/socket.svelte";
 
   import "./layout.css";
@@ -56,7 +55,7 @@
 </script>
 
 <svelte:head>
-  <link rel="icon" href={redPiece} />
+  <link rel="icon" href="/favicon.jpg" />
   <title>Red Tetris</title>
   <meta
     name="description"
