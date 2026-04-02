@@ -79,6 +79,7 @@
       "url": "https://red-tetris.fr/"
     }
   </script>
+  <link rel="canonical" href="https://red-tetris.fr/" />
 </svelte:head>
 
 {@render children()}
