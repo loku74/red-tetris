@@ -55,7 +55,7 @@
 </script>
 
 <svelte:head>
-  <link rel="icon" href="/favicon.jpg" />
+  <link rel="icon" href="/favicon.jpg" type="image/jpeg" />
   <title>Red Tetris - Play for free with your friends</title>
 
   <!-- analytics -->
