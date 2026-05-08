@@ -58,13 +58,6 @@
   <link rel="icon" href="/favicon.jpg" type="image/jpeg" />
   <title>Red Tetris - Play for free with your friends</title>
 
-  <!-- analytics -->
-  <script
-    defer
-    src="https://analytics.red-tetris.fr/script.js"
-    data-website-id="568ff6d6-0ec7-4abe-b1bf-afa5179f4103"
-  ></script>
-
   <!-- SEO -->
   <meta property="og:site_name" content="Red Tetris" />
   <meta
