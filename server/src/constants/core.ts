@@ -1,7 +1,7 @@
 import type { GameScore } from "@app/shared";
 
 // server
-export const SERVER_PORT = Number(process.env.SERVER_PORT);
+export const SERVER_PORT = 3000;
 
 // room
 export const ROOM_MAX_USERS = 4;

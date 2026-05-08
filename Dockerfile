@@ -1,4 +1,6 @@
-FROM oven/bun:1.3.10 AS builder
+ARG BUN_VERSION=1.3.13
+
+FROM oven/bun:${BUN_VERSION} AS builder
 
 WORKDIR /app
 
@@ -13,15 +15,13 @@ COPY . .
 RUN bun run build
 
 
-FROM oven/bun:1.3.10 AS runner
+FROM oven/bun:${BUN_VERSION} AS runner
 
 WORKDIR /app
 
 COPY --from=builder /app/client/build sveltekit-build
 COPY --from=builder /app/server/app.js app.js
 
-ARG SERVER_PORT
-ENV SERVER_PORT=${SERVER_PORT}
-EXPOSE ${SERVER_PORT}
+EXPOSE 3000
 
 CMD ["bun", "app.js"]
