@@ -26,9 +26,9 @@ The project is managed as a **Bun Workspace** monorepo with the following compon
   - [Socket.io Client](https://socket.io/)
 
 - **Server:**
-  - [Bun](https://bun.sh/) engine
+  - [Bun](https://bun.sh/)
   - [Express](https://expressjs.com/)
-  - [Socket.io](https://socket.io/) (via `@socket.io/bun-engine`)
+  - [Socket.io](https://socket.io/) (with `@socket.io/bun-engine`)
   - [Zod](https://zod.dev/) for schema validation
   - [Vitest](https://vitest.dev/) for testing
 
