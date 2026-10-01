@@ -46,7 +46,7 @@ The project is managed as a **Bun Workspace** monorepo with the following compon
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/loku74/red-tetris
    cd red-tetris
    ```
 
